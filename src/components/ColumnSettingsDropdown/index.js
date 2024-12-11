@@ -22,7 +22,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			inputLabel: "Intensity",
 			inputValue: data.intensity,
 			preConfirm: (value) => {
-				if (isNaN(value) || value < 0) {
+				if (!value || isNaN(value) || value < 0) {
 					return Promise.reject("Invalid value");
 				}
 				return Promise.resolve(value);
@@ -54,7 +54,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			},
 			showCancelButton: true,
 			preConfirm: (value) => {
-				if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+				if (!value || isNaN(value) || value <= 0 || !Number.isInteger(value)) {
 					return Promise.reject("Invalid value");
 				}
 				return Promise.resolve(value);
@@ -80,7 +80,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				inputValue: data.scaleFactor,
 				showCancelButton: true,
 				preConfirm: (value) => {
-					if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+					if (!value || isNaN(value) || value <= 0 || !Number.isInteger(value)) {
 						return Promise.reject("Invalid value");
 					}
 					return Promise.resolve(value);
@@ -111,7 +111,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				inputLabel: "Delta",
 				inputValue: data.direction,
 				preConfirm: (value) => {
-					if (isNaN(value)) {
+					if (!value || isNaN(value) || value < 0) {
 						return Promise.reject("Invalid value");
 					}
 					return Promise.resolve(value);
