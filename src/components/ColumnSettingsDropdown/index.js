@@ -51,6 +51,13 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			inputAttributes: {
 				min: 1,
 				step: 1
+			},
+			showCancelButton: true,
+			preConfirm: (value) => {
+				if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+					return Promise.reject("Invalid value");
+				}
+				return Promise.resolve(value);
 			}
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
@@ -70,7 +77,14 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				text: "This will change the scale factor of the light.",
 				input: "number",
 				inputLabel: "Scale Factor",
-				inputValue: data.scaleFactor
+				inputValue: data.scaleFactor,
+				showCancelButton: true,
+				preConfirm: (value) => {
+					if (isNaN(value) || value < 0 || !Number.isInteger(value)) {
+						return Promise.reject("Invalid value");
+					}
+					return Promise.resolve(value);
+				}
 			});
 
 			if (!isConfirmed) return;
