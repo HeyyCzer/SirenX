@@ -7,7 +7,6 @@ import "./modals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import Script from "next/script";
 config.autoAddCss = false;
 
 export const metadata = {
@@ -36,25 +35,18 @@ export default function RootLayout({ children }) {
 			<body className="dark bg-slate-950">
 				<GoogleAnalytics />
 
-				<Script
-					async
-					src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADS_CLIENT_ID}`}
-					strategy="lazyOnload"
-					crossOrigin="anonymous"
-				/>
-
 				{children}
 
-				<footer className="py-4 bg-slate-900 flex flex-col justify-center items-center gap-4">
+				<footer className="flex flex-col items-center justify-center gap-4 bg-slate-900 py-4">
 					<p className="text-center text-gray-300/60 text-sm">
 						Made with{" "}
-						<span className="bg-clip-text bg-emerald-400 text-transparent animate-ping">
+						<span className="animate-ping bg-emerald-400 bg-clip-text text-transparent">
 							💚
 						</span>{" "}
 						by{" "}
 						<Link
 							href="https://bio.site/HeyyCzer"
-							className="text-white font-bold underline underline-offset-2 hover:text-emerald-400 transition-all"
+							className="font-bold text-white underline underline-offset-2 transition-all hover:text-emerald-400"
 						>
 							HeyyCzer
 						</Link>
@@ -71,7 +63,7 @@ export default function RootLayout({ children }) {
 							width={0}
 							height={0}
 							sizes="512px"
-							className="hover:opacity-80 hover:bg-black rounded-lg transition-all hover:scale-105"
+							className="rounded-lg transition-all hover:scale-105 hover:bg-black hover:opacity-80"
 							style={{ width: "auto", height: "40px" }} // optional
 						/>
 					</Link>
