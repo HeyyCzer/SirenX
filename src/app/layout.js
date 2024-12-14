@@ -71,7 +71,7 @@ export default function RootLayout({ children }) {
 							width={0}
 							height={0}
 							sizes="512px"
-							className="hover:opacity-70 hover:bg-black rounded-lg transition-all hover:scale-105"
+							className="hover:opacity-80 hover:bg-black rounded-lg transition-all hover:scale-105"
 							style={{ width: "auto", height: "40px" }} // optional
 						/>
 					</Link>
