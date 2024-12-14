@@ -18,6 +18,7 @@
 		"@redux-devtools/extension": "^3.3.0",
 		"@reduxjs/toolkit": "^2.5.0",
 		"@sentry/nextjs": "8",
+		"@spotlightjs/spotlight": "^2.9.0",
 		"motion": "^11.14.4",
 		"next": "15.1.0",
 		"react": "^19.0.0",
