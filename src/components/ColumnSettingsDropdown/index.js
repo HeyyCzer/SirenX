@@ -33,10 +33,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			inputLabel: "Intensity",
 			inputValue: data.intensity,
 			preConfirm: (value) => {
-				if (!value || isNaN(value) || value < 0) {
-					return Promise.reject("Invalid value");
+				if (!value || Number.isNaN(value) || value < 0) {
+					return Modal.showValidationMessage("Invalid value");
 				}
-				return Promise.resolve(value);
+				return value;
 			},
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
@@ -65,10 +65,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			},
 			showCancelButton: true,
 			preConfirm: (value) => {
-				if (!value || isNaN(value) || value <= 0 || !Number.isInteger(value)) {
-					return Promise.reject("Invalid value");
+				if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value)) {
+					return Modal.showValidationMessage("Invalid value");
 				}
-				return Promise.resolve(value);
+				return value;
 			},
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
@@ -94,13 +94,13 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					preConfirm: (value) => {
 						if (
 							!value ||
-							isNaN(value) ||
+							Number.isNaN(value) ||
 							value <= 0 ||
 							!Number.isInteger(value)
 						) {
-							return Promise.reject("Invalid value");
+							return Modal.showValidationMessage("Invalid value");
 						}
-						return Promise.resolve(value);
+						return value;
 					},
 				});
 
@@ -131,10 +131,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					inputLabel: "Delta",
 					inputValue: data.direction,
 					preConfirm: (value) => {
-						if (!value || isNaN(value) || value < 0) {
-							return Promise.reject("Invalid value");
+						if (!value || Number.isNaN(value) || value < 0) {
+							return Modal.showValidationMessage("Invalid value");
 						}
-						return Promise.resolve(value);
+						return value;
 					},
 				});
 
@@ -204,7 +204,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										className={twMerge(
 											"group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
 											data.scaleFactor === scaleData.value &&
-												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 										)}
 									>
 										{scaleData.name}
@@ -220,7 +220,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										!Object.values(ScaleFactorEnum)
 											.map((d) => d.value)
 											.includes(data.scaleFactor) &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+										"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 									)}
 								>
 									Custom...
@@ -248,7 +248,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										className={twMerge(
 											"group relative select-none rounded-[3px] px-[5px] py-1 pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
 											data.direction === directionData.delta &&
-												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 										)}
 									>
 										<div className="flex items-center">
@@ -293,7 +293,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										!Object.values(DeltaEnum)
 											.map((d) => d.delta)
 											.includes(data.direction) &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+										"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 									)}
 								>
 									Custom...
