@@ -7,14 +7,14 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 export const Modal = withReactContent(Swal).mixin({
 	confirmButtonText: (
 		<>
-			<FontAwesomeIcon icon= { faCheck } className="mr-1" />
-			Confirmar
+			<FontAwesomeIcon icon={ faCheck } className="mr-2" />
+			Confirm
 		</>
 	),
 	cancelButtonText: (
 		<>
-			<FontAwesomeIcon icon= { faXmark } className="mr-1" />
-			Cancelar
+			<FontAwesomeIcon icon={ faXmark } className="mr-2" />
+			Cancel
 		</>
 	),
 });
