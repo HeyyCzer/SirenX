@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import * as Sentry from "@sentry/react";
 import editorSlice from "./reducers/editor.reducer";
 import settingsSlice from "./reducers/settings.reducer";
+import sponsorSlice from "./reducers/sponsor.reducer";
 import tutorialSlice from "./reducers/tutorial.reducer";
 
 export const STORE_KEY = "SirenX//";
@@ -30,12 +31,14 @@ export const makeStore = () => {
 	const store = configureStore({
 		reducer: {
 			editor: editorSlice,
+			sponsor: sponsorSlice,
 			settings: settingsSlice,
 			tutorial: tutorialSlice,
 		},
 		preloadedState: {
 			editor: preloadedEditor,
 			tutorial: getPreloadedState("tutorial"),
+			sponsor: getPreloadedState("sponsor"),
 		},
 		enhancers: (getDefaultEnhancers) =>
 			getDefaultEnhancers().concat(sentryReduxEnhancer),
@@ -49,6 +52,7 @@ export const makeStore = () => {
 				`${STORE_KEY}tutorial`,
 				JSON.stringify(state.tutorial),
 			);
+			localStorage.setItem(`${STORE_KEY}sponsor`, JSON.stringify(state.sponsor));
 		}
 	});
 
