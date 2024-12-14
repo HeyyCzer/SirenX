@@ -1,7 +1,10 @@
+import { createSlice } from "@reduxjs/toolkit";
 
-const { createSlice } = require("@reduxjs/toolkit")
+interface TutorialState {
+	[key: string]: boolean;
+}
 
-const initialState = {}
+const initialState: TutorialState = {};
 
 const tutorial = createSlice({
 	name: "tutorial",
@@ -11,7 +14,7 @@ const tutorial = createSlice({
 			state[key] = value;
 			return state;
 		},
-	}
+	},
 });
 
 export const { setStatus } = tutorial.actions;

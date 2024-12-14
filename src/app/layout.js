@@ -5,18 +5,17 @@ import "./globals.css";
 import "./modals.css";
 
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import { config } from '@fortawesome/fontawesome-svg-core';
-import '@fortawesome/fontawesome-svg-core/styles.css';
+import { config } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import dynamic from "next/dynamic";
 import Script from "next/script";
 config.autoAddCss = false;
 
-const DarkReaderAPI = dynamic(() => import('@/components/DarkReaderAPI'), { ssr: false });
-
 export const metadata = {
 	metadataBase: new URL("https://sirenx.heyyczer.com"),
 	title: "SirenX - Make GTA V sirens easily",
-	description: "SirenX is a web-based application that allows you to create and edit your GTA V carcols.meta sirens with ease. What about save your time using a simple and intuitive interface?",
+	description:
+		"SirenX is a web-based application that allows you to create and edit your GTA V carcols.meta sirens with ease. What about save your time using a simple and intuitive interface?",
 
 	openGraph: {
 		url: "https://sirenx.heyyczer.com",
@@ -36,7 +35,6 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<body className="dark bg-slate-950">
-				<DarkReaderAPI />
 				<GoogleAnalytics />
 
 				<Script
@@ -50,11 +48,24 @@ export default function RootLayout({ children }) {
 
 				<footer className="py-4 bg-slate-900 flex flex-col justify-center items-center gap-4">
 					<p className="text-center text-gray-300/60 text-sm">
-						Made with <span className="bg-clip-text bg-emerald-400 text-transparent animate-ping">💚</span> by{" "}
-						<Link href="https://bio.site/HeyyCzer" className="text-white font-bold underline underline-offset-2 hover:text-emerald-400 transition-all">HeyyCzer</Link>
+						Made with{" "}
+						<span className="bg-clip-text bg-emerald-400 text-transparent animate-ping">
+							💚
+						</span>{" "}
+						by{" "}
+						<Link
+							href="https://bio.site/HeyyCzer"
+							className="text-white font-bold underline underline-offset-2 hover:text-emerald-400 transition-all"
+						>
+							HeyyCzer
+						</Link>
 					</p>
 
-					<Link href="https://www.buymeacoffee.com/heyyczer" target="_blank" rel="noopener noreferrer">
+					<Link
+						href="https://www.buymeacoffee.com/heyyczer"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						<Image
 							src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png"
 							alt="Buy Me A Coffee"
@@ -62,7 +73,7 @@ export default function RootLayout({ children }) {
 							height={0}
 							sizes="512px"
 							className="hover:opacity-70 hover:bg-black rounded-lg transition-all hover:scale-105"
-							style={{ width: 'auto', height: '40px' }} // optional
+							style={{ width: "auto", height: "40px" }} // optional
 						/>
 					</Link>
 				</footer>

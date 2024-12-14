@@ -1,14 +1,14 @@
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
-import { setStatus } from "@/lib/reducers/tutorial.reducer";
+import { setStatus } from "@/store/reducers/tutorial.reducer";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { ACTIONS } from "react-joyride";
 import { tv } from "tailwind-variants";
 
-const ReactJoyride = dynamic(() => import('react-joyride'), {
+const ReactJoyride = dynamic(() => import("react-joyride"), {
 	ssr: false,
-})
+});
 
 const button = tv({
 	base: "py-1 px-2 transition-colors border-0 rounded-md text-white cursor-pointer outline-none appearance-none",
@@ -20,7 +20,7 @@ const button = tv({
 	},
 	defaultVariants: {
 		color: "default",
-	}
+	},
 });
 
 const TooltipButton = (props) => {
@@ -35,35 +35,57 @@ const TooltipButton = (props) => {
 	);
 };
 
-const Tooltip = ({ continuous, index, step, backProps, closeProps, primaryProps, tooltipProps }) => {
+const Tooltip = ({
+	continuous,
+	index,
+	step,
+	backProps,
+	closeProps,
+	primaryProps,
+	tooltipProps,
+}) => {
 	return (
-		<div className="react-joyride__tooltip bg-slate-800 rounded-lg box-border text-gray-300 max-w-full p-6 relative w-[380px]" {...tooltipProps}>
+		<div
+			className="react-joyride__tooltip bg-slate-800 rounded-lg box-border text-gray-300 max-w-full p-6 relative w-[380px]"
+			{...tooltipProps}
+		>
 			<div className="leading-[1.4] text-left">
-				{step.title && <h4 className="text-emerald-400 pb-2 font-bold">{step.title}</h4>}
+				{step.title && (
+					<h4 className="text-emerald-400 pb-2 font-bold">{step.title}</h4>
+				)}
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
 				<p dangerouslySetInnerHTML={{ __html: step.content }} />
 			</div>
 
 			<div className="flex items-center justify-end gap-x-4 mt-5">
 				{index > 0 && <TooltipButton {...backProps} id="back" />}
-				{continuous && <TooltipButton {...primaryProps} id="next" color="primary" />}
+				{continuous && (
+					<TooltipButton {...primaryProps} id="next" color="primary" />
+				)}
 				{!continuous && <TooltipButton {...closeProps} id="close" />}
 			</div>
 		</div>
 	);
 };
 
-export default function Tutorial({ uid, dependent, steps, callback: tutorialCallback, ...props }) {
+export default function Tutorial({
+	uid,
+	dependent,
+	steps,
+	callback: tutorialCallback,
+	...props
+}) {
 	const [showTutorial, setShowTutorial] = useState(false);
 	const dispatch = useAppDispatch();
 
-	const tutorialState = useAppSelector(state => state.tutorial);
+	const tutorialState = useAppSelector((state) => state.tutorial);
 
 	for (let step in steps) {
-		step = parseInt(step)
-		const stepData = steps[step]
+		step = Number.parseInt(step);
+		const stepData = steps[step];
 
 		if (stepData.condition && !stepData.condition()) {
-			steps.splice(step, 1)
+			steps.splice(step, 1);
 		}
 	}
 
@@ -76,7 +98,7 @@ export default function Tutorial({ uid, dependent, steps, callback: tutorialCall
 		}
 
 		if (dependent) {
-			const dependentTutorial = tutorialState[dependent]
+			const dependentTutorial = tutorialState[dependent];
 			if (!dependentTutorial) {
 				setShowTutorial(false);
 				return;
@@ -88,19 +110,21 @@ export default function Tutorial({ uid, dependent, steps, callback: tutorialCall
 			setTimeout(() => {
 				setShowTutorial(true);
 			}, 3000);
-			return;
 		}
-	}, [dispatch, tutorialState, uid, dependent]);
+	}, [tutorialState, uid, dependent]);
 
-	const callback = useCallback((data) => {
-		tutorialCallback && tutorialCallback(data);
-		
-		if (!uid) return;
-		
-		if (data.action === ACTIONS.RESET) {
-			dispatch(setStatus({ key: uid, value: true}));
-		}
-	}, [tutorialCallback, uid, dispatch])
+	const callback = useCallback(
+		(data) => {
+			tutorialCallback?.(data);
+
+			if (!uid) return;
+
+			if (data.action === ACTIONS.RESET) {
+				dispatch(setStatus({ key: uid, value: true }));
+			}
+		},
+		[tutorialCallback, uid, dispatch],
+	);
 
 	return (
 		<ReactJoyride
@@ -113,16 +137,12 @@ export default function Tutorial({ uid, dependent, steps, callback: tutorialCall
 				next: "Next",
 				skip: "Skip",
 			}}
-			
 			hideCloseButton
 			disableScrolling
 			disableScrollParentFix
-
 			{...props}
-
 			steps={steps}
 			tooltipComponent={Tooltip}
-
 			styles={{
 				options: {
 					arrowColor: "var(--color-slate-800)",

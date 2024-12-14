@@ -1,5 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from "tailwindcss";
+import tailwindCss3d from "tailwindcss-3d";
+
+export default {
 	darkMode: "class",
 	content: [
 		"./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -19,34 +21,33 @@ module.exports = {
 			},
 			keyframes: {
 				slideDownAndFade: {
-					from: { opacity: 0, transform: "translateY(-2px)" },
-					to: { opacity: 1, transform: "translateY(0)" },
+					from: { opacity: "0", transform: "translateY(-2px)" },
+					to: { opacity: "1", transform: "translateY(0)" },
 				},
 				slideLeftAndFade: {
-					from: { opacity: 0, transform: "translateX(2px)" },
-					to: { opacity: 1, transform: "translateX(0)" },
+					from: { opacity: "0", transform: "translateX(2px)" },
+					to: { opacity: "1", transform: "translateX(0)" },
 				},
 				slideUpAndFade: {
-					from: { opacity: 0, transform: "translateY(2px)" },
-					to: { opacity: 1, transform: "translateY(0)" },
+					from: { opacity: "0", transform: "translateY(2px)" },
+					to: { opacity: "1", transform: "translateY(0)" },
 				},
 				slideRightAndFade: {
-					from: { opacity: 0, transform: "translateX(-2px)" },
-					to: { opacity: 1, transform: "translateX(0)" },
+					from: { opacity: "0", transform: "translateX(-2px)" },
+					to: { opacity: "1", transform: "translateX(0)" },
 				},
 			},
 		},
 	},
 	plugins: [
-		require("@tailwindcss/forms"),
-		require("tailwindcss-3d"),
-		function ({ addBase, theme }) {
-			function extractColorVars(colorObj, colorGroup = "") {
-				return Object.keys(colorObj).reduce((vars, colorKey) => {
+		tailwindCss3d,
+		function ({ addBase, theme }: any) {
+			function extractColorVars(colorObj: any, colorGroup = "") {
+				return Object.keys(colorObj).reduce((vars: any, colorKey: any) => {
 					const value = colorObj[colorKey];
 					const cssVariable = colorKey === "DEFAULT" ? `--color${colorGroup}` : `--color${colorGroup}-${colorKey}`;
 
-					const newVars = typeof value === "string" ? { [cssVariable]: value } : extractColorVars(value, `${colorGroup}-${colorKey}`);
+					const newVars: any = typeof value === "string" ? { [cssVariable]: value } : extractColorVars(value, `${colorGroup}-${colorKey}`);
 
 					return { ...vars, ...newVars };
 				}, {});
@@ -57,4 +58,4 @@ module.exports = {
 			});
 		},
 	],
-};
+}  satisfies Config;
