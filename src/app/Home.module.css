@@ -1,9 +1,3 @@
-.heroContainer {
-	position: relative;
-	height: 90vh;
-	width: 100%;
-}
-
 .heroBackground {
 	position: absolute;
 	height: inherit;
@@ -22,5 +16,5 @@
 }
 
 .heroCharacters {
-	mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+	mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
 }

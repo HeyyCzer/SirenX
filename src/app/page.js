@@ -38,70 +38,69 @@ export default function Home() {
 
 	return (
 		<main className="min-h-screen">
-			<section className={styles.heroContainer}>
-				<div className="-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-50 flex w-full flex-col items-center xl:left-0 xl:block xl:translate-x-0 xl:pl-56">
-					<span className="rounded-full border border-emerald-400 px-4 py-0.5 text-[13px] text-emerald-400 leading-none">
-						<FontAwesomeIcon icon={faHourglass2} className="mr-2" />
-						Save your time
-					</span>
-					<h1 className="mt-1 mb-4 font-bold text-[72px] leading-none">
-						<span className="animate-siren text-white [animation-delay:0.70s]">
-							Siren
+			<section className={"relative h-[90vh] w-full"}>
+				<div
+					className={
+						"z-40 mx-auto flex w-full items-center justify-between gap-32 lg:my-32 xl:px-56"
+					}
+				>
+					<div className="z-50 flex flex-col items-center justify-center xl:block">
+						<span className="rounded-full border border-emerald-400 px-4 py-0.5 text-[13px] text-emerald-400 leading-none">
+							<FontAwesomeIcon icon={faHourglass2} className="mr-2" />
+							Save your time
 						</span>
-						<span className="animate-siren2 text-white">X</span>
-					</h1>
+						<h1 className="mt-1 mb-4 font-bold text-[72px] leading-none">
+							<span className="animate-siren text-white [animation-delay:0.70s]">
+								Siren
+							</span>
+							<span className="animate-siren2 text-white">X</span>
+						</h1>
 
-					<p className="text-center text-white/45 text-xl tracking-wide xl:text-left">
-						Ease, simplicity and time-saving. <br />
-						Your brand new and time-saving{" "}
-						<span className="font-semibold text-gradient-primary">
-							carcols.meta
-						</span>{" "}
-						editor.
-						<br />
-					</p>
+						<p className="text-center text-white/45 text-xl tracking-wide xl:text-left">
+							Ease, simplicity and time-saving. <br />
+							Your brand new and time-saving{" "}
+							<span className="font-semibold text-gradient-primary">
+								carcols.meta
+							</span>{" "}
+							editor.
+							<br />
+						</p>
 
-					<div className="mt-8 flex gap-4">
-						<Link
-							href="#features"
-							className="rounded-md bg-emerald-500 px-8 py-2 font-semibold text-sm text-white uppercase tracking-wide transition-all hover:bg-emerald-600"
-						>
-							<FontAwesomeIcon icon={faMagicWandSparkles} className="mr-2" />
-							Features
-						</Link>
-						<Link
-							href="/editor"
-							className="rounded-md bg-white px-8 py-2 font-semibold text-black text-sm uppercase tracking-wide transition-all hover:bg-gray-200"
-						>
-							<FontAwesomeIcon icon={faEdit} className="mr-2" />
-							Open Editor
-						</Link>
+						<div className="mt-8 flex gap-4">
+							<Link
+								href="#features"
+								className="flex flex-nowrap items-center text-nowrap rounded-md bg-emerald-500 px-8 py-2 font-semibold text-sm text-white uppercase tracking-wide transition-all hover:bg-emerald-600"
+							>
+								<FontAwesomeIcon icon={faMagicWandSparkles} className="mr-2" />
+								Features
+							</Link>
+							<Link
+								href="/editor"
+								className="flex flex-nowrap items-center text-nowrap rounded-md bg-white px-8 py-2 font-semibold text-black text-sm uppercase tracking-wide transition-all hover:bg-gray-200"
+							>
+								<FontAwesomeIcon icon={faEdit} className="mr-2" />
+								Open Editor
+							</Link>
+						</div>
+					</div>
+
+					<div>
+						<Image
+							src={screenshot}
+							alt="Screenshot"
+							className="hidden w-full min-w-[500px] rounded-lg border border-gray-700/70 bg-gray-500/20 p-2 opacity-80 xl:block xl:max-w-[800px] 2xl:max-w-[900px]"
+						/>
 					</div>
 				</div>
 
-				<Image
-					src={heroCharacters}
-					alt="Characters"
-					className={`absolute right-0 bottom-0 w-[600px] opacity-80 2xl:w-[900px] ${styles.heroCharacters} hidden xl:block`}
-				/>
-
-				<div
-					className={styles.heroBackground}
-					style={{ background: `url(/images/home/bg.png)` }}
-					suppressHydrationWarning
-				/>
-
-				<div className="absolute right-0 bottom-0 left-0 mb-8 flex justify-center gap-4">
+				<div className="absolute right-0 bottom-24 left-0 flex justify-center gap-4">
 					<Link href="#features" className="animate-bounce text-white">
 						<FontAwesomeIcon icon={faAngleDoubleDown} size="2x" />
 					</Link>
 				</div>
 			</section>
 
-			<section
-				id="about"
-				className="grid grid-cols-1 gap-20 px-12 py-16 xl:px-20 2xl:grid-cols-2"
-			>
+			<section id="about" className="mx-auto max-w-6xl px-12 pb-16">
 				<div>
 					<motion.h2
 						className="mb-12 text-center font-bold text-3xl text-gray-400"
@@ -137,13 +136,13 @@ export default function Home() {
 					</motion.p>
 				</div>
 
-				<div className="perspective-1000">
-					<Image
-						src={screenshot}
-						alt="Screenshot"
-						className="2xl:transform-style-3d 2xl:-rotate-y-[20deg] backface-hidden mx-auto w-2/3 max-w-[600px] rounded-lg border border-gray-700/70 bg-gray-500/20 p-2"
-					/>
-				</div>
+				{/*<div className="perspective-1000">*/}
+				{/*	<Image*/}
+				{/*		src={screenshot}*/}
+				{/*		alt="Screenshot"*/}
+				{/*		className="2xl:transform-style-3d 2xl:-rotate-y-[20deg] backface-hidden mx-auto w-2/3 max-w-[600px] rounded-lg border border-gray-700/70 bg-gray-500/20 p-2"*/}
+				{/*	/>*/}
+				{/*</div>*/}
 			</section>
 
 			<section id="features" className="px-12 py-16 xl:px-20">
