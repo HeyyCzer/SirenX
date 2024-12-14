@@ -40,7 +40,7 @@ const initialState: SettingsState = {
 		description: "This is the total rows of the editor. The maximum is 32.",
 		attributes: {
 			type: "range",
-			min: 20,
+			min: 1,
 			max: 32,
 		},
 		type: "number",
