@@ -7,7 +7,7 @@ import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
 
 const Light = dynamic(() => import("@/components/Light"), { ssr: false });
 
-export default function LightsEditor() {
+export default function Editor() {
 	const { bpm } = useAppSelector((state) => state.editor);
 	const { totalColumns } = useAppSelector((state) => state.settings);
 

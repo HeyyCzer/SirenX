@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import LightsEditor from "@/components/LightsEditor";
+import Editor from "@/components/Editor";
 import SeparatorsContainer from "@/components/SeparatorsContainer";
 
 const Toolbar = dynamic(() => import("@/components/Toolbar"), {
@@ -18,7 +18,7 @@ import { updateLights } from "@/store/reducers/editor.reducer";
 import dynamic from "next/dynamic";
 import AppTutorial from "./editor.tutorial";
 
-export default function Editor() {
+export default function EditorPage() {
 	// Buy me a coffee widget
 	useEffect(() => {
 		if (document.getElementById("bmc-script")) return;
@@ -34,7 +34,7 @@ export default function Editor() {
 		script.setAttribute("data-cfasync", "false");
 		script.setAttribute("data-id", "heyyczer");
 		script.setAttribute("data-description", "Support me on Buy me a coffee!");
-		script.setAttribute("data-message", "Would you like to support this tool?");
+		script.setAttribute("data-message", "Would you like to support this project?");
 		script.setAttribute("data-color", "#40DCA5");
 		script.setAttribute("data-position", "Right");
 		script.setAttribute("data-x_margin", "18");
@@ -105,7 +105,7 @@ export default function Editor() {
 
 			<div className={`${styles.background} min-h-screen px-12 py-9`}>
 				<div className="flex justify-between gap-x-6">
-					<LightsEditor />
+					<Editor />
 					<Toolbar />
 				</div>
 			</div>
