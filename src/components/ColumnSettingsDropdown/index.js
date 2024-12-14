@@ -21,7 +21,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 	const dispatch = useAppDispatch();
 	const { lights } = useAppSelector((state) => state.editor);
 	const data = useMemo(
-		() => lights[0]?.[columnIndex] ?? defaultLightModel,
+		() => lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
 		[lights, columnIndex],
 	);
 
@@ -112,7 +112,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			const tempLights = JSON.parse(JSON.stringify(lights));
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex]) {
-					row[columnIndex] = defaultLightModel;
+					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
 				}
 				row[columnIndex].scaleFactor = scaleFactor;
 			}
@@ -146,7 +146,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			const tempLights = JSON.parse(JSON.stringify(lights));
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex]) {
-					row[columnIndex] = defaultLightModel;
+					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
 				}
 				row[columnIndex].direction = delta;
 			}
