@@ -1,4 +1,4 @@
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from "sweetalert2/dist/sweetalert2.js";
@@ -13,7 +13,7 @@ export const Modal = withReactContent(Swal).mixin({
 	),
 	cancelButtonText: (
 		<>
-			<FontAwesomeIcon icon= { faCheck } className="mr-1" />
+			<FontAwesomeIcon icon= { faXmark } className="mr-1" />
 			Cancelar
 		</>
 	),
