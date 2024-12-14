@@ -1,12 +1,28 @@
-const { createSlice } = require("@reduxjs/toolkit")
+import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface SettingsState {
+	[key: string]: {
+		label: string;
+		description: string;
+		type: string;
+		negativeEffect?: string;
+		attributes: {
+			type: string;
+			min?: number;
+			max?: number;
+		};
+		value: boolean | number;
+	};
+}
+
+const initialState: SettingsState = {
 	separatorsVisible: {
 		label: "Show/hide separators",
 		description: "This will show the created separators.",
 		attributes: {
 			type: "checkbox",
 		},
+		type: "boolean",
 		value: true,
 	},
 	oneColorPerColumn: {
@@ -16,6 +32,7 @@ const initialState = {
 		attributes: {
 			type: "checkbox",
 		},
+		type: "boolean",
 		value: true,
 	},
 	totalColumns: {
@@ -28,8 +45,8 @@ const initialState = {
 		},
 		type: "number",
 		value: 20,
-	}
-}
+	},
+};
 
 const settings = createSlice({
 	name: "settings",
@@ -47,7 +64,7 @@ const settings = createSlice({
 			state[key].value = value;
 			return state;
 		},
-	}
+	},
 });
 
 export const { updateSettings } = settings.actions;

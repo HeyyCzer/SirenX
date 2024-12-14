@@ -2,18 +2,21 @@
 
 import styles from "./Editor.module.css";
 
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 import LightsEditor from "@/components/LightsEditor";
 import SeparatorsContainer from "@/components/SeparatorsContainer";
-import { updateLights } from "@/lib/reducers/editor.reducer";
+
+const Toolbar = dynamic(() => import("@/components/Toolbar"), {
+	ssr: false,
+});
+
+import { updateLights } from "@/store/reducers/editor.reducer";
 import dynamic from "next/dynamic";
 import AppTutorial from "./editor.tutorial";
-
-const Toolbar = dynamic(() => import("@/components/Toolbar"), { ssr: false });
 
 export default function Editor() {
 	// Buy me a coffee widget
@@ -23,7 +26,10 @@ export default function Editor() {
 		const script = document.createElement("script");
 		const div = document.getElementById("supportByBMC");
 		script.setAttribute("id", "bmc-script");
-		script.setAttribute("src", "https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js");
+		script.setAttribute(
+			"src",
+			"https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js",
+		);
 		script.setAttribute("data-name", "BMC-Widget");
 		script.setAttribute("data-cfasync", "false");
 		script.setAttribute("data-id", "heyyczer");
@@ -34,8 +40,11 @@ export default function Editor() {
 		script.setAttribute("data-x_margin", "18");
 		script.setAttribute("data-y_margin", "18");
 
-		script.onload = function () {
-			var evt = new Event("DOMContentLoaded", { bubbles: false, cancelable: false });
+		script.onload = () => {
+			const evt = new Event("DOMContentLoaded", {
+				bubbles: false,
+				cancelable: false,
+			});
 			window.dispatchEvent(evt);
 		};
 
@@ -52,12 +61,12 @@ export default function Editor() {
 
 		return () => {
 			window.removeEventListener("contextmenu", preventContextMenu);
-		}
+		};
 	}, []);
 
 	useEffect(() => {
 		if (!settings.oneColorPerColumn.value) return;
-	
+
 		const newLights = { ...lights };
 
 		const columnColors = [];
@@ -71,8 +80,15 @@ export default function Editor() {
 					columnColors[index] = item.color;
 				}
 
-				if (item.color !== "none" && columnColors[index] && columnColors[index] !== item.color) {
-					newLights[rowIndex] = { ...newLights[rowIndex], [index]: { ...item, color: columnColors[index] } };
+				if (
+					item.color !== "none" &&
+					columnColors[index] &&
+					columnColors[index] !== item.color
+				) {
+					newLights[rowIndex] = {
+						...newLights[rowIndex],
+						[index]: { ...item, color: columnColors[index] },
+					};
 				}
 			}
 		}

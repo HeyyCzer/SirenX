@@ -1,13 +1,18 @@
 import DeltaEnum from "@/enum/direction.enum";
 import Colors from "@/lib/colors";
-import { defaultCarcolsLightModel, defaultLightModel } from "@/lib/reducers/editor.reducer";
+import {
+	defaultCarcolsLightModel,
+	defaultLightModel,
+} from "@/store/reducers/editor.reducer";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
 import { json2xml } from "xml-js";
 import { createColor } from "./colors.controller";
 
 const buildLights = (sirenSelected, fullFile) => {
-	const sirenItems = Array.isArray(sirenSelected.sirens.Item) ? sirenSelected.sirens.Item : [sirenSelected.sirens.Item];
-	
+	const sirenItems = Array.isArray(sirenSelected.sirens.Item)
+		? sirenSelected.sirens.Item
+		: [sirenSelected.sirens.Item];
+
 	const builtSirens = [];
 	for (const columnIndex in sirenItems) {
 		const columnData = sirenItems[columnIndex];
@@ -17,7 +22,7 @@ const buildLights = (sirenSelected, fullFile) => {
 		const intensity = Number(columnData.intensity.$.value);
 		const scaleFactor = Number(columnData.scaleFactor.$.value);
 
-		let carcolsColor = columnData.color.$.value;
+		const carcolsColor = columnData.color.$.value;
 		let color = null;
 		for (const [colorName, colorData] of Object.entries(Colors)) {
 			if (colorData.carcols.color === carcolsColor) {
@@ -31,7 +36,9 @@ const buildLights = (sirenSelected, fullFile) => {
 			color = colorId;
 		}
 
-		const binarySequence = decimalToBinary(columnData.flashiness.sequencer.$.value);
+		const binarySequence = decimalToBinary(
+			columnData.flashiness.sequencer.$.value,
+		);
 		for (const row in binarySequence) {
 			const active = binarySequence[row] === "1";
 			if (!builtSirens[row]) {
@@ -43,8 +50,8 @@ const buildLights = (sirenSelected, fullFile) => {
 				direction,
 				multiples,
 				intensity,
-				scaleFactor
-			}
+				scaleFactor,
+			};
 		}
 	}
 
@@ -55,11 +62,11 @@ const buildLights = (sirenSelected, fullFile) => {
 		file: fullFile,
 		lights: builtSirens,
 	};
-}
+};
 
 const exportLights = (editor, settings) => {
 	const fullFile = JSON.parse(JSON.stringify(editor.uploadedFile));
-	
+
 	const lights = editor.lights;
 
 	let siren = fullFile?.CVehicleModelInfoVarGlobal?.Sirens.Item;
@@ -80,14 +87,18 @@ const exportLights = (editor, settings) => {
 	}
 	siren.sequencerBpm.$.value = editor.bpm;
 
-	let sequencer = {};
+	const sequencer = {};
 	for (let rowIndex = 0; rowIndex < 32; rowIndex++) {
 		let row = lights[rowIndex];
 		if (!row) {
 			row = [];
 		}
 
-		for (let columnIndex = 0; columnIndex < settings.totalColumns.value; columnIndex++) {
+		for (
+			let columnIndex = 0;
+			columnIndex < settings.totalColumns.value;
+			columnIndex++
+		) {
 			let light = row[columnIndex];
 			if (!siren.sirens.Item[columnIndex]) {
 				siren.sirens.Item[columnIndex] = defaultCarcolsLightModel;
@@ -98,18 +109,20 @@ const exportLights = (editor, settings) => {
 				_comment: ` Siren ${columnIndex + 1} `,
 				...columnData,
 			};
-			
+
 			if (!light) {
 				row[columnIndex] = defaultLightModel;
-				light = row[columnIndex]
+				light = row[columnIndex];
 			}
 
 			if (!sequencer[columnIndex]) sequencer[columnIndex] = "";
 
-			sequencer[columnIndex] += (light?.color !== "none" ? "1" : "0");
-			if (light?.color === "none" && sequencer[columnIndex].includes("1")) continue;
+			sequencer[columnIndex] += light?.color !== "none" ? "1" : "0";
+			if (light?.color === "none" && sequencer[columnIndex].includes("1"))
+				continue;
 
-			columnData.flashiness.delta.$.value = light?.direction ?? DeltaEnum.FRONT.delta;
+			columnData.flashiness.delta.$.value =
+				light?.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
 			columnData.intensity.$.value = light.intensity;
 			columnData.scaleFactor.$.value = light.scaleFactor;
@@ -120,13 +133,14 @@ const exportLights = (editor, settings) => {
 	}
 
 	for (const [index, sequence] of Object.entries(sequencer)) {
-		siren.sirens.Item[index].flashiness.sequencer.$.value = binaryToDecimal(sequence);
+		siren.sirens.Item[index].flashiness.sequencer.$.value =
+			binaryToDecimal(sequence);
 	}
 
-	return [json2xml(fullFile, { compact: true, attributesKey: "$", spaces: 2 }), fullFile];
-}
-
-export {
-	buildLights, exportLights
+	return [
+		json2xml(fullFile, { compact: true, attributesKey: "$", spaces: 2 }),
+		fullFile,
+	];
 };
 
+export { buildLights, exportLights };

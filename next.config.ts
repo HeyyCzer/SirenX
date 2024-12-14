@@ -1,8 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import injectWhyDidYouRender from "./scripts/why-did-you-render/index.js";
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [
 			{
@@ -10,10 +9,6 @@ const nextConfig = {
 				hostname: "cdn.buymeacoffee.com",
 			},
 		],
-	},
-	webpack: (config, context) => {
-		injectWhyDidYouRender(config, context);
-		return config;
 	},
 };
 
