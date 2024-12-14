@@ -7,7 +7,6 @@ import "./modals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import dynamic from "next/dynamic";
 import Script from "next/script";
 config.autoAddCss = false;
 
