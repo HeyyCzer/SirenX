@@ -10,9 +10,9 @@ function hexToRgb(hex) {
 	}
   
 	// Extrair os componentes R, G, B
-	const r = parseInt(hex.substring(0, 2), 16);
-	const g = parseInt(hex.substring(2, 4), 16);
-	const b = parseInt(hex.substring(4, 6), 16);
+	const r = Number.parseInt(hex.substring(0, 2), 16);
+	const g = Number.parseInt(hex.substring(2, 4), 16);
+	const b = Number.parseInt(hex.substring(4, 6), 16);
   
 	// Retornar os valores como objeto
 	return { r, g, b };
@@ -23,9 +23,9 @@ function getContrast(hexColor) {
 	hexColor = hexColor.replace(/^#/, '');
   
 	// Converte o HEX para RGB
-	const r = parseInt(hexColor.substring(0, 2), 16);
-	const g = parseInt(hexColor.substring(2, 4), 16);
-	const b = parseInt(hexColor.substring(4, 6), 16);
+	const r = Number.parseInt(hexColor.substring(0, 2), 16);
+	const g = Number.parseInt(hexColor.substring(2, 4), 16);
+	const b = Number.parseInt(hexColor.substring(4, 6), 16);
   
 	// Calcula o brilho relativo (luminosidade) da cor
 	const brightness = (r * 299 + g * 587 + b * 114) / 1000;

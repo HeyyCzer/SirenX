@@ -25,7 +25,7 @@ export default function Separator({ uuid: id, x: itemX, moveSeparator }) {
 			className="separator fixed h-screen px-2"
 			style={{ left: itemX }}
 		>
-			<div className={twMerge("h-[inherit] bg-white/60 w-1", (isDragging && "bg-red-500"))} />
+			<div className={twMerge("h-[inherit] w-1 bg-white/60", (isDragging && "bg-red-500"))} />
 		</div>
 	);
 }

@@ -36,7 +36,7 @@ export default function Toolbar() {
 			if (document.querySelector("input:focus")) return;
 
 			const key = e.key;
-			if (isNaN(Number.parseInt(key))) return;
+			if (Number.isNaN(key)) return;
 
 			const colorName = Object.keys(Colors)[Number.parseInt(key) - 1];
 			if (
@@ -84,7 +84,7 @@ export default function Toolbar() {
 
 				event({
 					action: "file_import",
-					category: `editor`,
+					category: "editor",
 					label: `${totalColumns} columns - ${result.bpm} BPM`,
 				});
 
@@ -99,7 +99,7 @@ export default function Toolbar() {
 			};
 			reader.readAsText(file);
 		},
-		[dispatch, hiddenFileInput],
+		[dispatch],
 	);
 
 	const handleDownloadFile = useCallback(() => {
@@ -115,7 +115,7 @@ export default function Toolbar() {
 			showCancelButton: true,
 			preConfirm: (newSirenId) => {
 				if (!newSirenId)
-					return Modal.showValidationMessage(`Please, enter a Siren ID.`);
+					return Modal.showValidationMessage("Please, enter a Siren ID.");
 				return newSirenId;
 			},
 		}).then(({ isConfirmed, value: newSirenId }) => {
@@ -129,7 +129,7 @@ export default function Toolbar() {
 				showCancelButton: true,
 				preConfirm: (newSirenName) => {
 					if (!newSirenName)
-						return Modal.showValidationMessage(`Please, enter a Siren Name.`);
+						return Modal.showValidationMessage("Please, enter a Siren Name.");
 					return newSirenName;
 				},
 			}).then(({ isConfirmed, value: newSirenName }) => {
@@ -151,7 +151,7 @@ export default function Toolbar() {
 
 				event({
 					action: "file_export",
-					category: `editor`,
+					category: "editor",
 					label: `${settings.totalColumns.value} columns - ${bpm} BPM`,
 				});
 
@@ -213,7 +213,7 @@ export default function Toolbar() {
 
 			<aside
 				id="toolbar"
-				className="flex flex-col gap-y-5 mt-14 bg-slate-900 w-full min-w-[250px] max-w-[300px] rounded-xl drop-shadow-lg px-6 pb-6"
+				className="mt-14 flex w-full min-w-[250px] max-w-[300px] flex-col gap-y-5 rounded-xl bg-slate-900 px-6 pb-6 drop-shadow-lg"
 			>
 				<input
 					type="file"
@@ -223,30 +223,33 @@ export default function Toolbar() {
 					onChange={handleFileUpload}
 				/>
 
-				<div className="flex justify-center py-6 text-white uppercase font-medium">
+				<div className="flex justify-center py-6 font-medium text-white uppercase">
 					<h1>Tool</h1>
-					<h1 className="text-gradient-primary font-semibold">Box</h1>
+					<h1 className="font-semibold text-gradient-primary">Box</h1>
 				</div>
 
 				<div className="flex flex-col gap-y-1.5">
 					<button
+						type="button"
 						id="toolbar-import"
-						className="w-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-white uppercase tracking-[2px] font-semibold rounded-lg text-sm py-1"
+						className="w-full rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
 						onClick={() => hiddenFileInput.current.click()}
 					>
 						Import
 					</button>
 					<button
+						type="button"
 						id="toolbar-export"
 						disabled={!settings.oneColorPerColumn.value}
-						className="bg-gradient-to-r from-orange-500 to-yellow-500 disabled:from-gray-500 disabled:to-gray-500 disabled:text-gray-400 disabled:cursor-not-allowed text-white uppercase tracking-[2px] font-semibold w-full rounded-lg text-sm py-1"
+						className="w-full rounded-lg bg-gradient-to-r from-orange-500 to-yellow-500 py-1 font-semibold text-sm text-white uppercase tracking-[2px] disabled:cursor-not-allowed disabled:from-gray-500 disabled:to-gray-500 disabled:text-gray-400"
 						onClick={handleDownloadFile}
 					>
 						Export
 					</button>
 					<button
+						type="button"
 						id="toolbar-reset"
-						className="bg-gradient-to-r from-red-600 to-red-800 text-white uppercase tracking-[2px] font-semibold w-full rounded-lg text-sm py-1"
+						className="w-full rounded-lg bg-gradient-to-r from-red-600 to-red-800 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
 						onClick={handleResetEditor}
 					>
 						Reset editor
@@ -255,11 +258,11 @@ export default function Toolbar() {
 
 				{/* BPM */}
 				<div>
-					<h2 className="text-center uppercase tracking-[2px] text-white text-sm">
+					<h2 className="text-center text-sm text-white uppercase tracking-[2px]">
 						Adjust BPM
 					</h2>
 
-					<div id="toolbar-bpm" className="flex flex-col items-center mt-2">
+					<div id="toolbar-bpm" className="mt-2 flex flex-col items-center">
 						<input
 							type="range"
 							min="10"
@@ -269,14 +272,14 @@ export default function Toolbar() {
 							value={bpm}
 							onChange={handleUpdateBPM}
 						/>
-						<span className="mt-1 flex gap-x-2 text-white text-xs items-center">
+						<span className="mt-1 flex items-center gap-x-2 text-white text-xs">
 							Current BPM:
 							<input
 								type="number"
 								max="1200"
 								min="10"
 								step="10"
-								className="proportional-nums py-0 px-0 bg-transparent border-0 border-b-2 border-white/30 focus:border-emerald-400 transition-all outline-none text-center text-white [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:ring-0"
+								className="border-0 border-white/30 border-b-2 bg-transparent px-0 py-0 text-center text-white proportional-nums outline-none transition-all [appearance:textfield] focus:border-emerald-400 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 								value={bpm}
 								onChange={handleUpdateBPM}
 							/>
@@ -286,13 +289,13 @@ export default function Toolbar() {
 
 				{/* COLORS */}
 				<div>
-					<h2 className="text-center uppercase tracking-[2px] text-white text-sm">
+					<h2 className="text-center text-sm text-white uppercase tracking-[2px]">
 						Siren Colors
 					</h2>
 
 					<div
 						id="toolbar-colors"
-						className="grid grid-cols-3 w-full gap-y-2 mt-4"
+						className="mt-4 grid w-full grid-cols-3 gap-y-2"
 					>
 						{Object.entries(Colors)
 							.filter(([, colorData]) => !colorData.toolbar.unlisted)
@@ -300,11 +303,12 @@ export default function Toolbar() {
 								const selected = selectedColor === color;
 								return (
 									<div
-										key={index}
+										key={color}
 										className="flex flex-col items-center text-white text-xs"
 									>
 										<button
-											className={`relative ${selected ? colorData.toolbar.selected : colorData.toolbar.default} mx-auto flex items-center justify-center rounded-lg w-12 aspect-square transition-all`}
+											type="button"
+											className={`relative ${selected ? colorData.toolbar.selected : colorData.toolbar.default} mx-auto flex aspect-square w-12 items-center justify-center rounded-lg transition-all`}
 											onClick={() => dispatch(setSelectedColor(color))}
 										>
 											{selected && (
@@ -329,22 +333,22 @@ export default function Toolbar() {
 
 				{/* SETTINGS */}
 				<div>
-					<h2 className="text-center uppercase tracking-[2px] text-white text-sm">
+					<h2 className="text-center text-sm text-white uppercase tracking-[2px]">
 						Settings
 					</h2>
 
 					<div
 						id="toolbar-settings"
-						className="flex flex-col gap-y-2 mt-4 text-gray-300 text-xs"
+						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
 						{Object.entries(settings)
 							.filter(([, settingsData]) => !settingsData.unlisted)
-							.map(([settingsId, settingsData], index) => (
-								<div key={index} className="flex flex-col gap-y-1">
-									<div className="flex justify-between items-center gap-x-2">
+							.map(([settingsId, settingsData]) => (
+								<div key={settingsId} className="flex flex-col gap-y-1">
+									<div className="flex items-center justify-between gap-x-2">
 										<input
 											className={twMerge(
-												"accent-emerald-400 text-emerald-400 rounded-md focus:ring-0 outline-none mt-1",
+												"mt-1 rounded-md text-emerald-400 accent-emerald-400 outline-none focus:ring-0",
 												settingsData.attributes?.type === "range" && "w-full",
 											)}
 											id={`settings-${settingsId}`}
@@ -367,7 +371,7 @@ export default function Toolbar() {
 										)}
 									</div>
 									<label htmlFor={`settings-${settingsId}`}>
-										<h5 className="text-white font-semibold text-sm">
+										<h5 className="font-semibold text-sm text-white">
 											{settingsData.label}
 										</h5>
 										{settingsData.description && (
@@ -386,33 +390,33 @@ export default function Toolbar() {
 
 				{/* KEYBINDS */}
 				<div>
-					<h2 className="text-center uppercase tracking-[2px] text-white text-sm">
+					<h2 className="text-center text-sm text-white uppercase tracking-[2px]">
 						Useful keybinds
 					</h2>
 
 					<div
 						id="toolbar-keybinds"
-						className="flex flex-col gap-y-2 mt-4 text-gray-300 text-xs"
+						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
-						<div className="grid grid-cols-2 gap-x-2 items-center">
+						<div className="grid grid-cols-2 items-center gap-x-2">
 							<kbd>
 								<kbd>Mouse Left</kbd>
 							</kbd>
 							<p>Draw color</p>
 						</div>
-						<div className="grid grid-cols-2 gap-x-2 items-center">
+						<div className="grid grid-cols-2 items-center gap-x-2">
 							<kbd>
 								<kbd>Mouse Right</kbd>
 							</kbd>
 							<p>Erase color</p>
 						</div>
-						<div className="grid grid-cols-2 gap-x-2 items-center">
+						<div className="grid grid-cols-2 items-center gap-x-2">
 							<kbd>
 								<kbd>0-9</kbd>
 							</kbd>
 							<p>Change color</p>
 						</div>
-						<div className="grid grid-cols-2 gap-x-2 items-center">
+						<div className="grid grid-cols-2 items-center gap-x-2">
 							<kbd>
 								<kbd>Q</kbd>
 							</kbd>

@@ -41,7 +41,7 @@ export default {
 	},
 	plugins: [
 		tailwindCss3d,
-		function ({ addBase, theme }: any) {
+		({ addBase, theme }: any) => {
 			function extractColorVars(colorObj: any, colorGroup = "") {
 				return Object.keys(colorObj).reduce((vars: any, colorKey: any) => {
 					const value = colorObj[colorKey];

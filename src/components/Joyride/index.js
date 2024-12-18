@@ -46,18 +46,18 @@ const Tooltip = ({
 }) => {
 	return (
 		<div
-			className="react-joyride__tooltip bg-slate-800 rounded-lg box-border text-gray-300 max-w-full p-6 relative w-[380px]"
+			className="react-joyride__tooltip relative box-border w-[380px] max-w-full rounded-lg bg-slate-800 p-6 text-gray-300"
 			{...tooltipProps}
 		>
-			<div className="leading-[1.4] text-left">
+			<div className="text-left leading-[1.4]">
 				{step.title && (
-					<h4 className="text-emerald-400 pb-2 font-bold">{step.title}</h4>
+					<h4 className="pb-2 font-bold text-emerald-400">{step.title}</h4>
 				)}
 				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
 				<p dangerouslySetInnerHTML={{ __html: step.content }} />
 			</div>
 
-			<div className="flex items-center justify-end gap-x-4 mt-5">
+			<div className="mt-5 flex items-center justify-end gap-x-4">
 				{index > 0 && <TooltipButton {...backProps} id="back" />}
 				{continuous && (
 					<TooltipButton {...primaryProps} id="next" color="primary" />

@@ -37,6 +37,7 @@ const uploadFile = async (fileContent) => {
 	if (sirens.length === 1) {
 		selectedSiren = sirens[0];
 	} else {
+		// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
 		const sirenOptions = sirens.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {});
 		await Modal.fire({
 			title: 'Select a siren to edit',
@@ -71,15 +72,15 @@ const downloadFile = (editor, settings, fileName) => {
 
 	const [content, jsonFileContent] = exportLights(editorClone, settings);
 
-	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+	const element = document.createElement('a');
+	element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`);
 	element.setAttribute('download', fileName);
-  
+
 	element.style.display = 'none';
 	document.body.appendChild(element);
-  
+
 	element.click();
-  
+
 	document.body.removeChild(element);
 
 	return [content, jsonFileContent];

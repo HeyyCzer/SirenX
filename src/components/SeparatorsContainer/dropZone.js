@@ -22,7 +22,7 @@ export default function SeparatorDropZone({ removeSeparator }) {
 	}
 
 	return (
-		<div ref={drop} className={`${canDrop ? "flex" : "hidden"} absolute left-0 top-1/2 -translate-y-1/2 bg-red-500/10 h-1/2 w-8 [writing-mode:vertical-lr] text-center text-red-500 justify-center items-center leading-none rounded-r-lg`}>
+		<div ref={drop} className={`${canDrop ? "flex" : "hidden"} -translate-y-1/2 absolute top-1/2 left-0 h-1/2 w-8 items-center justify-center rounded-r-lg bg-red-500/10 text-center text-red-500 leading-none [writing-mode:vertical-lr]`}>
 			<span className="rotate-180 text-sm uppercase tracking-widest">Delete separator</span>
 		</div>
 	);

@@ -7,5 +7,5 @@ export function decimalToBinary(decimal: number) {
 }
 
 export function binaryToDecimal(binary: string) {
-	return parseInt(binary, 2);
+	return Number.parseInt(binary, 2);
 }
