@@ -44,7 +44,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			const tempLights = JSON.parse(JSON.stringify(lights));
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex]) {
-					row[columnIndex] = defaultLightModel;
+					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
 				}
 				row[columnIndex].intensity = value;
 			}
@@ -82,7 +82,8 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 	}, [dispatch, lights, columnIndex, data.multiples]);
 
 	const handleChangeScaleFactor = useCallback(
-		async (scaleFactor) => {
+		async (choosenScaleFactor) => {
+			let scaleFactor = choosenScaleFactor;
 			if (scaleFactor === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom scale factor",
@@ -122,7 +123,8 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 	);
 
 	const handleChangeDirection = useCallback(
-		async (delta) => {
+		async (choosenDelta) => {
+			let delta = choosenDelta;
 			if (delta === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom direction",
@@ -260,12 +262,14 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										<div className="mt-1.5 flex flex-col gap-y-1">
 											{directionData.schema.map((row, rowIndex) => (
 												<div
-													key={`direction-${id}-${columnIndex}-row-${rowIndex}`}
+													key={`direction-${id}-${columnIndex}-row-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+rowIndex}`}
 													className="flex gap-x-1"
 												>
 													{row.map((cell, cellIndex) => (
 														<div
-															key={`direction-${id}-${columnIndex}-${rowIndex}-${cellIndex}`}
+															key={`direction-${id}-${columnIndex}-${rowIndex}-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+cellIndex}`}
 															className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200/20"
 														>
 															{cell === "CENTER" && (
