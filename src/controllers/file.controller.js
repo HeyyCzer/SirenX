@@ -1,6 +1,4 @@
 import { Modal } from '@/utils/modal';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { buildLights, exportLights } from './lights.controller';
 
 import { getRandomInt } from '@/utils/random';
@@ -46,12 +44,7 @@ const uploadFile = async (fileContent) => {
 			inputOptions: sirenOptions,
 
 			showCancelButton: true,
-			confirmButtonText: (
-				<>
-					<FontAwesomeIcon icon={faCheck} />
-					<span className="ml-1">Let&apos;s edit this!</span>
-				</>
-			)
+			confirmButtonText: "Let's edit this!"
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
 
