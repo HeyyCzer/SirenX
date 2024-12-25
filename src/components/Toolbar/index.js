@@ -10,13 +10,13 @@ import {
 	updateLights,
 } from "@/store/reducers/editor.reducer";
 import { updateSettings } from "@/store/reducers/settings.reducer";
+import { setSponsorLastSeen } from "@/store/reducers/sponsor.reducer";
 import { Modal } from "@/utils/modal";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as Sentry from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-
-import { setSponsorLastSeen } from "@/store/reducers/sponsor.reducer";
 import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
 
@@ -63,10 +63,23 @@ export default function Toolbar() {
 			reader.onload = async (e) => {
 				const content = e.target.result;
 
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "Requesting file import",
+					level: "info",
+				});
+
 				hiddenFileInput.current.value = null;
 
 				const result = await uploadFile(content);
-				if (!result) return;
+				if (!result) {
+					Sentry.addBreadcrumb({
+						category: "file",
+						message: "The imported file is invalid",
+						level: "warning",
+					});
+					return;
+				}
 
 				dispatch(updateLights(result.lights));
 
@@ -96,6 +109,12 @@ export default function Toolbar() {
 						file: result.file,
 					}),
 				);
+
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "File imported!",
+					level: "info",
+				});
 			};
 			reader.readAsText(file);
 		},
@@ -135,6 +154,12 @@ export default function Toolbar() {
 			}).then(({ isConfirmed, value: newSirenName }) => {
 				if (!isConfirmed || !newSirenName) return;
 
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "Requesting file export",
+					level: "info",
+				});
+
 				const [fileContent, jsonFileContent] = downloadFile(
 					{
 						sirenId,
@@ -167,6 +192,12 @@ export default function Toolbar() {
 					setIsSponsorModalOpen(true);
 					dispatch(setSponsorLastSeen(Date.now()));
 				}
+
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "File exported!",
+					level: "info",
+				});
 			});
 		});
 	}, [dispatch, lights, sponsor, sirenId, sirenName, bpm, settings, uploadedFile]);
