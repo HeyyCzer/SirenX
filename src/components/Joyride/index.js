@@ -80,8 +80,8 @@ export default function Tutorial({
 
 	const tutorialState = useAppSelector((state) => state.tutorial);
 
-	for (let step in steps) {
-		step = Number.parseInt(step);
+	for (const stepIndex in steps) {
+		const step = Number.parseInt(stepIndex);
 		const stepData = steps[step];
 
 		if (stepData.condition && !stepData.condition()) {
