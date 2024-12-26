@@ -12,6 +12,7 @@ const GoogleAnalytics = () => {
 			<Script
 				id="gtag-init"
 				strategy="afterInteractive"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
 				dangerouslySetInnerHTML={{
 					__html: `
                       window.dataLayer = window.dataLayer || [];
