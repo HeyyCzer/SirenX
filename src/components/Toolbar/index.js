@@ -15,7 +15,12 @@ import { Modal } from "@/utils/modal";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Sentry from "@sentry/nextjs";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState
+} from "react";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
@@ -188,7 +193,10 @@ export default function Toolbar() {
 					}),
 				);
 
-				if (!sponsor.lastSeen || Date.now() - sponsor.lastSeen > (15 * 24 * 60 * 60 * 1000)) {
+				if (
+					!sponsor.lastSeen ||
+					Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
+				) {
 					setIsSponsorModalOpen(true);
 					dispatch(setSponsorLastSeen(Date.now()));
 				}
@@ -200,7 +208,16 @@ export default function Toolbar() {
 				});
 			});
 		});
-	}, [dispatch, lights, sponsor, sirenId, sirenName, bpm, settings, uploadedFile]);
+	}, [
+		dispatch,
+		lights,
+		sponsor,
+		sirenId,
+		sirenName,
+		bpm,
+		settings,
+		uploadedFile,
+	]);
 
 	const handleResetEditor = useCallback(() => {
 		Modal.fire({
@@ -227,10 +244,17 @@ export default function Toolbar() {
 
 	const handleUpdateBPM = useCallback(
 		(e) => {
-			if (e.target.value < 10) e.target.value = 10;
-			if (e.target.value > 1200) e.target.value = 1200;
+			const target = e.target;
+			if (!target) return;
 
-			dispatch(setCurrentBpm(e.target.value));
+			let value = target.value;
+			if (value < 10) value = 10;
+			else if (value > 1200) value = 1200;
+			else return;
+
+			target.value = value;
+
+			dispatch(setCurrentBpm(target.value));
 		},
 		[dispatch],
 	);
