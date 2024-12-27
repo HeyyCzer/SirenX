@@ -10,6 +10,7 @@ export default function AppTutorial() {
 					title: "🔧 Toolbar",
 					content: "This is the toolbar. Here, you can use it to import/export files, change the BPM or select a color.",
 					disableBeacon: true,
+					placement: "left-start",
 				},
 				{
 					target: "#toolbar-import",
