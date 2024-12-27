@@ -13,7 +13,6 @@ import styles from "./Home.module.css";
 
 import { faHourglass2 } from "@fortawesome/free-regular-svg-icons";
 import { motion } from "motion/react";
-import heroCharacters from "/public/images/home/characters.png";
 import screenshot from "/public/images/home/screenshot.gif";
 
 export default function Home() {
