@@ -20,7 +20,7 @@
 		"@sentry/nextjs": "8",
 		"@spotlightjs/spotlight": "^2.9.0",
 		"motion": "^11.14.4",
-		"next": "15.1.0",
+		"next": "15.1.2",
 		"react": "^19.0.0",
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
