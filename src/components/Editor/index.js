@@ -31,10 +31,23 @@ export default function Editor() {
 
 	return (
 		<main className="mx-auto flex w-fit flex-col gap-y-6 overflow-x-auto">
-			<Link href="/" className="upper w-fit font-bold text-2xl text-white">
-				Siren
-				<span className="text-gradient-primary">X</span>
-			</Link>
+			<div className="flex items-end gap-x-4">
+				<Link
+					href="/"
+					className="upper w-fit font-bold text-2xl text-white leading-none"
+				>
+					Siren
+					<span className="text-gradient-primary">X</span>
+				</Link>
+
+				<Link href="https://github.com/heyyczer/sirenx" passHref rel="noopener" target="_blank">
+					<img
+						src="https://img.shields.io/github/stars/heyyczer/sirenx"
+						alt="Star"
+						className="h-fit"
+					/>
+				</Link>
+			</div>
 
 			{/* Preview bar */}
 			<div className="w-[inherit]">
