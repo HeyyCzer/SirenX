@@ -248,9 +248,7 @@ export default function Toolbar() {
 			if (!target) return;
 
 			let value = target.value;
-			if (value < 10) value = 10;
-			else if (value > 1200) value = 1200;
-			else return;
+			if (value < 0) value = 0;
 
 			target.value = value;
 
@@ -331,9 +329,6 @@ export default function Toolbar() {
 							Current BPM:
 							<input
 								type="number"
-								max="1200"
-								min="10"
-								step="10"
 								className="border-0 border-white/30 border-b-2 bg-transparent px-0 py-0 text-center text-white proportional-nums outline-none transition-all [appearance:textfield] focus:border-emerald-400 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
 								value={bpm}
 								onChange={handleUpdateBPM}
