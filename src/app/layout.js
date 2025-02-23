@@ -32,6 +32,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
+			{
+				process.env.NODE_ENV === "development" && (
+					<head>
+						<script src="https://unpkg.com/react-scan/dist/auto.global.js" async />
+						{/* rest of your scripts go under */}
+					</head>
+				)
+			}
+
 			<body className="dark bg-slate-950">
 				<GoogleAnalytics />
 

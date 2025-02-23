@@ -1,22 +1,19 @@
 "use client";
 
-import styles from "./Editor.module.css";
-
+import Editor from "@/components/Editor";
+import SeparatorsContainer from "@/components/SeparatorsContainer";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateLights } from "@/store/reducers/editor.reducer";
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-
-import Editor from "@/components/Editor";
-import SeparatorsContainer from "@/components/SeparatorsContainer";
+import styles from "./Editor.module.css";
+import AppTutorial from "./editor.tutorial";
 
 const Toolbar = dynamic(() => import("@/components/Toolbar"), {
 	ssr: false,
 });
-
-import { updateLights } from "@/store/reducers/editor.reducer";
-import dynamic from "next/dynamic";
-import AppTutorial from "./editor.tutorial";
 
 export default function EditorPage() {
 	// Buy me a coffee widget

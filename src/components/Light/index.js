@@ -5,7 +5,7 @@ import { updateLight } from "@/store/reducers/editor.reducer";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { memo, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 function getRow(number) {
@@ -23,7 +23,7 @@ function getRow(number) {
 	return column;
 }
 
-const Light = memo(({ isCurrent = false, disabled = false, row, column }) => {
+const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 	const dispatch = useAppDispatch();
 
 	const selectedColor = useAppSelector((state) => state.editor.selectedColor);
@@ -102,6 +102,6 @@ const Light = memo(({ isCurrent = false, disabled = false, row, column }) => {
 			)}
 		</button>
 	);
-});
+};
 
 export default Light;
