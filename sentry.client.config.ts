@@ -17,6 +17,12 @@ Sentry.init({
 		}),
 	],
 
+	ignoreErrors: [
+		'https://reactjs.org/docs/error-decoder.html?invariant=422', // There was an error while hydrating this Suspense boundary. Switched to client rendering.
+		'https://reactjs.org/docs/error-decoder.html?invariant=423', // There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root...
+		'https://reactjs.org/docs/error-decoder.html?invariant=425' // Text content does not match server-rendered HTML...
+	],
+
 	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
 	tracesSampleRate: 0.1,
 
