@@ -74,8 +74,8 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 			type={"button"}
 			className={twMerge(
 				"group my-1 flex h-6 w-9 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none lg:h-5 lg:w-8",
-				color !== "none" && Colors[color].editor?.default,
-				isCurrent && color !== "none" && Colors[color].editor?.current,
+				color !== "none" && Colors[color]?.editor?.default,
+				isCurrent && color !== "none" && Colors[color]?.editor?.current,
 			)}
 			disabled={disabled}
 			onContextMenu={onMouseRightClick}
