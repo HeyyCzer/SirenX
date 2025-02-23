@@ -84,7 +84,7 @@ export default function Tutorial({
 		const step = Number.parseInt(stepIndex);
 		const stepData = steps[step];
 
-		if (stepData.condition && !stepData.condition()) {
+		if (stepData?.condition && !stepData.condition()) {
 			steps.splice(step, 1);
 		}
 	}
