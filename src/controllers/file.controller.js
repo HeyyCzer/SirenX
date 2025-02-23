@@ -54,7 +54,15 @@ const uploadFile = async (fileContent) => {
 
 	if (!selectedSiren) return;
 
-	return buildLights(selectedSiren, json);
+	try {
+		return buildLights(selectedSiren, json);
+	} catch {
+		await Modal.fire({
+			icon: 'error',
+			title: 'Error while importing',
+			text: 'An error occurred while trying to build the lights. Please, try again or use another file.'
+		});
+	}
 }
 
 const downloadFile = (editor, settings, fileName) => {
@@ -63,20 +71,28 @@ const downloadFile = (editor, settings, fileName) => {
 		editorClone.sirenId = getRandomInt(100, 99999)
 	}
 
-	const [content, jsonFileContent] = exportLights(editorClone, settings);
-
-	const element = document.createElement('a');
-	element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`);
-	element.setAttribute('download', fileName);
-
-	element.style.display = 'none';
-	document.body.appendChild(element);
-
-	element.click();
-
-	document.body.removeChild(element);
-
-	return [content, jsonFileContent];
+	try {
+		const [content, jsonFileContent] = exportLights(editorClone, settings);
+	
+		const element = document.createElement('a');
+		element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`);
+		element.setAttribute('download', fileName);
+	
+		element.style.display = 'none';
+		document.body.appendChild(element);
+	
+		element.click();
+	
+		document.body.removeChild(element);
+	
+		return [content, jsonFileContent];
+	} catch {
+		return Modal.fire({
+			icon: 'error',
+			title: 'Error while exporting',
+			text: 'An error occurred while trying to export the file. Please, try again or reset the editor.'
+		});
+	}
 }
 
 export {
