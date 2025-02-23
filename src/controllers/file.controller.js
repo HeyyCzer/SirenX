@@ -1,8 +1,8 @@
 import { Modal } from '@/utils/modal';
-import { buildLights, exportLights } from './lights.controller';
-
 import { getRandomInt } from '@/utils/random';
+import * as Sentry from '@sentry/nextjs';
 import { xml2json } from 'xml-js';
+import { buildLights, exportLights } from './lights.controller';
 
 const uploadFile = async (fileContent) => {
 	let xmlJson = null;
@@ -56,7 +56,9 @@ const uploadFile = async (fileContent) => {
 
 	try {
 		return buildLights(selectedSiren, json);
-	} catch {
+	} catch (err) {
+		Sentry.captureException(err);
+
 		await Modal.fire({
 			icon: 'error',
 			title: 'Error while importing',

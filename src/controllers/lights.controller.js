@@ -2,7 +2,7 @@ import DeltaEnum from "@/enum/direction.enum";
 import Colors from "@/lib/colors";
 import {
 	defaultCarcolsLightModel,
-	defaultLightModel,
+	defaultLightModel
 } from "@/store/reducers/editor.reducer";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
 import { json2xml } from "xml-js";

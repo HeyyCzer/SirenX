@@ -1,6 +1,6 @@
 import { downloadFile, uploadFile } from "@/controllers/file.controller";
 import { event } from "@/gtag";
-import Colors from "@/lib/colors";
+import RealColors from "@/lib/colors";
 import { STORE_KEY } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -34,6 +34,8 @@ export default function Toolbar() {
 	const settings = useAppSelector((state) => state.settings);
 	const sponsor = useAppSelector((state) => state.sponsor);
 
+	const [colors] = useState(RealColors);
+	
 	const hiddenFileInput = useRef(null);
 
 	useEffect(() => {
@@ -47,7 +49,7 @@ export default function Toolbar() {
 			if (
 				colorName &&
 				selectedColor !== colorName &&
-				!Colors[colorName].toolbar.unlisted
+				!colors[colorName].toolbar.unlisted
 			) {
 				dispatch(setSelectedColor(colorName));
 			}
@@ -57,7 +59,7 @@ export default function Toolbar() {
 		return () => {
 			window.removeEventListener("keypress", handleKeypress);
 		};
-	}, [dispatch, selectedColor]);
+	}, [dispatch, selectedColor, colors]);
 
 	const handleFileUpload = useCallback(
 		(e) => {
@@ -120,6 +122,8 @@ export default function Toolbar() {
 					message: "File imported!",
 					level: "info",
 				});
+
+				window.location.reload();
 			};
 			reader.readAsText(file);
 		},
@@ -347,7 +351,7 @@ export default function Toolbar() {
 						id="toolbar-colors"
 						className="mt-4 grid w-full grid-cols-3 gap-y-2"
 					>
-						{Object.entries(Colors)
+						{Object.entries(colors)
 							.filter(([, colorData]) => !colorData.toolbar.unlisted)
 							.map(([color, colorData], index) => {
 								const selected = selectedColor === color;

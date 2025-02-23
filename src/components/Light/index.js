@@ -8,10 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
-function getRow(number) {
-	if (number <= 0 || !Number.isInteger(number)) {
-		return;
-	}
+function getRow(initialNumber) {
+	let number = initialNumber;
+	if (number <= 0 || !Number.isInteger(number)) return;
 
 	let column = "";
 	while (number > 0) {

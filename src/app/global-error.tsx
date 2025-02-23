@@ -1,7 +1,7 @@
 "use client";
 
+import { STORE_KEY } from "@/store";
 import * as Sentry from "@sentry/nextjs";
-import NextError from "next/error";
 import { useEffect } from "react";
 
 export default function GlobalError({ error }: Readonly<{ error: Error & { digest?: string } }>) {
@@ -12,11 +12,29 @@ export default function GlobalError({ error }: Readonly<{ error: Error & { diges
 	return (
 		<html lang="en">
 			<body>
-				{/* `NextError` is the default Next.js error page component. Its type
-        definition requires a `statusCode` prop. However, since the App Router
-        does not expose status codes for errors, we simply pass 0 to render a
-        generic error message. */}
-				<NextError statusCode={0} />
+				<div className="flex flex-col h-screen bg-gray-900 text-white items-center justify-center w-full">
+					<h1 className="text-cyan-400 font-semibold text-xl">Oops! An error occurred.</h1>
+					<p>We are sorry for the inconvenience. Please try again later.</p>
+
+					<div>
+						<button
+							type="button"
+							onClick={() => {
+								localStorage.removeItem(`${STORE_KEY}editor`);
+								window.location.reload();
+							}}
+							className="mt-4 bg-cyan-400/40 hover:bg-cyan-400/80 hover:text-black transition-colors font-medium px-4 py-2 rounded-md"
+						>
+							Clear my editor
+						</button>
+					</div>
+
+					{error.digest ? (
+						<p>
+							Error ID: <code>{error.digest}</code>
+						</p>
+					) : null}
+				</div>
 			</body>
 		</html>
 	);
