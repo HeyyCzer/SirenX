@@ -18,7 +18,7 @@ function hexToRgb(hex) {
 }
 
 function getContrast(hexColor) {
-	const hexWithoutHash = hex.replace(/^#/, '');
+	const hexWithoutHash = hexColor.replace(/^#/, '');
   
 	// Converte o HEX para RGB
 	const r = Number.parseInt(hexWithoutHash.substring(0, 2), 16);
