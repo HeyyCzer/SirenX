@@ -20,7 +20,7 @@
 		"@sentry/nextjs": "8",
 		"@spotlightjs/spotlight": "^2.9.0",
 		"babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
-		"motion": "^11.14.4",
+		"motion": "^12.4.7",
 		"next": "15.1.2",
 		"react": "^19.0.0",
 		"react-dnd": "^16.0.1",
