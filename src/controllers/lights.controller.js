@@ -17,6 +17,33 @@ const buildLights = (sirenSelected, fullFile) => {
 	for (const columnIndex in sirenItems) {
 		const columnData = sirenItems[columnIndex];
 
+		if (!columnData.flashiness)
+			columnData.flashiness = {};
+
+		// delta
+		if (!columnData.flashiness.delta)
+			columnData.flashiness.delta = {};
+		if (!columnData.flashiness.delta.$)
+			columnData.flashiness.delta.$ = {};
+
+		// multiples
+		if (!columnData.flashiness.multiples)
+			columnData.flashiness.multiples = {};
+		if (!columnData.flashiness.multiples.$)
+			columnData.flashiness.multiples.$ = {};
+		
+		// intensity
+		if (!columnData.intensity)
+			columnData.intensity = {};
+		if (!columnData.intensity.$)
+			columnData.intensity.$ = {};
+
+		// scaleFactor
+		if (!columnData.scaleFactor)
+			columnData.scaleFactor = {};
+		if (!columnData.scaleFactor.$)
+			columnData.scaleFactor.$ = {};
+
 		const direction = Number(columnData.flashiness.delta.$.value);
 		const multiples = Number(columnData.flashiness.multiples.$.value);
 		const intensity = Number(columnData.intensity.$.value);
@@ -144,3 +171,4 @@ const exportLights = (editor, settings) => {
 };
 
 export { buildLights, exportLights };
+
