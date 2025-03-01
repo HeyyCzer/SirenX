@@ -71,6 +71,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 	return (
 		<button
 			type={"button"}
+			id={`light-${row}-${column}`}
 			className={twMerge(
 				"group my-1 flex h-6 w-9 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none lg:h-5 lg:w-8",
 				color !== "none" && Colors[color]?.editor?.default,

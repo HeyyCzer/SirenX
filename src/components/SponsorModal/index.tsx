@@ -46,6 +46,7 @@ export default function SponsorModal({ isOpen, closeModal }: SponsorModalProps) 
 
 						<motion.div
 							key="sponsor-modal"
+							id="sponsor-modal"
 							initial={{ opacity: 0, scale: 0.8 }}
 							animate={{ opacity: 1, scale: 1.0 }}
 							exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
