@@ -16,22 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+      - uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm install
+        run: bun install
 
       - name: Build Next.js application
-        run: npm run build
+        run: bun run build
 
       - name: Start Next.js application in background
-        run: npm run start &
+        run: bun run start &
 
       - name: Wait for application to be ready
-        run: npx wait-on http://localhost:3000
+        run: bun x wait-on http://localhost:3000
 
       - name: Run Cypress tests
-        run: npx cypress run
+        run: bun run test
