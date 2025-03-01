@@ -54,6 +54,8 @@ context("Export", () => {
 		cy.get("#sponsor-modal button").first().click();
 
 		// repeat export to check if saves the last inserted info
+		cy.wait(5e3);
+
 		cy.get("@export").click();
 		cy.get(".swal2-container").should("be.visible");
 		cy.get(".swal2-confirm").click();
