@@ -20,6 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: bun install
+        env:
+          FONTAWESOME_TOKEN: ${{ secrets.FONTAWESOME_TOKEN }}
 
       - name: Build Next.js application
         run: bun run build
@@ -32,3 +34,15 @@ jobs:
 
       - name: Run Cypress tests
         run: bun run test
+  deploy_now:
+    if: github.ref == 'refs/heads/main'
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@master
+        - name: deploy
+          uses: amondnet/vercel-action@v25 #deploy
+          env:
+            vercel-token: ${{ secrets.VERCEL_TOKEN }}
+            vercel-org-id: ${{ secrets.ORG_ID}}  #Required
+            vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 

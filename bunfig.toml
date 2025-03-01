@@ -1,2 +1,2 @@
 [install.scopes]
-"@fortawesome" = { url = "https://registry.npmjs.org/"}
+"@fortawesome" = { token="$FONTAWESOME_TOKEN" , url = "https://npm.fontawesome.com/"}
