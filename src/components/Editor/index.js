@@ -90,7 +90,9 @@ export default function Editor() {
 				</div>
 				{editorRows.map((_, rowIndex) => (
 					<div
+						id={`light-row-${rowIndex}`}
 						className={twMerge(
+							"light-row",
 							"flex w-[inherit] gap-x-1 rounded-lg px-1",
 							rowIndex === currentRow && "bg-white/10",
 						)}
