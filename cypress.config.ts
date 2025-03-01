@@ -10,6 +10,9 @@ export default defineConfig({
 	supportFolder: "test/support",
 
 	e2e: {
+		supportFile: "test/support/e2e.ts",
+		specPattern: "test/e2e/**/*.cy.{js,jsx,ts,tsx}",
+
 		setupNodeEvents(on, config) {
 			on('task', {
 				readFileMaybe(filename) {
