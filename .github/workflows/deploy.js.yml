@@ -3,10 +3,10 @@ name: Build and Test Next.js with Cypress
 on:
   push:
     branches:
-      - master
+      - '*'
   pull_request:
     branches:
-      - master
+      - '*'
 
 jobs:
   build-and-test:
