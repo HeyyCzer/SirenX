@@ -45,7 +45,7 @@ export default function Toolbar() {
 			const key = e.key;
 			if (Number.isNaN(key)) return;
 
-			const colorName = Object.keys(Colors)[Number.parseInt(key) - 1];
+			const colorName = Object.keys(colors)[Number.parseInt(key) - 1];
 			if (
 				colorName &&
 				selectedColor !== colorName &&
