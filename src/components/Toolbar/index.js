@@ -1,6 +1,6 @@
 import { downloadFile, uploadFile } from "@/controllers/file.controller";
 import { event } from "@/gtag";
-import RealColors from "@/lib/colors";
+import Colors from "@/lib/colors";
 import { STORE_KEY } from "@/store";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
@@ -34,7 +34,7 @@ export default function Toolbar() {
 	const settings = useAppSelector((state) => state.settings);
 	const sponsor = useAppSelector((state) => state.sponsor);
 
-	const [colors] = useState(RealColors);
+	const [colors] = useState(Colors);
 	
 	const hiddenFileInput = useRef(null);
 
