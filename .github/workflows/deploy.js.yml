@@ -46,7 +46,7 @@ jobs:
       - name: Run Cypress tests
         run: bun run test
   deploy_now:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     needs: build-and-test
     runs-on: ubuntu-latest
     steps:
