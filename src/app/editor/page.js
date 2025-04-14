@@ -1,8 +1,7 @@
 "use client";
 
 import Editor from "@/components/Editor";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateLights } from "@/store/reducers/editor.reducer";
+import { useEditorStore, useSettingsStore } from "@/store/index.ts";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { DndProvider } from "react-dnd";
@@ -50,9 +49,9 @@ export default function EditorPage() {
 		div.appendChild(script);
 	}, []);
 
-	const dispatch = useAppDispatch();
-	const { lights } = useAppSelector((state) => state.editor);
-	const settings = useAppSelector((state) => state.settings);
+	const lights = useEditorStore((state) => state.lights);
+	const updateLights = useEditorStore((state) => state.updateLights);
+	const oneColorPerColumn = useSettingsStore((state) => state.oneColorPerColumn);
 
 	useEffect(() => {
 		const preventContextMenu = (e) => e.preventDefault();
@@ -64,7 +63,7 @@ export default function EditorPage() {
 	}, []);
 
 	useEffect(() => {
-		if (!settings.oneColorPerColumn.value) return;
+		if (!oneColorPerColumn.value) return;
 
 		const newLights = { ...lights };
 
@@ -93,9 +92,9 @@ export default function EditorPage() {
 		}
 
 		if (JSON.stringify(newLights) !== JSON.stringify(lights)) {
-			dispatch(updateLights(newLights));
+			updateLights(newLights);
 		}
-	}, [dispatch, settings.oneColorPerColumn.value, lights]);
+	}, [updateLights, oneColorPerColumn.value, lights]);
 
 	return (
 		<DndProvider backend={HTML5Backend}>

@@ -1,11 +1,11 @@
-import { useAppSelector } from "@/store/hooks";
+import { useSettingsStore } from "@/store/index.ts";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import SeparatorDropZone from "./dropZone";
 import Separator from "./separator";
 
 export default function SeparatorsContainer() {
-	const settings = useAppSelector((state) => state.settings);
+	const separatorsVisible = useSettingsStore((state) => state.separatorsVisible);
 	const [separators, setSeparators] = useState([]);
 
 	const removeSeparator = useCallback((id) => {
@@ -25,7 +25,7 @@ export default function SeparatorsContainer() {
 
 	useEffect(() => {
 		const handleKeyup = (e) => {
-			if (!settings.separatorsVisible.value) return;
+			if (!separatorsVisible.value) return;
 			if (document.querySelector("input:focus")) return;
 
 			if (e.key === "q") {
@@ -37,12 +37,12 @@ export default function SeparatorsContainer() {
 		return () => {
 			window.removeEventListener("keyup", handleKeyup);
 		}
-	}, [settings.separatorsVisible.value]);
+	}, [separatorsVisible.value]);
 
 	return (
 		<>
 			{
-				settings.separatorsVisible.value && (
+				separatorsVisible.value && (
 					separators.map((separator) => (
 						<Separator key={separator.id} uuid={separator.id} x={separator.x} moveSeparator={moveSeparator} />
 					))

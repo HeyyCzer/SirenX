@@ -1,10 +1,6 @@
 import DeltaEnum from "@/enum/direction.enum";
 import ScaleFactorEnum from "@/enum/scaleFactor.enum";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-	defaultLightModel,
-	updateLights,
-} from "@/store/reducers/editor.reducer";
+import { defaultLightModel, useEditorStore } from "@/store/index.ts";
 import { Modal } from "@/utils/modal";
 import {
 	faArrowUp,
@@ -18,8 +14,8 @@ import { memo, useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
 const ColumnSettingsDropdown = ({ columnIndex }) => {
-	const dispatch = useAppDispatch();
-	const { lights } = useAppSelector((state) => state.editor);
+	const lights = useEditorStore((state) => state.lights);
+	const updateLights = useEditorStore((state) => state.updateLights);
 	const data = useMemo(
 		() => lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
 		[lights, columnIndex],
@@ -48,9 +44,9 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				}
 				row[columnIndex].intensity = value;
 			}
-			dispatch(updateLights(tempLights));
+			updateLights(tempLights);
 		});
-	}, [dispatch, lights, columnIndex, data.intensity]);
+	}, [updateLights, lights, columnIndex, data.intensity]);
 
 	const handleChangeMultiples = useCallback(() => {
 		Modal.fire({
@@ -77,9 +73,9 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			for (const row of Object.values(tempLights)) {
 				row[columnIndex].multiples = value;
 			}
-			dispatch(updateLights(tempLights));
+			updateLights(tempLights);
 		});
-	}, [dispatch, lights, columnIndex, data.multiples]);
+	}, [updateLights, lights, columnIndex, data.multiples]);
 
 	const handleChangeScaleFactor = useCallback(
 		async (choosenScaleFactor) => {
@@ -117,9 +113,9 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				}
 				row[columnIndex].scaleFactor = scaleFactor;
 			}
-			dispatch(updateLights(tempLights));
+			updateLights(tempLights);
 		},
-		[dispatch, lights, columnIndex, data.scaleFactor],
+		[updateLights, lights, columnIndex, data.scaleFactor],
 	);
 
 	const handleChangeDirection = useCallback(
@@ -152,9 +148,9 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				}
 				row[columnIndex].direction = delta;
 			}
-			dispatch(updateLights(tempLights));
+			updateLights(tempLights);
 		},
-		[dispatch, lights, columnIndex, data.direction],
+		[updateLights, lights, columnIndex, data.direction],
 	);
 
 	return (

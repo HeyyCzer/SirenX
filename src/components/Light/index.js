@@ -1,9 +1,9 @@
 import DeltaEnum from "@/enum/direction.enum";
 import Colors from "@/lib/colors";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { updateLight } from "@/store/reducers/editor.reducer";
+import { useEditorStore, useSettingsStore } from "@/store/index.ts";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useShallow } from "zustand/react/shallow";
 
 import { useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
@@ -23,21 +23,29 @@ function getRow(initialNumber) {
 }
 
 const Light = ({ isCurrent = false, disabled = false, row, column }) => {
-	const dispatch = useAppDispatch();
-
-	const selectedColor = useAppSelector((state) => state.editor.selectedColor);
-	const light = useAppSelector((state) => state.editor.lights?.[row]?.[column]);
-
-	const isOneColorPerColumn = useAppSelector(
-		(state) => state.settings.oneColorPerColumn,
+	const { selectedColor, updateLight } = useEditorStore(
+		useShallow((state) => ({
+			selectedColor: state.selectedColor,
+			updateLight: state.updateLight,
+		}))
+	);
+	const light = useEditorStore(
+		useShallow((state) => state.lights?.[row]?.[column])
+	);
+	// const selectedColor = useEditorStore((state) => state.selectedColor);
+	// const light = useEditorStore((state) => state.lights?.[row]?.[column]);
+	// const updateLight = useEditorStore((state) => state.updateLight);
+	
+	const isOneColorPerColumn = useSettingsStore(
+		(state) => state.oneColorPerColumn,
 	);
 
 	const handleClick = useCallback(
 		(color) => {
 			if (disabled) return;
-			dispatch(updateLight({ row, column, color, isOneColorPerColumn }));
+			updateLight({ row, column, color, isOneColorPerColumn });
 		},
-		[dispatch, row, column, disabled, isOneColorPerColumn],
+		[updateLight, row, column, disabled, isOneColorPerColumn],
 	);
 
 	const rowName = useMemo(() => getRow(row + 1), [row]);
