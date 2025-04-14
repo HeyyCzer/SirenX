@@ -6,7 +6,7 @@ context("Export", () => {
 	beforeEach(() => {
 		cy.visit("http://localhost:3000/editor", {
 			onBeforeLoad: function (window) {
-				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"editor-basic-tutorial":true}));
+				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"state":{"editor-basic-tutorial":true},"version":0}));
 			}
 		});
 
@@ -49,9 +49,9 @@ context("Export", () => {
 		cy.get("#swal2-input").type("example");
 		cy.get(".swal2-confirm").click();
 
-		// cy.get("#sponsor-modal").should("be.visible");
+		cy.get("#sponsor-modal").should("be.visible");
 
-		// cy.get("#sponsor-modal button").first().click();
+		cy.get("#sponsor-modal button").first().click();
 
 		// repeat export to check if saves the last inserted info
 		cy.wait(5e3);
@@ -63,7 +63,7 @@ context("Export", () => {
 		cy.get(".swal2-container").should("be.visible");
 		cy.get(".swal2-confirm").click();
 
-		// cy.get("#sponsor-modal").should("not.exist");
+		cy.get("#sponsor-modal").should("not.exist");
 
 		cy.task("getFolderFiles", "test/downloads").then((files) => {
 			let found = 0;
