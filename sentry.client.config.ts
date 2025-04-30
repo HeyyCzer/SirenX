@@ -4,7 +4,6 @@
 
 import { useEditorStore, useSettingsStore } from "@/store";
 import * as Sentry from "@sentry/nextjs";
-import * as Spotlight from '@spotlightjs/spotlight';
 
 Sentry.init({
 	dsn: "https://dbab8da6c8f3937a04bb7ff8453deaa3@sentry.heyyczer.com/2",
@@ -19,10 +18,11 @@ Sentry.init({
 	],
 
 	beforeSend: (event, hint) => {
-		hint.attachments = [
+		hint.attachments = hint.attachments || [];
+		hint.attachments.push(
 			{ filename: "user-editor.json", data: JSON.stringify(useEditorStore(), null, 2) },
-			{ filename: "user-settings.json", data: JSON.stringify(useSettingsStore(), null, 2) },
-		];
+			{ filename: "user-settings.json", data: JSON.stringify(useSettingsStore(), null, 2) }
+		)
 		return event;
 	},
 
@@ -44,11 +44,13 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// Setting this option to true will print useful information to the console while you're setting up Sentry.
-	debug: false,
+	debug: true,
 });
 
-if (process.env.NODE_ENV === 'development') {
-	Spotlight.init({
-		anchor: "centerLeft",
+if (process.env.NODE_ENV === "development") {
+	import("@spotlightjs/spotlight").then((Spotlight) => {
+		Spotlight.init({
+			anchor: "centerLeft",
+		});
 	});
 }
