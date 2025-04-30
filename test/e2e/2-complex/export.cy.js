@@ -1,12 +1,10 @@
 /// <reference types="cypress" />
 
-const fs = require("fs");
-
 context("Export", () => {
 	beforeEach(() => {
 		cy.visit("http://localhost:3000/editor", {
 			onBeforeLoad: function (window) {
-				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"editor-basic-tutorial":true}));
+				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"state":{"editor-basic-tutorial":true},"version":0}));
 			}
 		});
 

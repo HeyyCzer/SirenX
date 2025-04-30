@@ -1,15 +1,13 @@
-import { useAppSelector } from "@/store/hooks";
-import dynamic from "next/dynamic";
+import { useEditorStore, useSettingsStore } from "@/store/index.ts";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
-
-const Light = dynamic(() => import("@/components/Light"), { ssr: false });
+import Light from "../Light";
 
 export default function Editor() {
-	const { bpm } = useAppSelector((state) => state.editor);
-	const { totalColumns } = useAppSelector((state) => state.settings);
+	const bpm = useEditorStore((state) => state.bpm);
+	const totalColumns = useSettingsStore((state) => state.totalColumns);
 
 	const [currentRow, setCurrentRow] = useState(0);
 	useEffect(() => {

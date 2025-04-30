@@ -3,7 +3,7 @@ import Colors from "@/lib/colors";
 import {
 	defaultCarcolsLightModel,
 	defaultLightModel
-} from "@/store/reducers/editor.reducer";
+} from "@/store";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
 import { json2xml } from "xml-js";
 import { createColor } from "./colors.controller";

@@ -1,16 +1,12 @@
 import { downloadFile, uploadFile } from "@/controllers/file.controller";
 import { event } from "@/gtag";
 import Colors from "@/lib/colors";
-import { STORE_KEY } from "@/store";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
-	setCurrentBpm,
-	setSelectedColor,
-	setUploadData,
-	updateLights,
-} from "@/store/reducers/editor.reducer";
-import { updateSettings } from "@/store/reducers/settings.reducer";
-import { setSponsorLastSeen } from "@/store/reducers/sponsor.reducer";
+	STORE_KEY,
+	useEditorStore,
+	useSettingsStore,
+	useSponsorStore
+} from "@/store/index.ts";
 import { Modal } from "@/utils/modal";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,11 +24,25 @@ import SponsorModal from "../SponsorModal";
 export default function Toolbar() {
 	const [isSponsorModalOpen, setIsSponsorModalOpen] = useState(false);
 
-	const dispatch = useAppDispatch();
-	const { selectedColor, bpm, lights, sirenId, sirenName, uploadedFile } =
-		useAppSelector((state) => state.editor);
-	const settings = useAppSelector((state) => state.settings);
-	const sponsor = useAppSelector((state) => state.sponsor);
+	// Editor store
+	const selectedColor = useEditorStore((state) => state.selectedColor);
+	const bpm = useEditorStore((state) => state.bpm);
+	const lights = useEditorStore((state) => state.lights);
+	const sirenId = useEditorStore((state) => state.sirenId);
+	const sirenName = useEditorStore((state) => state.sirenName);
+	const uploadedFile = useEditorStore((state) => state.uploadedFile);
+	const setSelectedColor = useEditorStore((state) => state.setSelectedColor);
+	const setCurrentBpm = useEditorStore((state) => state.setCurrentBpm);
+	const setUploadData = useEditorStore((state) => state.setUploadData);
+	const updateLights = useEditorStore((state) => state.updateLights);
+	
+	// Settings store
+	const settings = useSettingsStore();
+	const updateSettings = useSettingsStore((state) => state.updateSettings);
+	
+	// Sponsor store
+	const sponsor = useSponsorStore();
+	const setSponsorLastSeen = useSponsorStore((state) => state.setSponsorLastSeen);
 
 	const [colors] = useState(Colors);
 	
@@ -51,7 +61,7 @@ export default function Toolbar() {
 				selectedColor !== colorName &&
 				!colors[colorName].toolbar.unlisted
 			) {
-				dispatch(setSelectedColor(colorName));
+				setSelectedColor(colorName);
 			}
 		};
 		window.addEventListener("keypress", handleKeypress);
@@ -59,7 +69,7 @@ export default function Toolbar() {
 		return () => {
 			window.removeEventListener("keypress", handleKeypress);
 		};
-	}, [dispatch, selectedColor, colors]);
+	}, [setSelectedColor, selectedColor, colors]);
 
 	const handleFileUpload = useCallback(
 		(e) => {
@@ -88,19 +98,17 @@ export default function Toolbar() {
 					return;
 				}
 
-				dispatch(updateLights(result.lights));
+				updateLights(result.lights);
 
 				const minimumColumns = 20;
 				const totalColumns = Math.max(
 					result.lights?.[0]?.length,
 					minimumColumns,
 				);
-				dispatch(
-					updateSettings({
-						key: "totalColumns",
-						value: totalColumns,
-					}),
-				);
+				updateSettings({
+					key: "totalColumns",
+					value: totalColumns,
+				});
 
 				event({
 					action: "file_import",
@@ -108,26 +116,22 @@ export default function Toolbar() {
 					label: `${totalColumns} columns - ${result.bpm} BPM`,
 				});
 
-				dispatch(setCurrentBpm(result.bpm));
-				dispatch(
-					setUploadData({
-						id: result.id,
-						name: result.name,
-						file: result.file,
-					}),
-				);
+				setCurrentBpm(result.bpm);
+				setUploadData({
+					id: result.id,
+					name: result.name,
+					file: result.file,
+				});
 
 				Sentry.addBreadcrumb({
 					category: "file",
 					message: "File imported!",
 					level: "info",
 				});
-
-				window.location.reload();
 			};
 			reader.readAsText(file);
 		},
-		[dispatch],
+		[updateLights, updateSettings, setCurrentBpm, setUploadData],
 	);
 
 	const handleDownloadFile = useCallback(() => {
@@ -189,20 +193,18 @@ export default function Toolbar() {
 					label: `${settings.totalColumns.value} columns - ${bpm} BPM`,
 				});
 
-				dispatch(
-					setUploadData({
-						id: newSirenId,
-						name: newSirenName,
-						file: jsonFileContent,
-					}),
-				);
+				setUploadData({
+					id: newSirenId,
+					name: newSirenName,
+					file: jsonFileContent,
+				});
 
 				if (
 					!sponsor.lastSeen ||
 					Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
 				) {
 					setIsSponsorModalOpen(true);
-					dispatch(setSponsorLastSeen(Date.now()));
+					setSponsorLastSeen(Date.now());
 				}
 
 				Sentry.addBreadcrumb({
@@ -213,7 +215,6 @@ export default function Toolbar() {
 			});
 		});
 	}, [
-		dispatch,
 		lights,
 		sponsor,
 		sirenId,
@@ -221,6 +222,8 @@ export default function Toolbar() {
 		bpm,
 		settings,
 		uploadedFile,
+		setUploadData,
+		setSponsorLastSeen
 	]);
 
 	const handleResetEditor = useCallback(() => {
@@ -256,9 +259,9 @@ export default function Toolbar() {
 
 			target.value = value;
 
-			dispatch(setCurrentBpm(target.value));
+			setCurrentBpm(target.value);
 		},
-		[dispatch],
+		[setCurrentBpm],
 	);
 
 	return (
@@ -363,7 +366,7 @@ export default function Toolbar() {
 										<button
 											type="button"
 											className={`relative ${selected ? colorData.toolbar.selected : colorData.toolbar.default} mx-auto flex aspect-square w-12 items-center justify-center rounded-lg transition-all`}
-											onClick={() => dispatch(setSelectedColor(color))}
+											onClick={() => setSelectedColor(color)}
 										>
 											{selected && (
 												<FontAwesomeIcon
@@ -409,12 +412,10 @@ export default function Toolbar() {
 											checked={settingsData.value}
 											value={settingsData.value}
 											onChange={(e) =>
-												dispatch(
-													updateSettings({
-														key: settingsId,
-														value: e.target.value,
-													}),
-												)
+												updateSettings({
+													key: settingsId,
+													value: e.target.value,
+												})
 											}
 											{...(settingsData.attributes ?? {})}
 										/>

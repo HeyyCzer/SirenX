@@ -6,7 +6,7 @@ context("Importing", () => {
 	beforeEach(() => {
 		cy.visit("http://localhost:3000/editor", {
 			onBeforeLoad: function (window) {
-				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"editor-basic-tutorial":true}));
+				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({ "state": { "editor-basic-tutorial": true }, "version": 0 }));
 			}
 		});
 	});
@@ -14,7 +14,7 @@ context("Importing", () => {
 	it("import button should be visible", () => {
 		cy.get("#toolbar-import").should("be.visible");
 	});
-	
+
 	it("should import file correctly", () => {
 		cy.get("input[type=file]").as("fileInput");
 

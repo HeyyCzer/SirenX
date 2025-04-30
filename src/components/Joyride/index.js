@@ -1,6 +1,4 @@
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-
-import { setStatus } from "@/store/reducers/tutorial.reducer";
+import { useTutorialStore } from "@/store/index.ts";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { ACTIONS } from "react-joyride";
@@ -76,9 +74,8 @@ export default function Tutorial({
 	...props
 }) {
 	const [showTutorial, setShowTutorial] = useState(false);
-	const dispatch = useAppDispatch();
-
-	const tutorialState = useAppSelector((state) => state.tutorial);
+	const tutorialState = useTutorialStore();
+	const setStatus = useTutorialStore((state) => state.setStatus);
 
 	for (const stepIndex in steps) {
 		const step = Number.parseInt(stepIndex);
@@ -90,12 +87,7 @@ export default function Tutorial({
 	}
 
 	useEffect(() => {
-		if (!uid) {
-			setTimeout(() => {
-				setShowTutorial(true);
-			}, 3000);
-			return;
-		}
+		if (!uid) return;
 
 		if (dependent) {
 			const dependentTutorial = tutorialState[dependent];
@@ -105,11 +97,16 @@ export default function Tutorial({
 			}
 		}
 
+		let tutorialTimeout;
 		const tutorial = tutorialState[uid];
 		if (!tutorial) {
-			setTimeout(() => {
+			tutorialTimeout = setTimeout(() => {
 				setShowTutorial(true);
 			}, 3000);
+		}
+
+		return () => {
+			clearTimeout(tutorialTimeout);
 		}
 	}, [tutorialState, uid, dependent]);
 
@@ -120,10 +117,10 @@ export default function Tutorial({
 			if (!uid) return;
 
 			if (data.action === ACTIONS.RESET) {
-				dispatch(setStatus({ key: uid, value: true }));
+				setStatus({ key: uid, value: true });
 			}
 		},
-		[tutorialCallback, uid, dispatch],
+		[tutorialCallback, uid, setStatus],
 	);
 
 	return (
