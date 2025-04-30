@@ -128,8 +128,6 @@ export default function Toolbar() {
 					message: "File imported!",
 					level: "info",
 				});
-
-				window.location.reload();
 			};
 			reader.readAsText(file);
 		},

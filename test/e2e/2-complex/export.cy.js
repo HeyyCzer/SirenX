@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 
-const fs = require("fs");
-
 context("Export", () => {
 	beforeEach(() => {
 		cy.visit("http://localhost:3000/editor", {
