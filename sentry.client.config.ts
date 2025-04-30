@@ -2,6 +2,7 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
+import { useEditorStore, useSettingsStore } from "@/store";
 import * as Sentry from "@sentry/nextjs";
 import * as Spotlight from '@spotlightjs/spotlight';
 
@@ -16,6 +17,14 @@ Sentry.init({
 			blockAllMedia: false,
 		}),
 	],
+
+	beforeSend: (event, hint) => {
+		hint.attachments = [
+			{ filename: "user-editor.json", data: JSON.stringify(useEditorStore(), null, 2) },
+			{ filename: "user-settings.json", data: JSON.stringify(useSettingsStore(), null, 2) },
+		];
+		return event;
+	},
 
 	ignoreErrors: [
 		'https://reactjs.org/docs/error-decoder.html?invariant=422', // There was an error while hydrating this Suspense boundary. Switched to client rendering.

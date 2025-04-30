@@ -5,6 +5,11 @@ import { xml2json } from 'xml-js';
 import { buildLights, exportLights } from './lights.controller';
 
 const uploadFile = async (fileContent) => {
+	Sentry.getCurrentScope().addAttachment({
+		filename: 'imported-file.xml',
+		data: fileContent
+	});
+
 	let xmlJson = null;
 	try {
 		xmlJson = xml2json(fileContent, { compact: true, attributesKey: "$" });
@@ -88,7 +93,9 @@ const downloadFile = (editor, settings, fileName) => {
 		document.body.removeChild(element);
 	
 		return [content, jsonFileContent];
-	} catch {
+	} catch (err) {
+		Sentry.captureException(err);
+
 		return Modal.fire({
 			icon: 'error',
 			title: 'Error while exporting',
