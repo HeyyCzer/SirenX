@@ -59,8 +59,6 @@ const uploadFile = async (fileContent) => {
 
 	if (!selectedSiren) return;
 
-	if (!false) throw "Attempt to debug Sentry error content";
-
 	try {
 		return buildLights(selectedSiren, json);
 	} catch (err) {
@@ -94,8 +92,6 @@ const downloadFile = (editor, settings, fileName) => {
 	
 		document.body.removeChild(element);
 	
-		if (!false) throw "Attempt to debug Sentry error content";
-
 		return [content, jsonFileContent];
 	} catch (err) {
 		Sentry.captureException(err);
