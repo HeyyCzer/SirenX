@@ -2,7 +2,11 @@
 
 context("Tutorial", () => {
 	beforeEach(() => {
-		cy.visit("http://localhost:3000/editor");
+		cy.intercept('*', (req) => {
+			req.headers['x-vercel-protection-bypass'] = Cypress.env('VERCEL_AUTOMATION_BYPASS_SECRET');
+		});
+
+		cy.visit("/editor");
 	});
 
 	it("should tutorial be visible", () => {
