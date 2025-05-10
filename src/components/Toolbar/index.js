@@ -399,7 +399,7 @@ export default function Toolbar() {
 						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
 						{Object.entries(settings)
-							.filter(([, settingsData]) => !settingsData.unlisted)
+							.filter(([, settingsData]) => !settingsData.unlisted && typeof settingsData === "object")
 							.map(([settingsId, settingsData]) => (
 								<div key={settingsId} className="flex flex-col gap-y-1">
 									<div className="flex items-center justify-between gap-x-2">

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
@@ -35,3 +37,22 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
+
+	const headers = {
+		'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+	};
+
+	const mergedOptions = {
+		...options,
+		headers: {
+			...((options && options.headers) || {}),
+			...headers
+		}
+	};
+
+	//
+	// make sure to add a return here!
+	return originalFn(url, mergedOptions)
+});

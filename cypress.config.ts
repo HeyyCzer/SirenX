@@ -10,8 +10,12 @@ export default defineConfig({
 	supportFolder: "test/support",
 
 	e2e: {
+		baseUrl: process.env.CYPRESS_BASE_URL || "http://localhost:3000",
 		supportFile: "test/support/e2e.ts",
 		specPattern: "test/e2e/**/*.cy.{js,jsx,ts,tsx}",
+		env: {
+			VERCEL_AUTOMATION_BYPASS_SECRET: process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+		},
 
 		setupNodeEvents(on, config) {
 			on('task', {

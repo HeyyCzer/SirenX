@@ -2,12 +2,20 @@
 
 context("Export", () => {
 	beforeEach(() => {
-		cy.visit("http://localhost:3000/editor", {
+		cy.intercept('*', (req) => {
+			req.headers['x-vercel-protection-bypass'] = Cypress.env('VERCEL_AUTOMATION_BYPASS_SECRET');
+		});
+
+		cy.visit("/editor", {
 			onBeforeLoad: function (window) {
 				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"state":{"editor-basic-tutorial":true},"version":0}));
 			}
 		});
 
+		cy.task("deleteFolder", "test/downloads");
+	});
+
+	after(() => {
 		cy.task("deleteFolder", "test/downloads");
 	});
 
