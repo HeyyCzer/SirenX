@@ -18,11 +18,12 @@ Sentry.init({
 	],
 
 	beforeSend: (event, hint) => {
+		const date = new Date().toISOString().replace(/:/g, '-');
 		hint.attachments = hint.attachments || [];
 		hint.attachments.push(
-			{ filename: "user-editor.json", data: JSON.stringify(useEditorStore(), null, 2) },
-			{ filename: "user-settings.json", data: JSON.stringify(useSettingsStore(), null, 2) }
-		)
+			{ filename: `user-editor__${date}.json`, data: JSON.stringify(useEditorStore.getState(), null, 2) },
+			{ filename: `user-settings__${date}.json`, data: JSON.stringify(useSettingsStore.getState(), null, 2) }
+		);
 		return event;
 	},
 

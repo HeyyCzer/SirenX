@@ -37,7 +37,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 	// const updateLight = useEditorStore((state) => state.updateLight);
 	
 	const isOneColorPerColumn = useSettingsStore(
-		(state) => state.oneColorPerColumn,
+		(state) => state.settings.oneColorPerColumn,
 	);
 
 	const handleClick = useCallback(

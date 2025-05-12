@@ -6,7 +6,7 @@ import { buildLights, exportLights } from './lights.controller';
 
 const uploadFile = async (fileContent) => {
 	Sentry.getCurrentScope().addAttachment({
-		filename: 'imported-file.xml',
+		filename: `imported-file__${new Date().toISOString().replace(/:/g, '-')}.meta`,
 		data: fileContent
 	});
 

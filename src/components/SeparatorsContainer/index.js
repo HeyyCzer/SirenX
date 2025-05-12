@@ -5,7 +5,7 @@ import SeparatorDropZone from "./dropZone";
 import Separator from "./separator";
 
 export default function SeparatorsContainer() {
-	const separatorsVisible = useSettingsStore((state) => state.separatorsVisible);
+	const separatorsVisible = useSettingsStore((state) => state.settings.separatorsVisible);
 	const [separators, setSeparators] = useState([]);
 
 	const removeSeparator = useCallback((id) => {
