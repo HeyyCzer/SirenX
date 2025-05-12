@@ -7,7 +7,7 @@ import Light from "../Light";
 
 export default function Editor() {
 	const bpm = useEditorStore((state) => state.bpm);
-	const totalColumns = useSettingsStore((state) => state.totalColumns);
+	const totalColumns = useSettingsStore((state) => state.settings.totalColumns);
 
 	const [currentRow, setCurrentRow] = useState(0);
 	useEffect(() => {

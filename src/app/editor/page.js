@@ -51,7 +51,7 @@ export default function EditorPage() {
 
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
-	const oneColorPerColumn = useSettingsStore((state) => state.oneColorPerColumn);
+	const oneColorPerColumn = useSettingsStore((state) => state.settings.oneColorPerColumn);
 
 	useEffect(() => {
 		const preventContextMenu = (e) => e.preventDefault();

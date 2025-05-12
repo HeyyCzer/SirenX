@@ -7,7 +7,6 @@ import { persist } from "zustand/middleware";
 interface EditorState {
 	sirenId: string | null;
 	sirenName: string;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	uploadedFile: any;
 	selectedColor: string;
 	bpm: number;

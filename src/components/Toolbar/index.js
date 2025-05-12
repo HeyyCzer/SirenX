@@ -37,7 +37,7 @@ export default function Toolbar() {
 	const updateLights = useEditorStore((state) => state.updateLights);
 	
 	// Settings store
-	const settings = useSettingsStore();
+	const settings = useSettingsStore((state) => state.settings);
 	const updateSettings = useSettingsStore((state) => state.updateSettings);
 	
 	// Sponsor store
