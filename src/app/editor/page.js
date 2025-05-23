@@ -1,114 +1,91 @@
 "use client";
 
-import Editor from "@/components/Editor";
-import { useEditorStore, useSettingsStore } from "@/store/index.ts";
+import MainLayout from "@/components/shared/MainLayout";
+import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
+import { loadBuyMeCoffeeWidget } from "@/utils/donations";
+import { useProgressiveLoading } from "@/utils/progressive-loading";
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import styles from "./Editor.module.css";
-import AppTutorial from "./editor.tutorial";
 
-const SeparatorsContainer = dynamic(() => import("@/components/SeparatorsContainer"), {
-		ssr: false,
+// Importações dinâmicas com carregamento controlado para melhorar o desempenho
+const Editor = dynamic(() => import("@/components/Editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="min-h-[600px] w-full animate-pulse rounded-lg bg-slate-800/50" />
+	),
 });
+
+const SeparatorsContainer = dynamic(
+	() => import("@/components/SeparatorsContainer"),
+	{
+		ssr: false,
+	},
+);
+
 const Toolbar = dynamic(() => import("@/components/Toolbar"), {
+	ssr: false,
+	loading: () => (
+		<div className="h-[600px] w-[200px] animate-pulse rounded-lg bg-slate-800/50" />
+	),
+});
+
+const AppTutorial = dynamic(() => import("./editor.tutorial"), {
 	ssr: false,
 });
 
 export default function EditorPage() {
-	// Buy me a coffee widget
+	// Usar o sistema de carregamento progressivo com tempos escalonados
+	const componentsLoaded = useProgressiveLoading({
+		components: ["editor", "toolbar", "separators", "tutorial", "donations"],
+		delays: [200, 800, 1200, 1500, 2000],
+	});
+
+	// Buy me a coffee widget - carregar quando estiver pronto
 	useEffect(() => {
-		if (document.getElementById("bmc-script")) return;
-
-		const script = document.createElement("script");
-		const div = document.getElementById("supportByBMC");
-		script.setAttribute("id", "bmc-script");
-		script.setAttribute(
-			"src",
-			"https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js",
-		);
-		script.setAttribute("data-name", "BMC-Widget");
-		script.setAttribute("data-cfasync", "false");
-		script.setAttribute("data-id", "heyyczer");
-		script.setAttribute("data-description", "Support me on Buy me a coffee!");
-		script.setAttribute("data-message", "Would you like to support this project?");
-		script.setAttribute("data-color", "#40DCA5");
-		script.setAttribute("data-position", "Right");
-		script.setAttribute("data-x_margin", "18");
-		script.setAttribute("data-y_margin", "18");
-
-		script.onload = () => {
-			const evt = new Event("DOMContentLoaded", {
-				bubbles: false,
-				cancelable: false,
-			});
-			window.dispatchEvent(evt);
-		};
-
-		div.appendChild(script);
-	}, []);
-
-	const lights = useEditorStore((state) => state.lights);
-	const updateLights = useEditorStore((state) => state.updateLights);
-	const oneColorPerColumn = useSettingsStore((state) => state.settings.oneColorPerColumn);
-
-	useEffect(() => {
-		const preventContextMenu = (e) => e.preventDefault();
-		window.addEventListener("contextmenu", preventContextMenu);
-
-		return () => {
-			window.removeEventListener("contextmenu", preventContextMenu);
-		};
-	}, []);
-
-	useEffect(() => {
-		if (!oneColorPerColumn.value) return;
-
-		const newLights = { ...lights };
-
-		const columnColors = [];
-		for (const rowIndex in lights) {
-			const row = lights[rowIndex];
-			for (const index in row ?? []) {
-				const item = row[index];
-				if (!item) continue;
-
-				if (!columnColors[index] && item.color !== "none") {
-					columnColors[index] = item.color;
-				}
-
-				if (
-					item.color !== "none" &&
-					columnColors[index] &&
-					columnColors[index] !== item.color
-				) {
-					newLights[rowIndex] = {
-						...newLights[rowIndex],
-						[index]: { ...item, color: columnColors[index] },
-					};
-				}
-			}
+		if (componentsLoaded.donations) {
+			loadBuyMeCoffeeWidget();
 		}
+	}, [componentsLoaded.donations]);
 
-		if (JSON.stringify(newLights) !== JSON.stringify(lights)) {
-			updateLights(newLights);
+	// Prevenir menu de contexto padrão
+	usePreventContextMenu();
+
+	// Usar o hook de cores por coluna
+	useOneColorPerColumn();
+
+	// Registrar o progresso do carregamento
+	useEffect(() => {
+		if (componentsLoaded.editor) {
+			console.log("Editor carregado, interface principal disponível");
 		}
-	}, [updateLights, oneColorPerColumn.value, lights]);
+	}, [componentsLoaded.editor]);
 
 	return (
-		<DndProvider backend={HTML5Backend}>
-			<SeparatorsContainer />
-			<AppTutorial />
+		<MainLayout hideFooter>
+			<DndProvider backend={HTML5Backend}>
+				{componentsLoaded.separators && <SeparatorsContainer />}
+				{componentsLoaded.tutorial && <AppTutorial />}
 
-			<div className={`${styles.background} min-h-screen px-12 py-9`}>
-				<div className="flex justify-between gap-x-6">
-					<Editor />
-					<Toolbar />
+				<div className={`${styles.background} min-h-screen px-12 py-9`}>
+					<div className="flex justify-between gap-x-6">
+						{componentsLoaded.editor ? (
+							<Editor />
+						) : (
+							<div className="h-[600px] min-w-[600px] animate-pulse rounded-lg bg-slate-800/50" />
+						)}
+						{componentsLoaded.toolbar ? (
+							<Toolbar />
+						) : (
+							<div className="h-[600px] w-[200px] animate-pulse rounded-lg bg-slate-800/50" />
+						)}
+					</div>
 				</div>
-			</div>
 
-			<div id="supportByBMC" />
-		</DndProvider>
+				<div id="supportByBMC" />
+			</DndProvider>
+		</MainLayout>
 	);
 }
