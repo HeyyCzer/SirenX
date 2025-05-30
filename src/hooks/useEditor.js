@@ -1,9 +1,7 @@
-import { useEditorStore, useSettingsStore } from '@/store';
+import { useEditorStore } from '@/store/editor.store';
+import { useSettingsStore } from '@/store/settings.store';
 import { useEffect } from 'react';
 
-/**
- * Hook para gerenciar a funcionalidade de uma cor por coluna no editor
- */
 export function useOneColorPerColumn() {
   const lights = useEditorStore((state) => state.lights);
   const updateLights = useEditorStore((state) => state.updateLights);
@@ -12,12 +10,10 @@ export function useOneColorPerColumn() {
   useEffect(() => {
     if (!oneColorPerColumn.value) return;
 
-    // Usamos uma referência ao objeto para evitar cópia desnecessária
     let hasChanges = false;
     const newLights = { ...lights };
     const columnColors = [];
 
-    // Primeiro, encontramos a primeira cor não vazia para cada coluna
     for (const rowIndex in lights) {
       const row = lights[rowIndex];
       if (!row) continue;
@@ -32,7 +28,6 @@ export function useOneColorPerColumn() {
       }
     }
 
-    // Depois, aplicamos as cores onde necessário
     for (const rowIndex in lights) {
       const row = lights[rowIndex];
       if (!row) continue;
@@ -52,16 +47,12 @@ export function useOneColorPerColumn() {
       }
     }
 
-    // Só atualizamos o estado se houver mudanças
     if (hasChanges) {
       updateLights(newLights);
     }
   }, [oneColorPerColumn.value, lights, updateLights]);
 }
 
-/**
- * Hook para prevenir o menu de contexto padrão do navegador
- */
 export function usePreventContextMenu() {
   useEffect(() => {
     const preventContextMenu = (e) => e.preventDefault();

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const { default: Colors } = require("../../../src/lib/colors");
+import { useColorStore } from "../../../src/store/color.store";
 
 context("Toolbar", () => {
 	beforeEach(() => {
@@ -44,6 +44,8 @@ context("Toolbar", () => {
 
 	it("should display the toolbar colors", () => {
 		const colors = cy.get("#toolbar-colors");
+
+		const Colors = useColorStore.getState().colors;
 
 		colors.should("be.visible");
 		colors.children().should("have.length.at.least", Object.keys(Colors).length - ["_fallback", "none"].length);

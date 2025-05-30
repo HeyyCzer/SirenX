@@ -2,7 +2,8 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
-import { useEditorStore, useSettingsStore } from "@/store";
+import { useEditorStore } from "@/store/editor.store";
+import { useSettingsStore } from "@/store/settings.store";
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({

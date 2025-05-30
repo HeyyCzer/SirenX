@@ -1,10 +1,6 @@
 import React from 'react';
 import Light from '../Light';
 
-/**
- * Componente otimizado para carregamento de luzes por grupos
- * para evitar renderização excessiva ao mesmo tempo
- */
 const LightGroup = React.memo(({ 
   rowIndex, 
   columns, 
@@ -14,7 +10,7 @@ const LightGroup = React.memo(({
     <>
       {columns.map((_, columnIndex) => (
         <Light
-          // biome-ignore lint/suspicious/noArrayIndexKey: Índices são estáveis neste contexto
+          // biome-ignore lint/suspicious/noArrayIndexKey: indexes are stable in this context
           key={`light-${rowIndex}-${columnIndex}`}
           row={rowIndex}
           column={columnIndex}
@@ -25,7 +21,6 @@ const LightGroup = React.memo(({
   );
 });
 
-// Prevenir erros de nome no React DevTools
 LightGroup.displayName = 'LightGroup';
 
 export default LightGroup;

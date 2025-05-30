@@ -1,13 +1,9 @@
-import { useEditorStore, useSettingsStore } from '@/store/index.ts';
+import { useEditorStore } from '@/store/editor.store';
+import { useSettingsStore } from '@/store/settings.store';
 import { useCallback } from 'react';
 import { useShallow } from "zustand/react/shallow";
 
-/**
- * Hook personalizado para gerenciar a cor do componente Light
- * otimizado para evitar renderizações desnecessárias
- */
 export function useLightColor(row, column, disabled = false) {
-  // Usamos useShallow para evitar renderizações quando outras partes do estado mudam
   const light = useEditorStore(
     useShallow(state => state.lights?.[row]?.[column])
   );

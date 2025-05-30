@@ -1,5 +1,8 @@
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { createColor } from "@/controllers/colors.controller";
+import { useEditorStore } from "@/store/editor.store";
+import { Suspense, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
+import { useShallow } from "zustand/react/shallow";
 import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
 import LightGroup from "./LightGroup";
 
@@ -9,22 +12,27 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 		[totalColumns],
 	);
 
-	// Vamos renderizar apenas um conjunto de linhas visíveis por vez para reduzir o impacto inicial
-	const [visibleRows, setVisibleRows] = useState(8);
 	const editorRows = useMemo(
-		() => Array.from({ length: Math.min(visibleRows, 32) }),
-		[visibleRows],
+		() => Array.from({ length: 32 }),
+		[],
 	);
 
-	// Aumentar o número de linhas visíveis gradualmente
+	const lightRows = useEditorStore(
+		useShallow((state) => state.lights),
+	);
 	useEffect(() => {
-		if (visibleRows < 32) {
-			const timer = setTimeout(() => {
-				setVisibleRows((prev) => Math.min(prev + 8, 32));
-			}, 150);
-			return () => clearTimeout(timer);
+		if (!lightRows || lightRows.length === 0) return;
+
+		console.log(lightRows);
+
+		for (const row of Object.values(lightRows)) {
+			for (const light of Object.values(row)) {
+				if (!light?.color.includes("CUSTOM_")) continue;
+				
+				createColor(light.color.replace("CUSTOM_", ""));
+			}
 		}
-	}, [visibleRows]);
+	}, [lightRows]);
 
 	return (
 		<div className="w-[inherit]">
@@ -33,7 +41,7 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 			>
 				{editorColumns.map((_, columnIndex) => (
 					<ColumnSettingsDropdown
-						// biome-ignore lint/suspicious/noArrayIndexKey: Índices são estáveis neste contexto
+						// biome-ignore lint/suspicious/noArrayIndexKey: indexes are stable in this context
 						key={`column-settings-${columnIndex}`}
 						columnIndex={columnIndex}
 					/>
@@ -48,7 +56,7 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 						"flex w-[inherit] gap-x-1 rounded-lg px-1",
 						rowIndex === currentRow && "bg-white/10",
 					)}
-					// biome-ignore lint/suspicious/noArrayIndexKey: Índices são estáveis neste contexto
+					// biome-ignore lint/suspicious/noArrayIndexKey: indexes are stable in this context
 					key={`light-row-${rowIndex}`}
 				>
 					<Suspense

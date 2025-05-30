@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const { default: Colors } = require("../../../src/lib/colors");
+import { useColorStore } from "../../../src/store/color.store";
 
 context("Light", () => {
 	beforeEach(() => {
@@ -33,6 +33,8 @@ context("Light", () => {
 		cy.get("#toolbar-colors").children().eq(1).as("colorPicker");
 		cy.get("@colorPicker").click();
 		cy.get("@firstLight").click();
+
+		const Colors = useColorStore.getState().colors;
 
 		cy.get("@firstLight").then(($light) => {
 			const classes = $light[0].className;

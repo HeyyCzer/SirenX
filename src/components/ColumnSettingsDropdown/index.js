@@ -1,6 +1,7 @@
 import DeltaEnum from "@/enum/direction.enum";
 import ScaleFactorEnum from "@/enum/scaleFactor.enum";
-import { defaultLightModel, useEditorStore } from "@/store/index.ts";
+import { defaultLightModel } from "@/store/constants";
+import { useEditorStore } from "@/store/editor.store.ts";
 import { Modal } from "@/utils/modal";
 import {
 	faArrowUp,

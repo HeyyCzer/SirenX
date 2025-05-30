@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-const { default: Colors } = require("../../../src/lib/colors");
+import { useColorStore } from "../../../src/store/color.store";
 
 context("Importing", () => {
 	beforeEach(() => {
@@ -27,6 +27,8 @@ context("Importing", () => {
 
 		cy.get(".swal2-container").should("be.visible");
 		cy.get(".swal2-container .swal2-confirm").click();
+
+		const Colors = useColorStore.getState().colors;
 
 		const redLights = [
 			[0, 1, 15, 16, 17, 18],
