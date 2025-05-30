@@ -1,9 +1,9 @@
 import DeltaEnum from "@/enum/direction.enum";
-import Colors from "@/lib/colors";
+import { useColorStore } from "@/store/color.store";
 import {
 	defaultCarcolsLightModel,
 	defaultLightModel
-} from "@/store";
+} from "@/store/constants";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
 import { json2xml } from "xml-js";
 import { createColor } from "./colors.controller";
@@ -51,6 +51,8 @@ const buildLights = (sirenSelected, fullFile) => {
 
 		const carcolsColor = columnData.color.$.value;
 		let color = null;
+
+		const Colors = useColorStore.getState().colors;
 		for (const [colorName, colorData] of Object.entries(Colors)) {
 			if (colorData.carcols.color === carcolsColor) {
 				color = colorName;
@@ -113,6 +115,8 @@ const exportLights = (editor, settings) => {
 		siren.sequencerBpm.$ = {};
 	}
 	siren.sequencerBpm.$.value = editor.bpm;
+
+	const Colors = useColorStore.getState().colors;
 
 	const sequencer = {};
 	for (let rowIndex = 0; rowIndex < 32; rowIndex++) {

@@ -1,18 +1,19 @@
 "use client";
 
-import { STORE_KEY } from "@/store";
-
+import { STORE_KEY } from "@/store/constants";
 
 export default function ErrorPage({
 	error,
-	reset
+	reset,
 }: {
-	error: Error & { digest?: string }
-	reset: () => void
+	error: Error & { digest?: string };
+	reset: () => void;
 }) {
 	return (
-		<div className="flex flex-col h-screen bg-gray-900 text-white items-center justify-center w-full">
-			<h1 className="text-cyan-400 font-semibold text-xl">Oops! An error occurred.</h1>
+		<div className="flex h-screen w-full flex-col items-center justify-center bg-gray-900 text-white">
+			<h1 className="font-semibold text-cyan-400 text-xl">
+				Oops! An error occurred.
+			</h1>
 			<p>We are sorry for the inconvenience. Please try again later.</p>
 
 			<div>
@@ -22,7 +23,7 @@ export default function ErrorPage({
 						localStorage.removeItem(`${STORE_KEY}editor`);
 						window.location.reload();
 					}}
-					className="mt-4 bg-cyan-400/40 hover:bg-cyan-400/80 hover:text-black transition-colors font-medium px-4 py-2 rounded-md"
+					className="mt-4 rounded-md bg-cyan-400/40 px-4 py-2 font-medium transition-colors hover:bg-cyan-400/80 hover:text-black"
 				>
 					Clear my editor
 				</button>
@@ -34,5 +35,5 @@ export default function ErrorPage({
 				</p>
 			) : null}
 		</div>
-	)
+	);
 }

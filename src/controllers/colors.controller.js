@@ -1,39 +1,33 @@
-import Colors from "@/lib/colors";
+import { useColorStore } from "@/store/color.store";
 
 function hexToRgb(hex) {
 	let hexWithoutHash = hex.replace(/^#/, '');
   
-	// Converter para o formato "RRGGBB" em caso de formato reduzido (ex: "FFF")
 	if (hex.length === 3) {
 		hexWithoutHash = hex.replace(/(.)/g, '$1$1');
 	}
   
-	// Extrair os componentes R, G, B
 	const r = Number.parseInt(hexWithoutHash.substring(0, 2), 16);
 	const g = Number.parseInt(hexWithoutHash.substring(2, 4), 16);
 	const b = Number.parseInt(hexWithoutHash.substring(4, 6), 16);
   
-	// Retornar os valores como objeto
 	return { r, g, b };
 }
 
 function getContrast(hexColor) {
 	const hexWithoutHash = hexColor.replace(/^#/, '');
   
-	// Converte o HEX para RGB
 	const r = Number.parseInt(hexWithoutHash.substring(0, 2), 16);
 	const g = Number.parseInt(hexWithoutHash.substring(2, 4), 16);
 	const b = Number.parseInt(hexWithoutHash.substring(4, 6), 16);
   
-	// Calcula o brilho relativo (luminosidade) da cor
 	const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  
-	// Retorna "black" se a luminosidade for menor ou igual a 125, caso contrário retorna "white"
 	return brightness <= 125 ? "white" : "black";
 }
 
 const createColor = (carcolsColor) => {
 	const key = `CUSTOM_${carcolsColor}`;
+	const Colors = useColorStore.getState().colors;
 	if (Colors[key]) return key;
 
 	const hexColor = carcolsColor.slice(4);
@@ -56,7 +50,7 @@ const createColor = (carcolsColor) => {
 	document.head.appendChild(style);
 
 	const totalCustoms = Object.keys(Colors).filter((color) => color.includes("CUSTOM")).length;
-	Colors[key] = {
+	const newColor = {
 		toolbar: {
 			name: `Custom ${totalCustoms + 1}`,
 			default: `bg-${key} hover:bg-${key}`,
@@ -70,10 +64,16 @@ const createColor = (carcolsColor) => {
 			color: carcolsColor,
 		}
 	};
+	useColorStore.setState((state) => ({
+		colors: {
+			...state.colors,
+			[key]: newColor,
+		},
+	}));
 
 	// Make custom colors the first ones, so they can be easily found, and sort the custom colors by name.
 	const customColors = Object.entries(Colors).filter(([color]) => color.includes("CUSTOM"));
-	const sortedColors = Object.entries(Colors).filter(([color]) => !color.includes("CUSTOM")).sort(([a], [b]) => a.localeCompare(b));
+	const sortedColors = Object.entries(Colors).filter(([color]) => !color.includes("CUSTOM")).sort(([a], [b]) => Object.keys(Colors).indexOf(a) - Object.keys(Colors).indexOf(b));
 	const newColors = Object.fromEntries([...customColors, ...sortedColors]);
 	for (const index in newColors) {
 		delete Colors[index];

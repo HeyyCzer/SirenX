@@ -1,4 +1,4 @@
-import { useTutorialStore } from "@/store/index.ts";
+import { useTutorialStore } from "@/store/tutorial.store";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { ACTIONS } from "react-joyride";

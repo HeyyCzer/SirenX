@@ -73,10 +73,11 @@ context("Export", () => {
 
 		cy.task("getFolderFiles", "test/downloads").then((files) => {
 			let found = 0;
+			
+			const downloadedFiles = files as string[];
+			expect(downloadedFiles).to.be.an("array");
 	
-			expect(files).to.be.an("array");
-	
-			for (const file of files) {
+			for (const file of downloadedFiles) {
 				if (file.includes(".meta")) {
 					found++;
 				}

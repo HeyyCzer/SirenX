@@ -1,12 +1,9 @@
 import { downloadFile, uploadFile } from "@/controllers/file.controller";
 import { event } from "@/gtag";
-import Colors from "@/lib/colors";
-import {
-	STORE_KEY,
-	useEditorStore,
-	useSettingsStore,
-	useSponsorStore
-} from "@/store/index.ts";
+import { useColorStore } from "@/store/color.store";
+import { useEditorStore } from "@/store/editor.store";
+import { useSettingsStore } from "@/store/settings.store";
+import { useSponsorStore } from "@/store/sponsor.store";
 import { Modal } from "@/utils/modal";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,7 +41,7 @@ export default function Toolbar() {
 	const sponsor = useSponsorStore();
 	const setSponsorLastSeen = useSponsorStore((state) => state.setSponsorLastSeen);
 
-	const [colors] = useState(Colors);
+	const { colors } = useColorStore();
 	
 	const hiddenFileInput = useRef(null);
 

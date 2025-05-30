@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_KEY } from "./editor.store";
+import { STORE_KEY } from "./constants";
 
 interface SponsorState {
 	lastSeen?: number;
