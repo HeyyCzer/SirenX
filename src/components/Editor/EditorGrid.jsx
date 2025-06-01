@@ -23,8 +23,6 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 	useEffect(() => {
 		if (!lightRows || lightRows.length === 0) return;
 
-		console.log(lightRows);
-
 		for (const row of Object.values(lightRows)) {
 			for (const light of Object.values(row)) {
 				if (!light?.color.includes("CUSTOM_")) continue;
