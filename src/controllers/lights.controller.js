@@ -15,72 +15,77 @@ const buildLights = (sirenSelected, fullFile) => {
 
 	const builtSirens = [];
 	for (const columnIndex in sirenItems) {
-		const columnData = sirenItems[columnIndex];
+		try {
+			const columnData = sirenItems[columnIndex];
+			if (!columnData.flashiness)
+				columnData.flashiness = {};
 
-		if (!columnData.flashiness)
-			columnData.flashiness = {};
+			// delta
+			if (!columnData.flashiness.delta)
+				columnData.flashiness.delta = {};
+			if (!columnData.flashiness.delta.$)
+				columnData.flashiness.delta.$ = {};
 
-		// delta
-		if (!columnData.flashiness.delta)
-			columnData.flashiness.delta = {};
-		if (!columnData.flashiness.delta.$)
-			columnData.flashiness.delta.$ = {};
+			// multiples
+			if (!columnData.flashiness.multiples)
+				columnData.flashiness.multiples = {};
+			if (!columnData.flashiness.multiples.$)
+				columnData.flashiness.multiples.$ = {};
 
-		// multiples
-		if (!columnData.flashiness.multiples)
-			columnData.flashiness.multiples = {};
-		if (!columnData.flashiness.multiples.$)
-			columnData.flashiness.multiples.$ = {};
-		
-		// intensity
-		if (!columnData.intensity)
-			columnData.intensity = {};
-		if (!columnData.intensity.$)
-			columnData.intensity.$ = {};
+			// intensity
+			if (!columnData.intensity)
+				columnData.intensity = {};
+			if (!columnData.intensity.$)
+				columnData.intensity.$ = {};
 
-		// scaleFactor
-		if (!columnData.scaleFactor)
-			columnData.scaleFactor = {};
-		if (!columnData.scaleFactor.$)
-			columnData.scaleFactor.$ = {};
+			// scaleFactor
+			if (!columnData.scaleFactor)
+				columnData.scaleFactor = {};
+			if (!columnData.scaleFactor.$)
+				columnData.scaleFactor.$ = {};
 
-		const direction = Number(columnData.flashiness.delta.$.value);
-		const multiples = Number(columnData.flashiness.multiples.$.value);
-		const intensity = Number(columnData.intensity.$.value);
-		const scaleFactor = Number(columnData.scaleFactor.$.value);
+			const direction = Number(columnData.flashiness.delta.$.value);
+			const multiples = Number(columnData.flashiness.multiples.$.value);
+			const intensity = Number(columnData.intensity.$.value);
+			const scaleFactor = Number(columnData.scaleFactor.$.value);
 
-		const carcolsColor = columnData.color.$.value;
-		let color = null;
+			const carcolsColor = columnData.color.$.value;
+			let color = null;
 
-		const Colors = useColorStore.getState().colors;
-		for (const [colorName, colorData] of Object.entries(Colors)) {
-			if (colorData.carcols.color === carcolsColor) {
-				color = colorName;
-				break;
-			}
-		}
-
-		if (!color) {
-			const colorId = createColor(carcolsColor);
-			color = colorId;
-		}
-
-		const binarySequence = decimalToBinary(
-			columnData.flashiness.sequencer.$.value,
-		);
-		for (const row in binarySequence) {
-			const active = binarySequence[row] === "1";
-			if (!builtSirens[row]) {
-				builtSirens[row] = [];
+			const Colors = useColorStore.getState().colors;
+			for (const [colorName, colorData] of Object.entries(Colors)) {
+				if (colorData.carcols.color === carcolsColor) {
+					color = colorName;
+					break;
+				}
 			}
 
-			builtSirens[row][columnIndex] = {
-				color: active ? color : "none",
-				direction,
-				multiples,
-				intensity,
-				scaleFactor,
-			};
+			if (!color) {
+				const colorId = createColor(carcolsColor);
+				color = colorId;
+			}
+
+			const binarySequence = decimalToBinary(
+				columnData.flashiness.sequencer.$.value,
+			);
+			for (const row in binarySequence) {
+				const active = binarySequence[row] === "1";
+				if (!builtSirens[row]) {
+					builtSirens[row] = [];
+				}
+
+				builtSirens[row][columnIndex] = {
+					color: active ? color : "none",
+					direction,
+					multiples,
+					intensity,
+					scaleFactor,
+				};
+			}
+		} catch {
+			throw {
+				customMessage: `Error processing siren column ${columnIndex + 1}. Please check the file structure.`,
+			}
 		}
 	}
 
