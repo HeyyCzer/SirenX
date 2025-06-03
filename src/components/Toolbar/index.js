@@ -182,7 +182,7 @@ export default function Toolbar() {
 					},
 					settings,
 					`${uuidv4()}.meta`,
-				);
+				) || [];
 				if (!fileContent) return;
 
 				event({
