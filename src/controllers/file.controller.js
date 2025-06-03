@@ -5,12 +5,7 @@ import { xml2json } from 'xml-js';
 import { buildLights, exportLights } from './lights.controller';
 
 const uploadFile = async (fileContent) => {
-	Sentry.getCurrentScope().addAttachment({
-		filename: `imported-file__${new Date().toISOString().replace(/:/g, '-')}.meta`,
-		data: fileContent
-	});
-
-	let xmlJson = null;
+	let xmlJson;
 	try {
 		xmlJson = xml2json(fileContent, { compact: true, attributesKey: "$" });
 	} catch {
@@ -30,6 +25,11 @@ const uploadFile = async (fileContent) => {
 			text: 'The file provided is not a valid carcols.meta file or does not contain any siren data. Please try another file.'
 		});
 	}
+
+	Sentry.getCurrentScope().addAttachment({
+		filename: `imported-file__${new Date().toISOString().replace(/:/g, '-')}.meta`,
+		data: fileContent
+	});
 
 	const hasMultipleSirens = Array.isArray(sirens);
 	if (!hasMultipleSirens) {
