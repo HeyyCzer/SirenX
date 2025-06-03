@@ -13,7 +13,7 @@ const uploadFile = async (fileContent) => {
 	let xmlJson = null;
 	try {
 		xmlJson = xml2json(fileContent, { compact: true, attributesKey: "$" });
-	} catch (err) {
+	} catch {
 		return Modal.fire({
 			icon: 'error',
 			title: 'Error',
@@ -36,10 +36,8 @@ const uploadFile = async (fileContent) => {
 		sirens = [sirens];
 	}
 
-	let selectedSiren = null;
-	if (sirens.length === 1) {
-		selectedSiren = sirens[0];
-	} else {
+	let selectedSiren = sirens[0];
+	if (sirens.length > 1) {
 		// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
 		const sirenOptions = sirens.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {});
 		await Modal.fire({
@@ -67,7 +65,7 @@ const uploadFile = async (fileContent) => {
 		await Modal.fire({
 			icon: 'error',
 			title: 'Error while importing',
-			text: 'An error occurred while trying to build the lights. Please, try again or use another file.'
+			text: err.customMessage || 'Failed to load your file. Are you sure this is a valid carcols.meta file?'
 		});
 	}
 }
@@ -99,7 +97,7 @@ const downloadFile = (editor, settings, fileName) => {
 		return Modal.fire({
 			icon: 'error',
 			title: 'Error while exporting',
-			text: 'An error occurred while trying to export the file. Please, try again or reset the editor.'
+			text: err.customMessage || 'Error while trying to export the file. Please, try again or reset the editor.'
 		});
 	}
 }
