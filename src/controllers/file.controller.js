@@ -5,16 +5,11 @@ import { xml2json } from 'xml-js';
 import { buildLights, exportLights } from './lights.controller';
 
 const uploadFile = async (fileContent) => {
-	Sentry.getCurrentScope().addAttachment({
-		filename: `imported-file__${new Date().toISOString().replace(/:/g, '-')}.meta`,
-		data: fileContent
-	});
-
-	let xmlJson = null;
+	let xmlJson;
 	try {
 		xmlJson = xml2json(fileContent, { compact: true, attributesKey: "$" });
 	} catch {
-		return Modal.fire({
+		return void Modal.fire({
 			icon: 'error',
 			title: 'Error',
 			text: 'The file provided is not a valid XML file. Please, check the file and try again'
@@ -24,17 +19,20 @@ const uploadFile = async (fileContent) => {
 	const json = JSON.parse(xmlJson);
 	let sirens = json?.CVehicleModelInfoVarGlobal?.Sirens?.Item;
 	if (!sirens) {
-		return Modal.fire({
+		return void Modal.fire({
 			icon: 'error',
 			title: 'Error',
 			text: 'The file provided is not a valid carcols.meta file or does not contain any siren data. Please try another file.'
 		});
 	}
 
+	Sentry.getCurrentScope().addAttachment({
+		filename: `imported-file__${new Date().toISOString().replace(/:/g, '-')}.meta`,
+		data: fileContent
+	});
+
 	const hasMultipleSirens = Array.isArray(sirens);
-	if (!hasMultipleSirens) {
-		sirens = [sirens];
-	}
+	if (!hasMultipleSirens) sirens = [sirens];
 
 	let selectedSiren = sirens[0];
 	if (sirens.length > 1) {
@@ -56,13 +54,12 @@ const uploadFile = async (fileContent) => {
 	}
 
 	if (!selectedSiren) return;
-
 	try {
 		return buildLights(selectedSiren, json);
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { level: "warning" });
 
-		await Modal.fire({
+		void Modal.fire({
 			icon: 'error',
 			title: 'Error while importing',
 			text: err.customMessage || 'Failed to load your file. Are you sure this is a valid carcols.meta file?'
@@ -94,7 +91,7 @@ const downloadFile = (editor, settings, fileName) => {
 	} catch (err) {
 		Sentry.captureException(err);
 
-		return Modal.fire({
+		return void Modal.fire({
 			icon: 'error',
 			title: 'Error while exporting',
 			text: err.customMessage || 'Error while trying to export the file. Please, try again or reset the editor.'

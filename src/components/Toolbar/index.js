@@ -242,6 +242,7 @@ export default function Toolbar() {
 				timerProgressBar: true,
 			}).then(() => {
 				localStorage.removeItem(`${STORE_KEY}editor`);
+				localStorage.removeItem(`${STORE_KEY}settings`);
 				window.location.reload();
 			});
 		});
