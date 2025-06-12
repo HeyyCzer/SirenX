@@ -12,7 +12,7 @@ const uploadFile = async (fileContent) => {
 		return void Modal.fire({
 			icon: 'error',
 			title: 'Error',
-			text: 'The file provided is not a valid XML file. Please, check the file and try again'
+			text: 'The file provided is not a valid .meta file. Please, check the file and try again'
 		});
 	}
 
