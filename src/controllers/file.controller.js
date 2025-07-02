@@ -36,8 +36,21 @@ const uploadFile = async (fileContent) => {
 
 	let selectedSiren = sirens[0];
 	if (sirens.length > 1) {
-		// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-		const sirenOptions = sirens.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {});
+		let sirenOptions;
+		try {
+			// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+			sirenOptions = sirens.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {});
+			
+		} catch(err) {
+			Sentry.captureException(err, { level: "warning" });
+
+			return void Modal.fire({
+				icon: 'error',
+				title: 'Error while selecting siren',
+				text: 'Looks like one of the sirens in the file is malformed or has an invalid ID. Please, check the file and try again.'
+			});
+		}
+
 		await Modal.fire({
 			title: 'Select a siren to edit',
 			text: 'The selected file contains multiple sirens. Please select one to continue.',
