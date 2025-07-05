@@ -20,7 +20,7 @@ Sentry.init({
 
 	beforeSend: (event, hint) => {
 		const date = new Date().toISOString().replace(/:/g, '-');
-		hint.attachments = hint.attachments || [];
+		hint.attachments = hint.attachments ?? [];
 		hint.attachments.push(
 			{ filename: `user-editor__${date}.json`, data: JSON.stringify(useEditorStore.getState(), null, 2) },
 			{ filename: `user-settings__${date}.json`, data: JSON.stringify(useSettingsStore.getState(), null, 2) }
@@ -56,3 +56,5 @@ if (process.env.NODE_ENV === "development") {
 		});
 	});
 }
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

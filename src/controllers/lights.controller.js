@@ -1,10 +1,8 @@
 import DeltaEnum from "@/enum/direction.enum";
 import { useColorStore } from "@/store/color.store";
-import {
-	defaultCarcolsLightModel,
-	defaultLightModel
-} from "@/store/constants";
+import { defaultCarcolsLightModel, defaultLightModel } from "@/store/constants";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
+import { addBreadcrumb } from "@sentry/nextjs";
 import { json2xml } from "xml-js";
 import { createColor } from "./colors.controller";
 
@@ -16,33 +14,18 @@ const buildLights = (sirenSelected, fullFile) => {
 	const builtSirens = [];
 	for (const columnIndex in sirenItems) {
 		try {
+			console.log(`Processing siren column ${Number(columnIndex) + 1}`);
+
 			const columnData = sirenItems[columnIndex];
-			if (!columnData.flashiness)
-				columnData.flashiness = {};
+			const defaultModel = defaultCarcolsLightModel;
 
-			// delta
-			if (!columnData.flashiness.delta)
-				columnData.flashiness.delta = {};
-			if (!columnData.flashiness.delta.$)
-				columnData.flashiness.delta.$ = {};
+			recursivelyCloneKeysIfNotExists(columnData, defaultModel);
 
-			// multiples
-			if (!columnData.flashiness.multiples)
-				columnData.flashiness.multiples = {};
-			if (!columnData.flashiness.multiples.$)
-				columnData.flashiness.multiples.$ = {};
-
-			// intensity
-			if (!columnData.intensity)
-				columnData.intensity = {};
-			if (!columnData.intensity.$)
-				columnData.intensity.$ = {};
-
-			// scaleFactor
-			if (!columnData.scaleFactor)
-				columnData.scaleFactor = {};
-			if (!columnData.scaleFactor.$)
-				columnData.scaleFactor.$ = {};
+			recursivelyCreateKeys(columnData, ["flashiness", "delta", "$"], {});
+			recursivelyCreateKeys(columnData, ["flashiness", "multiples", "$"], {});
+			recursivelyCreateKeys(columnData, ["intensity", "$"], {});
+			recursivelyCreateKeys(columnData, ["scaleFactor", "$"], {});
+			recursivelyCreateKeys(columnData, ["color", "$"], {});
 
 			const direction = Number(columnData.flashiness.delta.$.value);
 			const multiples = Number(columnData.flashiness.multiples.$.value);
@@ -85,7 +68,7 @@ const buildLights = (sirenSelected, fullFile) => {
 		} catch {
 			throw {
 				customMessage: `Error processing siren column ${columnIndex + 1}. Please check the file structure.`,
-			}
+			};
 		}
 	}
 
@@ -157,6 +140,12 @@ const exportLights = (editor, settings) => {
 			if (light?.color === "none" && sequencer[columnIndex].includes("1"))
 				continue;
 
+			recursivelyCreateKeys(columnData, ["flashiness", "delta", "$"], {});
+			recursivelyCreateKeys(columnData, ["flashiness", "multiples", "$"], {});
+			recursivelyCreateKeys(columnData, ["intensity", "$"], {});
+			recursivelyCreateKeys(columnData, ["scaleFactor", "$"], {});
+			recursivelyCreateKeys(columnData, ["color", "$"], {});
+
 			columnData.flashiness.delta.$.value =
 				light?.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
@@ -178,6 +167,54 @@ const exportLights = (editor, settings) => {
 		fullFile,
 	];
 };
+
+function recursivelyCreateKeys(obj, keys, value) {
+	keys.reduce((acc, key) => {
+		if (!acc[key]) {
+			const debugData = {
+				keys: keys.join("."),
+				previousObject: acc,
+				newKey: key,
+			}
+
+			console.debug(`Creating missing key: ${key}`, debugData);
+			addBreadcrumb({
+				message: `Creating missing key: ${key}`,
+				data: debugData,
+				level: "debug",
+			});
+
+			acc[key] = {};
+		}
+		return acc[key];
+	}, obj)[keys[keys.length - 1]] = value;
+}
+
+function recursivelyCloneKeysIfNotExists(source, target, path = "@") {
+	for (const key of Object.keys(target)) {
+		if (source[key] === undefined) {
+			const debugData = {
+				key,
+				path,
+				sourceObject: source,
+				targetObject: target,
+			};
+
+			console.debug(`Cloning key: ${key} from target to source`, debugData);
+			addBreadcrumb({
+				message: `Cloning key: ${key}`,
+				data: debugData,
+				level: "debug",
+			});
+
+			source[key] = source[key] || {};
+		}
+
+		if (typeof target[key] === "object" && !Array.isArray(target[key])) {
+			recursivelyCloneKeysIfNotExists(source[key], target[key], `${path ? `${path}.` : ""}${key}`);
+		}
+	}
+}
 
 export { buildLights, exportLights };
 
