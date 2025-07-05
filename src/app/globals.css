@@ -77,4 +77,8 @@ kbd > kbd {
 #sentry-feedback {
 	--inset: auto auto 0 0;
 	--background: theme("colors.gray.800");
+
+	input {
+		@apply outline-none;	
+	}
 }

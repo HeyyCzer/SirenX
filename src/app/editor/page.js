@@ -1,5 +1,6 @@
 "use client";
 
+import FeedbackWidget from "@/components/SentryFeedback";
 import MainLayout from "@/components/shared/MainLayout";
 import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
 import { loadBuyMeCoffeeWidget } from "@/utils/donations";
@@ -44,6 +45,8 @@ export default function EditorPage() {
 
 	return (
 		<MainLayout hideFooter>
+			<FeedbackWidget key={"sentry-feedback"} />
+
 			<DndProvider backend={HTML5Backend}>
 				<Suspense fallback={null}>
 					<SeparatorsContainer />

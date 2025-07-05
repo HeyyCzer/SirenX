@@ -17,7 +17,8 @@ Sentry.init({
 			blockAllMedia: false,
 		}),
 		Sentry.feedbackAsyncIntegration({
-			// Additional SDK configuration goes in here, for example:
+			autoInject: false,
+
 			colorScheme: "dark",
 			isEmailRequired: true,
 
@@ -32,6 +33,11 @@ Sentry.init({
 			{ filename: `user-editor__${date}.json`, data: JSON.stringify(useEditorStore.getState(), null, 2) },
 			{ filename: `user-settings__${date}.json`, data: JSON.stringify(useSettingsStore.getState(), null, 2) }
 		);
+
+		if (event.exception && event.event_id && event.level && ["error", "fatal"].includes(event.level)) {
+			Sentry.showReportDialog({ eventId: event.event_id });
+		}
+
 		return event;
 	},
 
