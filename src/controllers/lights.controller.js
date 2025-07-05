@@ -17,7 +17,7 @@ const buildLights = (sirenSelected, fullFile) => {
 			console.log(`Processing siren column ${Number(columnIndex) + 1}`);
 
 			const columnData = sirenItems[columnIndex];
-			const defaultModel = defaultLightModel;
+			const defaultModel = defaultCarcolsLightModel;
 
 			recursivelyCloneKeysIfNotExists(columnData, defaultModel);
 
@@ -171,9 +171,16 @@ const exportLights = (editor, settings) => {
 function recursivelyCreateKeys(obj, keys, value) {
 	keys.reduce((acc, key) => {
 		if (!acc[key]) {
+			const debugData = {
+				keys: keys.join("."),
+				previousObject: acc,
+				newKey: key,
+			}
+
+			console.debug(`Creating missing key: ${key}`, debugData);
 			addBreadcrumb({
 				message: `Creating missing key: ${key}`,
-				data: { keys: keys.join("."), previousObject: acc, newKey: key },
+				data: debugData,
 				level: "debug",
 			});
 
@@ -183,12 +190,20 @@ function recursivelyCreateKeys(obj, keys, value) {
 	}, obj)[keys[keys.length - 1]] = value;
 }
 
-function recursivelyCloneKeysIfNotExists(source, target) {
+function recursivelyCloneKeysIfNotExists(source, target, path = "@") {
 	for (const key of Object.keys(target)) {
 		if (source[key] === undefined) {
+			const debugData = {
+				key,
+				path,
+				sourceObject: source,
+				targetObject: target,
+			};
+
+			console.debug(`Cloning key: ${key} from target to source`, debugData);
 			addBreadcrumb({
 				message: `Cloning key: ${key}`,
-				data: { sourceKey: key, sourceValue: source[key], targetObject: target },
+				data: debugData,
 				level: "debug",
 			});
 
@@ -196,7 +211,7 @@ function recursivelyCloneKeysIfNotExists(source, target) {
 		}
 
 		if (typeof target[key] === "object" && !Array.isArray(target[key])) {
-			recursivelyCloneKeysIfNotExists(source[key], target[key]);
+			recursivelyCloneKeysIfNotExists(source[key], target[key], `${path ? `${path}.` : ""}${key}`);
 		}
 	}
 }
