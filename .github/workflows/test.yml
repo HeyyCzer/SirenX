@@ -1,4 +1,4 @@
-name: Build and Test Next.js with Cypress
+name: Test Deployment
 
 on:
   deployment_status:
