@@ -16,6 +16,13 @@ Sentry.init({
 			maskAllText: false,
 			blockAllMedia: false,
 		}),
+		Sentry.feedbackAsyncIntegration({
+			// Additional SDK configuration goes in here, for example:
+			colorScheme: "dark",
+			isEmailRequired: true,
+
+			showBranding: false,
+		}),
 	],
 
 	beforeSend: (event, hint) => {
