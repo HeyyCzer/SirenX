@@ -102,7 +102,7 @@ const downloadFile = (editor, settings, fileName) => {
 	
 		return [content, jsonFileContent];
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureMessage(`Error while exporting file: ${err.customMessage || "No message"}`, { level: 'warning' });
 
 		return void Modal.fire({
 			icon: 'error',
