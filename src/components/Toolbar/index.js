@@ -138,7 +138,6 @@ export default function Toolbar() {
 			input: "number",
 			inputAttributes: {
 				min: 100,
-				max: 99999,
 			},
 			inputValue: sirenId,
 			inputPlaceholder: "Siren ID",
