@@ -13,19 +13,20 @@ const buildLights = (sirenSelected, fullFile) => {
 
 	const builtSirens = [];
 	for (const columnIndex in sirenItems) {
+		const numberIndex = Number(columnIndex);
 		try {
-			console.log(`Processing siren column ${Number(columnIndex) + 1}`);
+			console.debug(`Processing siren column ${numberIndex + 1}`);
 
 			const columnData = sirenItems[columnIndex];
 			const defaultModel = defaultCarcolsLightModel;
 
 			recursivelyCloneKeysIfNotExists(columnData, defaultModel);
 
-			recursivelyCreateKeys(columnData, ["flashiness", "delta", "$"], {});
-			recursivelyCreateKeys(columnData, ["flashiness", "multiples", "$"], {});
-			recursivelyCreateKeys(columnData, ["intensity", "$"], {});
-			recursivelyCreateKeys(columnData, ["scaleFactor", "$"], {});
-			recursivelyCreateKeys(columnData, ["color", "$"], {});
+			recursivelyCreateKeysIfNotExists(columnData, ["flashiness", "delta", "$", "value"], 0);
+			recursivelyCreateKeysIfNotExists(columnData, ["flashiness", "multiples", "$", "value"], 0);
+			recursivelyCreateKeysIfNotExists(columnData, ["intensity", "$", "value"], 0);
+			recursivelyCreateKeysIfNotExists(columnData, ["scaleFactor", "$", "value"], 0);
+			recursivelyCreateKeysIfNotExists(columnData, ["color", "$", "value"], 0);
 
 			const direction = Number(columnData.flashiness.delta.$.value);
 			const multiples = Number(columnData.flashiness.multiples.$.value);
@@ -65,9 +66,10 @@ const buildLights = (sirenSelected, fullFile) => {
 					scaleFactor,
 				};
 			}
-		} catch {
+		} catch (err) {
+			console.warn("Error processing siren column:", numberIndex + 1, err);
 			throw {
-				customMessage: `Error processing siren column ${columnIndex + 1}. Please check the file structure.`,
+				customMessage: `Error processing siren column ${numberIndex + 1}. Please check the file structure.`,
 			};
 		}
 	}
@@ -109,9 +111,7 @@ const exportLights = (editor, settings) => {
 	const sequencer = {};
 	for (let rowIndex = 0; rowIndex < 32; rowIndex++) {
 		let row = lights[rowIndex];
-		if (!row) {
-			row = [];
-		}
+		if (!row) row = [];
 
 		for (
 			let columnIndex = 0;
@@ -140,14 +140,23 @@ const exportLights = (editor, settings) => {
 			if (light?.color === "none" && sequencer[columnIndex].includes("1"))
 				continue;
 
-			recursivelyCreateKeys(columnData, ["flashiness", "delta", "$"], {});
-			recursivelyCreateKeys(columnData, ["flashiness", "multiples", "$"], {});
-			recursivelyCreateKeys(columnData, ["intensity", "$"], {});
-			recursivelyCreateKeys(columnData, ["scaleFactor", "$"], {});
-			recursivelyCreateKeys(columnData, ["color", "$"], {});
+			recursivelyCreateKeysIfNotExists(
+				columnData,
+				["flashiness", "delta", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`
+			);
+			recursivelyCreateKeysIfNotExists(
+				columnData,
+				["flashiness", "multiples", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`
+			);
+			recursivelyCreateKeysIfNotExists(columnData, ["intensity", "$", "value"], -1, `@column${columnIndex + 1}`);
+			recursivelyCreateKeysIfNotExists(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
+			recursivelyCreateKeysIfNotExists(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
 
-			columnData.flashiness.delta.$.value =
-				light?.direction ?? DeltaEnum.FRONT.delta;
+			columnData.flashiness.delta.$.value = light?.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
 			columnData.intensity.$.value = light.intensity;
 			columnData.scaleFactor.$.value = light.scaleFactor;
@@ -168,50 +177,74 @@ const exportLights = (editor, settings) => {
 	];
 };
 
-function recursivelyCreateKeys(obj, keys, value) {
-	keys.reduce((acc, key) => {
-		if (!acc[key]) {
-			const debugData = {
-				keys: keys.join("."),
-				previousObject: acc,
-				newKey: key,
-			}
+function recursivelyCreateKeysIfNotExists(obj, keys, value, path = "@") {
+	if (keys.length === 0) return;
+	if (keys.length === 1) {
+		if (obj[keys[0]] !== undefined) return;
 
-			console.debug(`Creating missing key: ${key}`, debugData);
-			addBreadcrumb({
-				message: `Creating missing key: ${key}`,
-				data: debugData,
-				level: "debug",
-			});
+		const debugData = {
+			key: keys[0],
+			path,
+			value,
+			object: obj,
+		};
 
-			acc[key] = {};
-		}
-		return acc[key];
-	}, obj)[keys[keys.length - 1]] = value;
+		console.debug(`Creating key '${keys[0]}' in object`, debugData);
+		addBreadcrumb({
+			message: `Creating key '${keys[0]}'`,
+			data: debugData,
+		});
+
+		obj[keys[0]] = value;
+		return;
+	}
+
+	const currentKey = keys[0];
+	if (!obj[currentKey] || typeof obj[currentKey] !== "object") {
+		obj[currentKey] = {};
+	}
+
+	recursivelyCreateKeysIfNotExists(obj[currentKey], keys.slice(1), value, `${path}.${currentKey}`);
 }
 
+
 function recursivelyCloneKeysIfNotExists(source, target, path = "@") {
-	for (const key of Object.keys(target)) {
-		if (source[key] === undefined) {
-			const debugData = {
-				key,
-				path,
-				sourceObject: source,
-				targetObject: target,
-			};
+	if (!target || typeof target !== 'object' || Array.isArray(target)) {
+		return;
+	}
 
-			console.debug(`Cloning key: ${key} from target to source`, debugData);
-			addBreadcrumb({
-				message: `Cloning key: ${key}`,
-				data: debugData,
-				level: "debug",
-			});
+	if (!source || typeof source !== 'object' || Array.isArray(source)) {
+		return;
+	}
 
-			source[key] = source[key] || {};
-		}
+	for (const key in target) {
+		// biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+		if (target.hasOwnProperty(key)) {
+			const currentPath = path === "@" ? key : `${path}.${key}`;
 
-		if (typeof target[key] === "object" && !Array.isArray(target[key])) {
-			recursivelyCloneKeysIfNotExists(source[key], target[key], `${path ? `${path}.` : ""}${key}`);
+			// biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+			if (!source.hasOwnProperty(key)) {
+				source[key] = JSON.parse(JSON.stringify(target[key]));
+
+				const debugData = {
+					key,
+					value: target[key],
+					path: currentPath,
+					sourceObject: source,
+					targetObject: target,
+				};
+
+				console.debug(`Cloning key '${key}' from target to source at path '${currentPath}'`, debugData);
+				addBreadcrumb({
+					message: `Cloning key '${key}' from target to source`,
+					data: debugData,
+				});
+			} else {
+				if (typeof source[key] === 'object' && !Array.isArray(source[key]) &&
+					typeof target[key] === 'object' && !Array.isArray(target[key])) {
+					recursivelyCloneKeysIfNotExists(source[key], target[key], currentPath);
+				}
+			}
 		}
 	}
 }
