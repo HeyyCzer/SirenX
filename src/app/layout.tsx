@@ -1,6 +1,6 @@
-import "./fonts.css";
-import "./globals.css";
-import "./modals.css";
+import "./styles/fonts.css";
+import "./styles/globals.css";
+import "./styles/modals.css";
 
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { config } from "@fortawesome/fontawesome-svg-core";
@@ -27,7 +27,9 @@ export const metadata = {
 	},
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: {
+	children: React.ReactNode;
+}) {
 	return (
 		<html lang="en">
 			<body className="dark bg-slate-950" suppressHydrationWarning>

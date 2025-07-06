@@ -1,5 +1,5 @@
 import React from 'react';
-import Light from '../Light';
+import Light from '.';
 
 const LightGroup = React.memo(({ 
   rowIndex, 

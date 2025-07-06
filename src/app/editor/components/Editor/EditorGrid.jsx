@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
 import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
-import LightGroup from "./LightGroup";
+import LightGroup from "../Light/LightGroup";
 
 export default function EditorGrid({ totalColumns, currentRow }) {
 	const editorColumns = useMemo(

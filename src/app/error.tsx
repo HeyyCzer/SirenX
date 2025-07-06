@@ -3,8 +3,7 @@
 import { STORE_KEY } from "@/store/constants";
 
 export default function ErrorPage({
-	error,
-	reset,
+	error
 }: {
 	error: Error & { digest?: string };
 	reset: () => void;
