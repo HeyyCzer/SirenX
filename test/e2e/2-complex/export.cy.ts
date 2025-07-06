@@ -11,8 +11,6 @@ context("Export", () => {
 				window.localStorage.setItem('SirenX//tutorial', JSON.stringify({"state":{"editor-basic-tutorial":true},"version":0}));
 			}
 		});
-
-		cy.task("deleteFolder", "test/downloads");
 	});
 
 	after(() => {
@@ -24,6 +22,8 @@ context("Export", () => {
 	});
 	
 	it("should export file", () => {
+		cy.task("deleteFolder", "test/downloads");
+
 		cy.get("#toolbar-export").as("export");
 
 		cy.get("@export").should("be.visible");
@@ -86,4 +86,26 @@ context("Export", () => {
 			expect(found).to.be.equal(2);
 		});
 	});
+
+	it("exported file should be valid", () => {
+		cy.task("getFolderFiles", "test/downloads").then((files) => {
+			const downloadedFiles = files as string[];
+			expect(downloadedFiles).to.be.an("array");
+			expect(downloadedFiles.length).to.be.greaterThan(0);
+
+			let found = 0;
+			for (const file of downloadedFiles) {
+				if (!file.includes(".meta")) continue;
+
+				cy.readFile(`test/downloads/${file}`).then((content) => {
+					expect(content).to.not.includes("[object Object]");
+					expect(content).to.not.includes("$");
+				});
+
+				found++;
+			}
+
+			expect(found).to.be.greaterThan(0);
+		});
+	})
 });
