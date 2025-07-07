@@ -1,9 +1,9 @@
 "use client";
 
-import AboutSection from "@/components/home/AboutSection";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import Hero from "@/components/home/Hero";
-import MainLayout from "@/components/shared/MainLayout";
+import AboutSection from "@/app/components/AboutSection";
+import FeaturesSection from "@/app/components/FeaturesSection";
+import Hero from "@/app/components/Hero";
+import MainLayout from "@/components/MainLayout";
 import styles from "./Home.module.css";
 
 export default function Home() {
