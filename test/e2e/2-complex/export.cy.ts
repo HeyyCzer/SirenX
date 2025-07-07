@@ -100,6 +100,8 @@ context("Export", () => {
 				cy.readFile(`test/downloads/${file}`).then((content) => {
 					expect(content).to.not.includes("[object Object]");
 					expect(content).to.not.includes("$");
+					expect(content).to.not.be.empty;
+					expect(content.length).to.be.at.least(100);
 				});
 
 				found++;
