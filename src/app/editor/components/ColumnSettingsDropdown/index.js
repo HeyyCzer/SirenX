@@ -29,10 +29,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			input: "text",
 			inputLabel: "Intensity",
 			inputValue: data.intensity,
-			preConfirm: (value) => {
-				if (!value || Number.isNaN(value) || value < 0) {
+			preConfirm: (valueStr) => {
+				const value = Number(valueStr);
+				if (!value || Number.isNaN(value) || value < 0)
 					return Modal.showValidationMessage("Invalid value");
-				}
 				return value;
 			},
 		}).then(({ isConfirmed, value }) => {
@@ -61,10 +61,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				step: 1,
 			},
 			showCancelButton: true,
-			preConfirm: (value) => {
-				if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value)) {
+			preConfirm: (valueStr) => {
+				const value = Number(valueStr);
+				if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value))
 					return Modal.showValidationMessage("Invalid value");
-				}
 				return value;
 			},
 		}).then(({ isConfirmed, value }) => {
@@ -89,15 +89,10 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					inputLabel: "Scale Factor",
 					inputValue: data.scaleFactor,
 					showCancelButton: true,
-					preConfirm: (value) => {
-						if (
-							!value ||
-							Number.isNaN(value) ||
-							value <= 0 ||
-							!Number.isInteger(value)
-						) {
+					preConfirm: (valueStr) => {
+						const value = Number(valueStr);
+						if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value))
 							return Modal.showValidationMessage("Invalid value");
-						}
 						return value;
 					},
 				});
@@ -122,6 +117,8 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 	const handleChangeDirection = useCallback(
 		async (choosenDelta) => {
 			let delta = choosenDelta;
+			console.log("choosenDelta", choosenDelta);
+
 			if (delta === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom direction",
@@ -129,8 +126,9 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					input: "text",
 					inputLabel: "Delta",
 					inputValue: data.direction,
-					preConfirm: (value) => {
-						if (!value || Number.isNaN(value) || value < 0) {
+					preConfirm: (valueStr) => {
+						const value = Number(valueStr);
+						if (!value || Number.isNaN(value)) {
 							return Modal.showValidationMessage("Invalid value");
 						}
 						return value;
@@ -161,6 +159,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					type={"button"}
 					className="w-9 text-gray-400 text-xs outline-none transition-colors hover:text-gray-200 sm:text-sm lg:w-8"
 					id={`settings-dropdown-${columnIndex}`}
+					data-testid="column-settings-dropdown"
 				>
 					<FontAwesomeIcon icon={faGear} />
 				</button>

@@ -156,7 +156,7 @@ const exportLights = (editor, settings) => {
 			recursivelyCreateKeysIfNotExists(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
 			recursivelyCreateKeysIfNotExists(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
 
-			columnData.flashiness.delta.$.value = light?.direction ?? DeltaEnum.FRONT.delta;
+			columnData.flashiness.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
 			columnData.intensity.$.value = light.intensity;
 			columnData.scaleFactor.$.value = light.scaleFactor;
