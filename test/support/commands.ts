@@ -56,3 +56,17 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
 	// make sure to add a return here!
 	return originalFn(url, mergedOptions)
 });
+
+let LOCAL_STORAGE_MEMORY: Record<string, string> = {};
+
+Cypress.Commands.add('saveLocalStorage', () => {
+	Object.keys(localStorage).forEach(key => {
+		LOCAL_STORAGE_MEMORY[key] = localStorage.getItem(key) as string;
+	});
+});
+
+Cypress.Commands.add('restoreLocalStorage', () => {
+	Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+		localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+	});
+});
