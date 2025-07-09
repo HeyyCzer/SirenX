@@ -20,9 +20,9 @@ context("ColumnSettingsDropdown", () => {
 		cy.saveLocalStorage();
 	});
 
-	// after(() => {
-	// 	cy.task('deleteFolder', 'test/downloads');
-	// });
+	after(() => {
+		cy.task('deleteFolder', 'test/downloads');
+	});
 
 	it("should change Multiples with valid and invalid values", () => {
 		// import a file
