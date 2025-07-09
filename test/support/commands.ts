@@ -59,14 +59,21 @@ Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
 
 let LOCAL_STORAGE_MEMORY: Record<string, string> = {};
 
-Cypress.Commands.add('saveLocalStorage', () => {
+Cypress.Commands.add('saveLocalStorage', (testKey: string) => {
 	Object.keys(localStorage).forEach(key => {
-		LOCAL_STORAGE_MEMORY[key] = localStorage.getItem(key) as string;
+		if (!LOCAL_STORAGE_MEMORY[testKey]) {
+			LOCAL_STORAGE_MEMORY[testKey] = {};
+		}
+		LOCAL_STORAGE_MEMORY[testKey][key] = localStorage.getItem(key) as string;
 	});
 });
 
-Cypress.Commands.add('restoreLocalStorage', () => {
-	Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
-		localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+Cypress.Commands.add('restoreLocalStorage', (testKey: string) => {
+	if (!LOCAL_STORAGE_MEMORY[testKey]) {
+		LOCAL_STORAGE_MEMORY[testKey] = {};
+	}
+
+	Object.keys(LOCAL_STORAGE_MEMORY[testKey]).forEach(key => {
+		localStorage.setItem(key, LOCAL_STORAGE_MEMORY[testKey][key]);
 	});
 });

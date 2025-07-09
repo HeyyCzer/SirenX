@@ -4,7 +4,7 @@ import DeltaEnum from "../../../src/enum/direction.enum";
 
 context("ColumnSettingsDropdown", () => {
 	beforeEach(() => {
-		cy.restoreLocalStorage();
+		cy.restoreLocalStorage("column-settings-test");
 		cy.intercept('*', (req) => {
 			req.headers['x-vercel-protection-bypass'] = Cypress.env('VERCEL_AUTOMATION_BYPASS_SECRET');
 		});
@@ -17,7 +17,7 @@ context("ColumnSettingsDropdown", () => {
 	});
 
 	afterEach(() => {
-		cy.saveLocalStorage();
+		cy.saveLocalStorage("column-settings-test");
 	});
 
 	after(() => {
