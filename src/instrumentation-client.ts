@@ -34,9 +34,9 @@ Sentry.init({
 			{ filename: `user-settings__${date}.json`, data: JSON.stringify(useSettingsStore.getState(), null, 2) }
 		);
 
-		if (event.exception && event.event_id && event.level && ["error", "fatal"].includes(event.level)) {
-			Sentry.showReportDialog({ eventId: event.event_id });
-		}
+		// if (event.exception && event.event_id && event.level && ["error", "fatal"].includes(event.level)) {
+		// 	Sentry.showReportDialog({ eventId: event.event_id });
+		// }
 
 		return event;
 	},
