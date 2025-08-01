@@ -20,7 +20,7 @@ import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
 
 export default function Toolbar() {
-	const [isSponsorModalOpen, setIsSponsorModalOpen] = useState(false);
+	const [isSponsorModalOpen, setIsSponsorModalOpen] = useState<boolean>(false);
 
 	// Editor store
 	const selectedColor = useEditorStore((state) => state.selectedColor);
@@ -44,10 +44,10 @@ export default function Toolbar() {
 
 	const { colors } = useColorStore();
 	
-	const hiddenFileInput = useRef(null);
+	const hiddenFileInput = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		const handleKeypress = (e) => {
+		const handleKeypress = (e: KeyboardEvent) => {
 			if (document.querySelector("input:focus")) return;
 
 			const key = e.key;
@@ -70,13 +70,13 @@ export default function Toolbar() {
 	}, [setSelectedColor, selectedColor, colors]);
 
 	const handleFileUpload = useCallback(
-		(e) => {
-			const file = e.target.files[0];
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
 			if (!file) return;
 
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				const content = e.target.result;
+				const content = (e.target as FileReader).result;
 
 				Sentry.addBreadcrumb({
 					category: "file",
@@ -84,7 +84,9 @@ export default function Toolbar() {
 					level: "info",
 				});
 
-				hiddenFileInput.current.value = null;
+				if (hiddenFileInput.current) {
+					hiddenFileInput.current.value = "";
+				}
 
 				const result = await uploadFile(content);
 				if (!result) {
@@ -142,12 +144,12 @@ export default function Toolbar() {
 			inputValue: sirenId,
 			inputPlaceholder: "Siren ID",
 			showCancelButton: true,
-			preConfirm: (newSirenId) => {
+			preConfirm: (newSirenId: string) => {
 				if (!newSirenId)
 					return Modal.showValidationMessage("Please, enter a Siren ID.");
 				return newSirenId;
 			},
-		}).then(({ isConfirmed, value: newSirenId }) => {
+		}).then(({ isConfirmed, value: newSirenId }: { isConfirmed: boolean; value: string }) => {
 			if (!isConfirmed || !newSirenId) return;
 
 			Modal.fire({
@@ -156,12 +158,12 @@ export default function Toolbar() {
 				inputValue: sirenName,
 				inputPlaceholder: "Siren name",
 				showCancelButton: true,
-				preConfirm: (newSirenName) => {
+				preConfirm: (newSirenName: string) => {
 					if (!newSirenName)
 						return Modal.showValidationMessage("Please, enter a Siren Name.");
 					return newSirenName;
 				},
-			}).then(({ isConfirmed, value: newSirenName }) => {
+			}).then(({ isConfirmed, value: newSirenName }: { isConfirmed: boolean; value: string }) => {
 				if (!isConfirmed || !newSirenName) return;
 
 				Sentry.addBreadcrumb({
@@ -229,7 +231,7 @@ export default function Toolbar() {
 			title: "Reset editor",
 			text: "Are you sure you want to reset the editor? This action cannot be undone.",
 			showCancelButton: true,
-		}).then(({ isConfirmed }) => {
+		}).then(({ isConfirmed }: { isConfirmed: boolean }) => {
 			if (!isConfirmed) return;
 
 			Modal.fire({
@@ -248,16 +250,18 @@ export default function Toolbar() {
 	}, []);
 
 	const handleUpdateBPM = useCallback(
-		(e) => {
+		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const target = e.target;
 			if (!target) return;
 
-			let value = target.value;
+			let value = Number.parseInt(target.value);
+			if (Number.isNaN(value)) value = 120;
 			if (value < 0) value = 0;
 
+			// @ts-expect-error
 			target.value = value;
 
-			setCurrentBpm(target.value);
+			setCurrentBpm(value);
 		},
 		[setCurrentBpm],
 	);
@@ -291,7 +295,7 @@ export default function Toolbar() {
 						type="button"
 						id="toolbar-import"
 						className="w-full rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
-						onClick={() => hiddenFileInput.current.click()}
+						onClick={() => (hiddenFileInput.current as HTMLInputElement).click()}
 					>
 						Import
 					</button>
@@ -397,8 +401,8 @@ export default function Toolbar() {
 						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
 						{Object.entries(settings)
-							.filter(([, settingsData]) => !settingsData.unlisted && typeof settingsData === "object")
-							.map(([settingsId, settingsData]) => (
+							.filter(([, settingsData]: [string, any]) => !settingsData.unlisted && typeof settingsData === "object")
+							.map(([settingsId, settingsData]: [string, any]) => (
 								<div key={settingsId} className="flex flex-col gap-y-1">
 									<div className="flex items-center justify-between gap-x-2">
 										<input
