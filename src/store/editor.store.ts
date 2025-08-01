@@ -2,7 +2,7 @@ import { createColor } from "@/controllers/colors.controller";
 import DefaultCarcols from "@/default_carcols.json";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { defaultLightModel, STORE_KEY } from "./constants";
+import { STORE_KEY, defaultLightModel } from "./constants";
 
 interface EditorState {
 	sirenId: string | null;

@@ -82,3 +82,15 @@ kbd > kbd {
 		@apply outline-none;	
 	}
 }
+
+input[type="color"] {
+	@apply appearance-none size-32 rounded-full border-none outline outline-white/5 m-2 hover:outline-white/30 transition-all duration-100;
+
+	&::-webkit-color-swatch {
+		border: none;
+	}
+
+	&::-webkit-color-swatch-wrapper {
+		padding: 0;
+	}
+}

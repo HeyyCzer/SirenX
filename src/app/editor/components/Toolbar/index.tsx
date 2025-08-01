@@ -1,3 +1,4 @@
+import { createColor } from "@/controllers/colors.controller";
 import { downloadFile, uploadFile } from "@/controllers/file.controller";
 import { event } from "@/gtag";
 import { useColorStore } from "@/store/color.store";
@@ -6,21 +7,16 @@ import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 import { useSponsorStore } from "@/store/sponsor.store";
 import { Modal } from "@/utils/modal";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Sentry from "@sentry/nextjs";
-import {
-	useCallback,
-	useEffect,
-	useRef,
-	useState
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
 
 export default function Toolbar() {
-	const [isSponsorModalOpen, setIsSponsorModalOpen] = useState(false);
+	const [isSponsorModalOpen, setIsSponsorModalOpen] = useState<boolean>(false);
 
 	// Editor store
 	const selectedColor = useEditorStore((state) => state.selectedColor);
@@ -33,21 +29,23 @@ export default function Toolbar() {
 	const setCurrentBpm = useEditorStore((state) => state.setCurrentBpm);
 	const setUploadData = useEditorStore((state) => state.setUploadData);
 	const updateLights = useEditorStore((state) => state.updateLights);
-	
+
 	// Settings store
 	const settings = useSettingsStore((state) => state.settings);
 	const updateSettings = useSettingsStore((state) => state.updateSettings);
-	
+
 	// Sponsor store
 	const sponsor = useSponsorStore();
-	const setSponsorLastSeen = useSponsorStore((state) => state.setSponsorLastSeen);
+	const setSponsorLastSeen = useSponsorStore(
+		(state) => state.setSponsorLastSeen,
+	);
 
 	const { colors } = useColorStore();
-	
-	const hiddenFileInput = useRef(null);
+
+	const hiddenFileInput = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		const handleKeypress = (e) => {
+		const handleKeypress = (e: KeyboardEvent) => {
 			if (document.querySelector("input:focus")) return;
 
 			const key = e.key;
@@ -70,13 +68,13 @@ export default function Toolbar() {
 	}, [setSelectedColor, selectedColor, colors]);
 
 	const handleFileUpload = useCallback(
-		(e) => {
-			const file = e.target.files[0];
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const file = e.target.files?.[0];
 			if (!file) return;
 
 			const reader = new FileReader();
 			reader.onload = async (e) => {
-				const content = e.target.result;
+				const content = (e.target as FileReader).result;
 
 				Sentry.addBreadcrumb({
 					category: "file",
@@ -84,7 +82,9 @@ export default function Toolbar() {
 					level: "info",
 				});
 
-				hiddenFileInput.current.value = null;
+				if (hiddenFileInput.current) {
+					hiddenFileInput.current.value = "";
+				}
 
 				const result = await uploadFile(content);
 				if (!result) {
@@ -142,75 +142,86 @@ export default function Toolbar() {
 			inputValue: sirenId,
 			inputPlaceholder: "Siren ID",
 			showCancelButton: true,
-			preConfirm: (newSirenId) => {
+			preConfirm: (newSirenId: string) => {
 				if (!newSirenId)
 					return Modal.showValidationMessage("Please, enter a Siren ID.");
 				return newSirenId;
 			},
-		}).then(({ isConfirmed, value: newSirenId }) => {
-			if (!isConfirmed || !newSirenId) return;
+		}).then(
+			({
+				isConfirmed,
+				value: newSirenId,
+			}: { isConfirmed: boolean; value: string }) => {
+				if (!isConfirmed || !newSirenId) return;
 
-			Modal.fire({
-				title: "Enter the Siren Name",
-				input: "text",
-				inputValue: sirenName,
-				inputPlaceholder: "Siren name",
-				showCancelButton: true,
-				preConfirm: (newSirenName) => {
-					if (!newSirenName)
-						return Modal.showValidationMessage("Please, enter a Siren Name.");
-					return newSirenName;
-				},
-			}).then(({ isConfirmed, value: newSirenName }) => {
-				if (!isConfirmed || !newSirenName) return;
-
-				Sentry.addBreadcrumb({
-					category: "file",
-					message: "Requesting file export",
-					level: "info",
-				});
-
-				const [fileContent, jsonFileContent] = downloadFile(
-					{
-						sirenId,
-						newSirenId,
-						newSirenName,
-						uploadedFile,
-						lights,
-						bpm,
+				Modal.fire({
+					title: "Enter the Siren Name",
+					input: "text",
+					inputValue: sirenName,
+					inputPlaceholder: "Siren name",
+					showCancelButton: true,
+					preConfirm: (newSirenName: string) => {
+						if (!newSirenName)
+							return Modal.showValidationMessage("Please, enter a Siren Name.");
+						return newSirenName;
 					},
-					settings,
-					`${uuidv4()}.meta`,
-				) || [];
-				if (!fileContent) return;
+				}).then(
+					({
+						isConfirmed,
+						value: newSirenName,
+					}: { isConfirmed: boolean; value: string }) => {
+						if (!isConfirmed || !newSirenName) return;
 
-				event({
-					action: "file_export",
-					category: "editor",
-					label: `${settings.totalColumns.value} columns - ${bpm} BPM`,
-				});
+						Sentry.addBreadcrumb({
+							category: "file",
+							message: "Requesting file export",
+							level: "info",
+						});
 
-				setUploadData({
-					id: newSirenId,
-					name: newSirenName,
-					file: jsonFileContent,
-				});
+						const [fileContent, jsonFileContent] =
+							downloadFile(
+								{
+									sirenId,
+									newSirenId,
+									newSirenName,
+									uploadedFile,
+									lights,
+									bpm,
+								},
+								settings,
+								`${uuidv4()}.meta`,
+							) || [];
+						if (!fileContent) return;
 
-				if (
-					!sponsor.lastSeen ||
-					Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
-				) {
-					setIsSponsorModalOpen(true);
-					setSponsorLastSeen(Date.now());
-				}
+						event({
+							action: "file_export",
+							category: "editor",
+							label: `${settings.totalColumns.value} columns - ${bpm} BPM`,
+						});
 
-				Sentry.addBreadcrumb({
-					category: "file",
-					message: "File exported!",
-					level: "info",
-				});
-			});
-		});
+						setUploadData({
+							id: newSirenId,
+							name: newSirenName,
+							file: jsonFileContent,
+						});
+
+						if (
+							!sponsor.lastSeen ||
+							Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
+						) {
+							setIsSponsorModalOpen(true);
+							setSponsorLastSeen(Date.now());
+						}
+
+						Sentry.addBreadcrumb({
+							category: "file",
+							message: "File exported!",
+							level: "info",
+						});
+					},
+				);
+			},
+		);
 	}, [
 		lights,
 		sponsor,
@@ -220,7 +231,7 @@ export default function Toolbar() {
 		settings,
 		uploadedFile,
 		setUploadData,
-		setSponsorLastSeen
+		setSponsorLastSeen,
 	]);
 
 	const handleResetEditor = useCallback(() => {
@@ -229,7 +240,7 @@ export default function Toolbar() {
 			title: "Reset editor",
 			text: "Are you sure you want to reset the editor? This action cannot be undone.",
 			showCancelButton: true,
-		}).then(({ isConfirmed }) => {
+		}).then(({ isConfirmed }: { isConfirmed: boolean }) => {
 			if (!isConfirmed) return;
 
 			Modal.fire({
@@ -248,19 +259,45 @@ export default function Toolbar() {
 	}, []);
 
 	const handleUpdateBPM = useCallback(
-		(e) => {
+		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const target = e.target;
 			if (!target) return;
 
-			let value = target.value;
+			let value = Number.parseInt(target.value);
+			if (Number.isNaN(value)) value = 120;
 			if (value < 0) value = 0;
 
+			// @ts-expect-error
 			target.value = value;
 
-			setCurrentBpm(target.value);
+			setCurrentBpm(value);
 		},
 		[setCurrentBpm],
 	);
+
+	const handleCreateCustomColor = useCallback(() => {
+		Modal.fire({
+			title: "Create Custom Color",
+			html: `
+				<input id="swal-color-picker" type="color" />
+			`,
+			showCancelButton: true,
+			preConfirm: () => {
+				const value = (document.getElementById("swal-color-picker") as HTMLInputElement).value;
+				if (!/^#?[0-9a-fA-F]{6}$/.test(value)) {
+					return Modal.showValidationMessage("Invalid format. Use HEX, e.g.: #FF00FF");
+				}
+
+				return value.replace("#", "").toUpperCase();
+			}
+		}).then(({ isConfirmed, value }: { isConfirmed: boolean; value: string }) => {
+			if(!isConfirmed) return;
+
+			const carcolsColor = `0xFF${value.toUpperCase()}`;
+			const key = createColor(carcolsColor);
+			setSelectedColor(key);
+		})
+	}, [setSelectedColor]);
 
 	return (
 		<>
@@ -291,7 +328,9 @@ export default function Toolbar() {
 						type="button"
 						id="toolbar-import"
 						className="w-full rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
-						onClick={() => hiddenFileInput.current.click()}
+						onClick={() =>
+							(hiddenFileInput.current as HTMLInputElement).click()
+						}
 					>
 						Import
 					</button>
@@ -359,6 +398,7 @@ export default function Toolbar() {
 								return (
 									<div
 										key={color}
+										data-test-id={`toolbar-color-${color}`}
 										className="flex flex-col items-center text-white text-xs"
 									>
 										<button
@@ -383,6 +423,26 @@ export default function Toolbar() {
 									</div>
 								);
 							})}
+
+						<div
+							key={"custom-color-create"}
+							className="flex flex-col items-center text-white text-xs"
+						>
+							<button
+								data-test-id="toolbar-create-custom-color"
+								type="button"
+								className={
+									"relative mx-auto flex aspect-square w-12 items-center justify-center rounded-lg border border-white/5 bg-white/5 transition-all"
+								}
+								onClick={handleCreateCustomColor}
+							>
+								<FontAwesomeIcon
+									icon={faPlus}
+									className="text-2xl drop-shadow-[0px_2px_1px_#000]"
+								/>
+							</button>
+							Custom
+						</div>
 					</div>
 				</div>
 
@@ -397,8 +457,11 @@ export default function Toolbar() {
 						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
 						{Object.entries(settings)
-							.filter(([, settingsData]) => !settingsData.unlisted && typeof settingsData === "object")
-							.map(([settingsId, settingsData]) => (
+							.filter(
+								([, settingsData]: [string, any]) =>
+									!settingsData.unlisted && typeof settingsData === "object",
+							)
+							.map(([settingsId, settingsData]: [string, any]) => (
 								<div key={settingsId} className="flex flex-col gap-y-1">
 									<div className="flex items-center justify-between gap-x-2">
 										<input

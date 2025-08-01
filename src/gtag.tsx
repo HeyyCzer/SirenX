@@ -11,7 +11,7 @@ export const event = ({ action, category, label, value }: {
 	action: string;
 	category: string;
 	label: string;
-	value: number;
+	value?: number;
 }) => {
 	if (!GA_TRACKING_ID) return;
 	window.gtag("event", action, {

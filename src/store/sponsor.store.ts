@@ -4,6 +4,7 @@ import { STORE_KEY } from "./constants";
 
 interface SponsorState {
 	lastSeen?: number;
+	setSponsorLastSeen: (value: number) => void;
 }
 
 export const useSponsorStore = create<SponsorState>()(
