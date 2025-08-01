@@ -67,7 +67,7 @@ export default function Hero({ heroBackgroundClass }) {
         <div>
           <Image
             unoptimized
-            src={"/images/screenshot.png"}
+            src={"/images/home/screenshot.gif"}
             alt="Screenshot"
             className="hidden w-full min-w-[500px] rounded-lg border border-gray-700/70 bg-gray-500/20 p-2 opacity-80 xl:block xl:max-w-[800px] 2xl:max-w-[900px]"
           />
