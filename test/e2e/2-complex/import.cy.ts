@@ -94,6 +94,6 @@ context("Importing", () => {
 		cy.get("@fileInput").should("not.be.visible");
 		cy.get("@fileInput").selectFile("./test/assets/carcols-custom-colors.meta", { force: true });
 
-		cy.get("#toolbar-colors").children().should("have.length", 10);
+		cy.get("#toolbar-colors").children().should("have.length", 10 + 1); // 10 imported colors + 1 custom color create button
 	});
 });
