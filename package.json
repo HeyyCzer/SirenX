@@ -21,7 +21,7 @@
 		"@spotlightjs/spotlight": "^3.0.1",
 		"babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
 		"motion": "^11.14.4",
-		"next": "15.4.5",
+		"next": "15.4.7",
 		"react": "^19.0.0",
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
