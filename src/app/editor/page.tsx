@@ -1,7 +1,8 @@
 "use client";
 
-import FeedbackWidget from "@/app/editor/components/SentryFeedback";
+// import FeedbackWidget from "@/app/editor/components/SentryFeedback";
 import MainLayout from "@/components/MainLayout";
+import { restoreCustomColors } from "@/services/color-manager.service";
 import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
 import { loadBuyMeCoffeeWidget } from "@/utils/donations";
 import dynamic from "next/dynamic";
@@ -38,6 +39,7 @@ const EditorTutorial = dynamic(() => import("./components/Tutorial"), {
 export default function EditorPage() {
 	useEffect(() => {
 		loadBuyMeCoffeeWidget();
+		restoreCustomColors();
 	}, []);
 
 	usePreventContextMenu();
@@ -45,7 +47,7 @@ export default function EditorPage() {
 
 	return (
 		<MainLayout hideFooter>
-			<FeedbackWidget key={"sentry-feedback"} />
+			{/* <FeedbackWidget key={"sentry-feedback"} /> */}
 
 			<DndProvider backend={HTML5Backend}>
 				<Suspense fallback={null}>
