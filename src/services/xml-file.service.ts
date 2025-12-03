@@ -2,10 +2,27 @@ import { Modal } from '@/utils/modal';
 import { getRandomInt } from '@/utils/random';
 import * as Sentry from '@sentry/nextjs';
 import { xml2json } from 'xml-js';
-import { buildLights, exportLights } from './lights.controller';
+import { buildSirenData, exportSirenData } from './siren-transformer.service';
 
-const uploadFile = async (fileContent) => {
-	let xmlJson;
+interface SirenData {
+	id: { $: { value: string } };
+	name?: { _text: string };
+	sirens: {
+		Item: unknown | unknown[];
+	};
+	sequencerBpm: { $: { value: string } };
+}
+
+interface UploadedFileJson {
+	CVehicleModelInfoVarGlobal?: {
+		Sirens?: {
+			Item?: SirenData | SirenData[];
+		};
+	};
+}
+
+export const importXmlFile = async (fileContent: string) => {
+	let xmlJson: string;
 	try {
 		xmlJson = xml2json(fileContent, { compact: true, attributesKey: "$" });
 	} catch {
@@ -16,7 +33,7 @@ const uploadFile = async (fileContent) => {
 		});
 	}
 
-	const json = JSON.parse(xmlJson);
+	const json: UploadedFileJson = JSON.parse(xmlJson);
 	let sirens = json?.CVehicleModelInfoVarGlobal?.Sirens?.Item;
 	if (!sirens) {
 		return void Modal.fire({
@@ -32,15 +49,14 @@ const uploadFile = async (fileContent) => {
 	});
 
 	const hasMultipleSirens = Array.isArray(sirens);
-	if (!hasMultipleSirens) sirens = [sirens];
+	const sirensArray: SirenData[] = hasMultipleSirens ? sirens : [sirens];
 
-	let selectedSiren = sirens[0];
-	if (sirens.length > 1) {
-		let sirenOptions;
+	let selectedSiren: SirenData | undefined = sirensArray[0];
+	if (sirensArray.length > 1) {
+		let sirenOptions: Record<string, string>;
 		try {
-			// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
-			sirenOptions = sirens.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {});
-			
+			sirenOptions = sirensArray.reduce((acc, siren) => ({ ...acc, [siren.id.$.value]: `${siren?.name?._text || "NO-NAME"} (ID: ${siren.id.$.value})` }), {} as Record<string, string>);
+
 		} catch(err) {
 			Sentry.captureException(err, { level: "warning" });
 
@@ -59,61 +75,55 @@ const uploadFile = async (fileContent) => {
 
 			showCancelButton: true,
 			confirmButtonText: "Let's edit this!"
-		}).then(({ isConfirmed, value }) => {
-			if (!isConfirmed) return;
+		}).then((result: { isConfirmed: boolean; value: string }) => {
+			if (!result.isConfirmed) return;
 
-			selectedSiren = sirens.find((siren) => siren.id.$.value === value);
+			selectedSiren = sirensArray.find((siren) => siren.id.$.value === result.value);
 		});
 	}
 
 	if (!selectedSiren) return;
 	try {
-		return buildLights(selectedSiren, json);
+		return buildSirenData(selectedSiren as any, json);
 	} catch (err) {
 		Sentry.captureException(err, { level: "warning" });
 
 		void Modal.fire({
 			icon: 'error',
 			title: 'Error while importing',
-			text: err.customMessage || 'Failed to load your file. Are you sure this is a valid carcols.meta file?'
+			text: (err as { customMessage?: string }).customMessage || 'Failed to load your file. Are you sure this is a valid carcols.meta file?'
 		});
 	}
 }
 
-const downloadFile = (editor, settings, fileName) => {
+export const exportXmlFile = (editor: any, settings: any, fileName: string) => {
 	const editorClone = JSON.parse(JSON.stringify(editor));
 	if (!editorClone.sirenId) {
 		editorClone.sirenId = getRandomInt(100, 99999)
 	}
 
 	try {
-		const [content, jsonFileContent] = exportLights(editorClone, settings);
-	
+		const [content, jsonFileContent] = exportSirenData(editorClone, settings);
+
 		const element = document.createElement('a');
 		element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(content)}`);
 		element.setAttribute('download', fileName);
-	
+
 		element.style.display = 'none';
 		document.body.appendChild(element);
-	
+
 		element.click();
-	
+
 		document.body.removeChild(element);
-	
+
 		return [content, jsonFileContent];
 	} catch (err) {
-		Sentry.captureMessage(`Error while exporting file: ${err.customMessage || "No message"}`, { level: 'warning' });
+		Sentry.captureMessage(`Error while exporting file: ${(err as { customMessage?: string }).customMessage || "No message"}`, { level: 'warning' });
 
 		return void Modal.fire({
 			icon: 'error',
 			title: 'Error while exporting',
-			text: err.customMessage || 'Error while trying to export the file. Please, try again or reset the editor.'
+			text: (err as { customMessage?: string }).customMessage || 'Error while trying to export the file. Please, try again or reset the editor.'
 		});
 	}
 }
-
-export {
-	downloadFile,
-	uploadFile
-};
-

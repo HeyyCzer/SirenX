@@ -1,5 +1,5 @@
-import { createColor } from "@/controllers/colors.controller";
-import { downloadFile, uploadFile } from "@/controllers/file.controller";
+import { createCustomColor } from "@/services/color-manager.service";
+import { exportXmlFile, importXmlFile } from "@/services/xml-file.service";
 import { event } from "@/gtag";
 import { useColorStore } from "@/store/color.store";
 import { STORE_KEY } from "@/store/constants";
@@ -12,7 +12,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Sentry from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
 
 export default function Toolbar() {
@@ -86,7 +85,16 @@ export default function Toolbar() {
 					hiddenFileInput.current.value = "";
 				}
 
-				const result = await uploadFile(content);
+				if (typeof content !== 'string') {
+					Sentry.addBreadcrumb({
+						category: "file",
+						message: "The imported file content is not a string",
+						level: "error",
+					});
+					return;
+				}
+
+				const result = await importXmlFile(content);
 				if (!result) {
 					Sentry.addBreadcrumb({
 						category: "file",
@@ -179,7 +187,7 @@ export default function Toolbar() {
 						});
 
 						const [fileContent, jsonFileContent] =
-							downloadFile(
+							exportXmlFile(
 								{
 									sirenId,
 									newSirenId,
@@ -189,7 +197,7 @@ export default function Toolbar() {
 									bpm,
 								},
 								settings,
-								`${uuidv4()}.meta`,
+								`${crypto.randomUUID()}.meta`,
 							) || [];
 						if (!fileContent) return;
 
@@ -294,7 +302,7 @@ export default function Toolbar() {
 			if(!isConfirmed) return;
 
 			const carcolsColor = `0xFF${value.toUpperCase()}`;
-			const key = createColor(carcolsColor);
+			const key = createCustomColor(carcolsColor);
 			setSelectedColor(key);
 		})
 	}, [setSelectedColor]);

@@ -1,4 +1,4 @@
-import { createColor } from "@/controllers/colors.controller";
+import { createCustomColor } from "@/services/color-manager.service";
 import { useEditorStore } from "@/store/editor.store";
 import { Suspense, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
@@ -27,7 +27,7 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 			for (const light of Object.values(row)) {
 				if (!light?.color.includes("CUSTOM_")) continue;
 				
-				createColor(light.color.replace("CUSTOM_", ""));
+				createCustomColor(light.color.replace("CUSTOM_", ""));
 			}
 		}
 	}, [lightRows]);

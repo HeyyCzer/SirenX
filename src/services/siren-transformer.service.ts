@@ -2,16 +2,52 @@ import DeltaEnum from "@/enum/direction.enum";
 import { useColorStore } from "@/store/color.store";
 import { defaultCarcolsLightModel, defaultLightModel } from "@/store/constants";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
-import { addBreadcrumb } from "@sentry/nextjs";
 import { json2xml } from "xml-js";
-import { createColor } from "./colors.controller";
+import { createCustomColor } from "./color-manager.service";
+import { cloneNestedKeys, createNestedKeys } from "./xml-helpers.service";
 
-const buildLights = (sirenSelected, fullFile) => {
+interface SirenItem {
+	flashiness: {
+		sequencer: { $: { value: string } };
+		delta: { $: { value: string } };
+		multiples: { $: { value: string } };
+	};
+	intensity: { $: { value: string } };
+	scaleFactor: { $: { value: string } };
+	color: { $: { value: string } };
+}
+
+interface SirenData {
+	id: { $: { value: string } };
+	name?: { _text: string };
+	sirens: {
+		Item: SirenItem | SirenItem[];
+	};
+	sequencerBpm: { $: { value: string } };
+}
+
+interface LightCell {
+	color: string;
+	direction: number;
+	multiples: number;
+	intensity: number;
+	scaleFactor: number;
+}
+
+interface EditorState {
+	bpm: number;
+	id: string;
+	name: string;
+	file: any;
+	lights: LightCell[][];
+}
+
+export const buildSirenData = (sirenSelected: SirenData, fullFile: any): EditorState => {
 	const sirenItems = Array.isArray(sirenSelected.sirens.Item)
 		? sirenSelected.sirens.Item
 		: [sirenSelected.sirens.Item];
 
-	const builtSirens = [];
+	const builtSirens: LightCell[][] = [];
 	for (const columnIndex in sirenItems) {
 		const numberIndex = Number(columnIndex);
 		try {
@@ -20,13 +56,13 @@ const buildLights = (sirenSelected, fullFile) => {
 			const columnData = sirenItems[columnIndex];
 			const defaultModel = defaultCarcolsLightModel;
 
-			recursivelyCloneKeysIfNotExists(columnData, defaultModel);
+			cloneNestedKeys(columnData, defaultModel);
 
-			recursivelyCreateKeysIfNotExists(columnData, ["flashiness", "delta", "$", "value"], 0);
-			recursivelyCreateKeysIfNotExists(columnData, ["flashiness", "multiples", "$", "value"], 0);
-			recursivelyCreateKeysIfNotExists(columnData, ["intensity", "$", "value"], 0);
-			recursivelyCreateKeysIfNotExists(columnData, ["scaleFactor", "$", "value"], 0);
-			recursivelyCreateKeysIfNotExists(columnData, ["color", "$", "value"], 0);
+			createNestedKeys(columnData, ["flashiness", "delta", "$", "value"], 0);
+			createNestedKeys(columnData, ["flashiness", "multiples", "$", "value"], 0);
+			createNestedKeys(columnData, ["intensity", "$", "value"], 0);
+			createNestedKeys(columnData, ["scaleFactor", "$", "value"], 0);
+			createNestedKeys(columnData, ["color", "$", "value"], 0);
 
 			const direction = Number(columnData.flashiness.delta.$.value);
 			const multiples = Number(columnData.flashiness.multiples.$.value);
@@ -45,14 +81,14 @@ const buildLights = (sirenSelected, fullFile) => {
 			}
 
 			if (!color) {
-				const colorId = createColor(carcolsColor);
+				const colorId = createCustomColor(carcolsColor);
 				color = colorId;
 			}
 
 			const binarySequence = decimalToBinary(
-				columnData.flashiness.sequencer.$.value,
+				Number(columnData.flashiness.sequencer.$.value),
 			);
-			for (const row in binarySequence) {
+			for (let row = 0; row < binarySequence.length; row++) {
 				const active = binarySequence[row] === "1";
 				if (!builtSirens[row]) {
 					builtSirens[row] = [];
@@ -75,7 +111,7 @@ const buildLights = (sirenSelected, fullFile) => {
 	}
 
 	return {
-		bpm: sirenSelected.sequencerBpm.$.value,
+		bpm: Number(sirenSelected.sequencerBpm.$.value),
 		id: sirenSelected.id.$.value,
 		name: sirenSelected.name?._text ?? "SirenX-GeneratedCarcols",
 		file: fullFile,
@@ -83,14 +119,14 @@ const buildLights = (sirenSelected, fullFile) => {
 	};
 };
 
-const exportLights = (editor, settings) => {
+export const exportSirenData = (editor: any, settings: any): [string, any] => {
 	const fullFile = JSON.parse(JSON.stringify(editor.uploadedFile));
 
 	const lights = editor.lights;
 
 	let siren = fullFile?.CVehicleModelInfoVarGlobal?.Sirens.Item;
 	if (Array.isArray(siren)) {
-		siren = siren.find((siren) => siren.id.$.value === editor.sirenId);
+		siren = siren.find((siren: any) => siren.id.$.value === editor.sirenId);
 	}
 
 	siren.id.$.value = editor.newSirenId;
@@ -108,7 +144,7 @@ const exportLights = (editor, settings) => {
 
 	const Colors = useColorStore.getState().colors;
 
-	const sequencer = {};
+	const sequencer: Record<number, string> = {};
 	for (let rowIndex = 0; rowIndex < 32; rowIndex++) {
 		let row = lights[rowIndex];
 		if (!row) row = [];
@@ -140,21 +176,21 @@ const exportLights = (editor, settings) => {
 			if (light?.color === "none" && sequencer[columnIndex].includes("1"))
 				continue;
 
-			recursivelyCreateKeysIfNotExists(
+			createNestedKeys(
 				columnData,
 				["flashiness", "delta", "$", "value"],
 				-1,
 				`@column${columnIndex + 1}`
 			);
-			recursivelyCreateKeysIfNotExists(
+			createNestedKeys(
 				columnData,
 				["flashiness", "multiples", "$", "value"],
 				-1,
 				`@column${columnIndex + 1}`
 			);
-			recursivelyCreateKeysIfNotExists(columnData, ["intensity", "$", "value"], -1, `@column${columnIndex + 1}`);
-			recursivelyCreateKeysIfNotExists(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
-			recursivelyCreateKeysIfNotExists(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
+			createNestedKeys(columnData, ["intensity", "$", "value"], -1, `@column${columnIndex + 1}`);
+			createNestedKeys(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
+			createNestedKeys(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
 
 			columnData.flashiness.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
@@ -176,78 +212,3 @@ const exportLights = (editor, settings) => {
 		fullFile,
 	];
 };
-
-function recursivelyCreateKeysIfNotExists(obj, keys, value, path = "@") {
-	if (keys.length === 0) return;
-	if (keys.length === 1) {
-		if (obj[keys[0]] !== undefined) return;
-
-		const debugData = {
-			key: keys[0],
-			path,
-			value,
-			object: obj,
-		};
-
-		console.debug(`Creating key '${keys[0]}' in object`, debugData);
-		addBreadcrumb({
-			message: `Creating key '${keys[0]}'`,
-			data: debugData,
-		});
-
-		obj[keys[0]] = value;
-		return;
-	}
-
-	const currentKey = keys[0];
-	if (!obj[currentKey] || typeof obj[currentKey] !== "object") {
-		obj[currentKey] = {};
-	}
-
-	recursivelyCreateKeysIfNotExists(obj[currentKey], keys.slice(1), value, `${path}.${currentKey}`);
-}
-
-
-function recursivelyCloneKeysIfNotExists(source, target, path = "@") {
-	if (!target || typeof target !== 'object' || Array.isArray(target)) {
-		return;
-	}
-
-	if (!source || typeof source !== 'object' || Array.isArray(source)) {
-		return;
-	}
-
-	for (const key in target) {
-		// biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-		if (target.hasOwnProperty(key)) {
-			const currentPath = path === "@" ? key : `${path}.${key}`;
-
-			// biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-			if (!source.hasOwnProperty(key)) {
-				source[key] = JSON.parse(JSON.stringify(target[key]));
-
-				const debugData = {
-					key,
-					value: target[key],
-					path: currentPath,
-					sourceObject: source,
-					targetObject: target,
-				};
-
-				console.debug(`Cloning key '${key}' from target to source at path '${currentPath}'`, debugData);
-				addBreadcrumb({
-					message: `Cloning key '${key}' from target to source`,
-					data: debugData,
-				});
-			} else {
-				if (typeof source[key] === 'object' && !Array.isArray(source[key]) &&
-					typeof target[key] === 'object' && !Array.isArray(target[key])) {
-					recursivelyCloneKeysIfNotExists(source[key], target[key], currentPath);
-				}
-			}
-		}
-	}
-}
-
-export { buildLights, exportLights };
-
