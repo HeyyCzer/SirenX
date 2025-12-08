@@ -3,6 +3,7 @@ import "./styles/globals.css";
 import "./styles/modals.css";
 
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import MotionProvider from "@/components/MotionProvider";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: {
 		<html lang="en">
 			<body className="dark bg-slate-950" suppressHydrationWarning>
 				<GoogleAnalytics />
-				{children}
+				<MotionProvider>
+					{children}
+				</MotionProvider>
 			</body>
 		</html>
 	);
