@@ -9,18 +9,16 @@ import { useSettingsStore } from "@/store/settings.store";
 import { useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 
-function getRow(initialNumber) {
-	let number = initialNumber;
-	if (number <= 0 || !Number.isInteger(number)) return;
+function getRow(number) {
+    if (!Number.isInteger(number) || number <= 0) return;
 
-	let column = "";
-	while (number > 0) {
-		const rest = (number - 1) % 26;
-		column = String.fromCharCode(rest + 65) + column;
-		number = Math.floor((number - rest - 1) / 26);
-	}
-
-	return column;
+    let col = "";
+    while (number > 0) {
+        number--; // Ajuste para base 26 "excel"
+        col = String.fromCharCode(65 + (number % 26)) + col;
+        number = Math.floor(number / 26);
+    }
+    return col;
 }
 
 const Light = ({ isCurrent = false, disabled = false, row, column }) => {
@@ -80,7 +78,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 			type={"button"}
 			id={`light-${row}-${column}`}
 			className={twMerge(
-				"group my-1 flex h-6 w-9 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none lg:h-5 lg:w-8",
+				"group my-1 flex h-6 w-9 lg:h-5 lg:w-8 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none",
 				color !== "none" && colors[color]?.editor?.default,
 				isCurrent && color !== "none" && colors[color]?.editor?.current,
 			)}

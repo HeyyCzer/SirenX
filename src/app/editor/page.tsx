@@ -2,6 +2,7 @@
 
 // import FeedbackWidget from "@/app/editor/components/SentryFeedback";
 import MainLayout from "@/components/MainLayout";
+import MeshGradient from "@/components/MeshGradient";
 import { restoreCustomColors } from "@/services/color-manager.service";
 import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
 import { loadBuyMeCoffeeWidget } from "@/utils/donations";
@@ -9,7 +10,6 @@ import dynamic from "next/dynamic";
 import { Suspense, useEffect } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import styles from "./Editor.module.css";
 
 const Editor = dynamic(() => import("@/app/editor/components/Editor"), {
 	ssr: false,
@@ -47,6 +47,7 @@ export default function EditorPage() {
 
 	return (
 		<MainLayout hideFooter>
+			<MeshGradient />
 			{/* <FeedbackWidget key={"sentry-feedback"} /> */}
 
 			<DndProvider backend={HTML5Backend}>
@@ -57,7 +58,7 @@ export default function EditorPage() {
 					<EditorTutorial />
 				</Suspense>
 
-				<div className={`${styles.background} min-h-screen px-12 py-9`}>
+				<div className="relative min-h-screen px-6 py-9 lg:px-12">
 					<div className="flex justify-between gap-x-6">
 						<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
 							<Editor />

@@ -33,7 +33,7 @@ export default function EditorGrid({ totalColumns, currentRow }) {
 	}, [lightRows]);
 
 	return (
-		<div className="w-[inherit]">
+		<div className="w-[inherit] rounded-xl border border-white/10 bg-white/5 p-2 backdrop-blur-sm">
 			<div
 				className={"flex w-[inherit] justify-around gap-x-1 rounded-lg px-1"}
 			>

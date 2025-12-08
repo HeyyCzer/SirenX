@@ -19,12 +19,14 @@ export default function EditorPreview({ totalColumns, currentRow, setCurrentRow,
   );
   return (
     <div className="w-[inherit]">
-      <div>
-        <h2 className="text-center font-light text-gray-300/60 text-xs uppercase tracking-[2px]">
+      <div className="mb-2 flex items-center justify-center gap-x-2">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/20" />
+        <h2 className="font-light text-white/40 text-xs uppercase tracking-[3px]">
           Preview
         </h2>
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/20" />
       </div>
-      <div className="flex gap-x-1 px-1">
+      <div className="flex gap-x-1 rounded-lg border border-white/10 bg-white/5 p-2 backdrop-blur-sm">
         {editorColumns.map((_, columnIndex) => (
           <Light
             isCurrent
@@ -36,8 +38,6 @@ export default function EditorPreview({ totalColumns, currentRow, setCurrentRow,
           />
         ))}
       </div>
-
-      <hr className="mx-auto mt-2 w-1/2 border-gray-300/30" />
     </div>
   );
 }
