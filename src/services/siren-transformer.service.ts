@@ -178,6 +178,12 @@ export const exportSirenData = (editor: any, settings: any): [string, any] => {
 
 			createNestedKeys(
 				columnData,
+				["rotation", "delta", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`
+			);
+			createNestedKeys(
+				columnData,
 				["flashiness", "delta", "$", "value"],
 				-1,
 				`@column${columnIndex + 1}`
@@ -192,6 +198,7 @@ export const exportSirenData = (editor: any, settings: any): [string, any] => {
 			createNestedKeys(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
 			createNestedKeys(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
 
+			columnData.rotation.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
 			columnData.intensity.$.value = light.intensity;
