@@ -16,14 +16,14 @@ Sentry.init({
 			maskAllText: false,
 			blockAllMedia: false,
 		}),
-		Sentry.feedbackAsyncIntegration({
-			autoInject: false,
+		// Sentry.feedbackAsyncIntegration({
+		// 	autoInject: false,
 
-			colorScheme: "dark",
-			isEmailRequired: true,
+		// 	colorScheme: "dark",
+		// 	isEmailRequired: true,
 
-			showBranding: false,
-		}),
+		// 	showBranding: false,
+		// }),
 	],
 
 	beforeSend: (event, hint) => {
