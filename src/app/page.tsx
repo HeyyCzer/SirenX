@@ -4,13 +4,14 @@ import AboutSection from "@/app/components/AboutSection";
 import FeaturesSection from "@/app/components/FeaturesSection";
 import Hero from "@/app/components/Hero";
 import MainLayout from "@/components/MainLayout";
-import styles from "./Home.module.css";
+import MeshGradient from "@/components/MeshGradient";
 
 export default function Home() {
 	return (
 		<MainLayout>
-			<main className="min-h-screen">
-				<Hero heroBackgroundClass={styles.heroBackground} />
+			<MeshGradient />
+			<main className="relative min-h-screen">
+				<Hero />
 				<AboutSection />
 				<FeaturesSection />
 			</main>

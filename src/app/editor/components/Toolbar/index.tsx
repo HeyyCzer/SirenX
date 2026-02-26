@@ -1,5 +1,5 @@
-import { createColor } from "@/controllers/colors.controller";
-import { downloadFile, uploadFile } from "@/controllers/file.controller";
+import { createCustomColor } from "@/services/color-manager.service";
+import { exportXmlFile, importXmlFile } from "@/services/xml-file.service";
 import { event } from "@/gtag";
 import { useColorStore } from "@/store/color.store";
 import { STORE_KEY } from "@/store/constants";
@@ -7,12 +7,11 @@ import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 import { useSponsorStore } from "@/store/sponsor.store";
 import { Modal } from "@/utils/modal";
-import { faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRotateRight, faCheck, faFileExport, faFileImport, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Sentry from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { v4 as uuidv4 } from "uuid";
 import SponsorModal from "../SponsorModal";
 
 export default function Toolbar() {
@@ -86,7 +85,16 @@ export default function Toolbar() {
 					hiddenFileInput.current.value = "";
 				}
 
-				const result = await uploadFile(content);
+				if (typeof content !== 'string') {
+					Sentry.addBreadcrumb({
+						category: "file",
+						message: "The imported file content is not a string",
+						level: "error",
+					});
+					return;
+				}
+
+				const result = await importXmlFile(content);
 				if (!result) {
 					Sentry.addBreadcrumb({
 						category: "file",
@@ -179,7 +187,7 @@ export default function Toolbar() {
 						});
 
 						const [fileContent, jsonFileContent] =
-							downloadFile(
+							exportXmlFile(
 								{
 									sirenId,
 									newSirenId,
@@ -189,7 +197,7 @@ export default function Toolbar() {
 									bpm,
 								},
 								settings,
-								`${uuidv4()}.meta`,
+								`${crypto.randomUUID()}.meta`,
 							) || [];
 						if (!fileContent) return;
 
@@ -294,7 +302,7 @@ export default function Toolbar() {
 			if(!isConfirmed) return;
 
 			const carcolsColor = `0xFF${value.toUpperCase()}`;
-			const key = createColor(carcolsColor);
+			const key = createCustomColor(carcolsColor);
 			setSelectedColor(key);
 		})
 	}, [setSelectedColor]);
@@ -308,7 +316,7 @@ export default function Toolbar() {
 
 			<aside
 				id="toolbar"
-				className="mt-14 flex w-full min-w-[250px] max-w-[300px] flex-col gap-y-5 rounded-xl bg-slate-900 px-6 pb-6 drop-shadow-lg"
+				className="mt-14 flex w-full min-w-[250px] max-w-[300px] flex-col gap-y-5 rounded-2xl border border-white/10 bg-white/5 px-6 pb-6 backdrop-blur-xl drop-shadow-lg"
 			>
 				<input
 					type="file"
@@ -320,35 +328,34 @@ export default function Toolbar() {
 
 				<div className="flex justify-center py-6 font-medium text-white uppercase">
 					<h1>Tool</h1>
-					<h1 className="font-semibold text-gradient-primary">Box</h1>
+					<h1 className="font-semibold text-emerald-400">Box</h1>
 				</div>
 
 				<div className="flex flex-col gap-y-1.5">
 					<button
-						type="button"
+						className="group flex justify-center items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-6 py-1.5 font-semibold text-sm text-emerald-400 uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-400/10"
 						id="toolbar-import"
-						className="w-full rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
 						onClick={() =>
 							(hiddenFileInput.current as HTMLInputElement).click()
 						}
 					>
+						<FontAwesomeIcon icon={faFileImport} className="transition-transform group-hover:scale-110" />
 						Import
 					</button>
 					<button
-						type="button"
+						className="group flex justify-center items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-1.5 font-semibold text-sm text-white uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10"
 						id="toolbar-export"
-						disabled={!settings.oneColorPerColumn.value}
-						className="w-full rounded-lg bg-gradient-to-r from-orange-500 to-yellow-500 py-1 font-semibold text-sm text-white uppercase tracking-[2px] disabled:cursor-not-allowed disabled:from-gray-500 disabled:to-gray-500 disabled:text-gray-400"
 						onClick={handleDownloadFile}
 					>
+						<FontAwesomeIcon icon={faFileExport} className="transition-transform group-hover:scale-110" />
 						Export
 					</button>
 					<button
-						type="button"
+						className="group flex justify-center items-center gap-2 rounded-lg border border-rose-500/20 bg-rose-500/5 px-6 py-1.5 font-semibold text-sm text-rose-500 uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-rose-500/40 hover:bg-rose-500/10"
 						id="toolbar-reset"
-						className="w-full rounded-lg bg-gradient-to-r from-red-600 to-red-800 py-1 font-semibold text-sm text-white uppercase tracking-[2px]"
 						onClick={handleResetEditor}
 					>
+						<FontAwesomeIcon icon={faArrowRotateRight} className="transition-transform group-hover:scale-110" />
 						Reset editor
 					</button>
 				</div>

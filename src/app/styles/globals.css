@@ -94,3 +94,8 @@ input[type="color"] {
 		padding: 0;
 	}
 }
+
+/* Custom Color Variables System */
+:root {
+	/* Custom colors are dynamically added here via JavaScript */
+}

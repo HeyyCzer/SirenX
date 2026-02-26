@@ -1,4 +1,4 @@
-import { createColor } from "@/controllers/colors.controller";
+import { createCustomColor } from "@/services/color-manager.service";
 import DefaultCarcols from "@/default_carcols.json";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -43,7 +43,7 @@ if (typeof window !== "undefined") {
 			for (const row of Object.values(preloadedEditor.lights ?? {})) {
 				for (const item of Object.values(row ?? {})) {
 					if (item?.color?.startsWith("CUSTOM_")) {
-						createColor(item.color.replace("CUSTOM_", ""));
+						createCustomColor(item.color.replace("CUSTOM_", ""));
 					}
 				}
 			}

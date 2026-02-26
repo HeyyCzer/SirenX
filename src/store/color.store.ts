@@ -16,6 +16,15 @@ interface ColorState {
 			carcols: {
 				color: string;
 			};
+			css?: {
+				rgb: {
+					r: number;
+					g: number;
+					b: number;
+				};
+				textColor: string;
+				varPrefix: string;
+			};
 		};
 	};
 }
