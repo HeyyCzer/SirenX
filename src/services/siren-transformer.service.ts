@@ -1,8 +1,8 @@
+import { json2xml } from "xml-js";
 import DeltaEnum from "@/enum/direction.enum";
 import { useColorStore } from "@/store/color.store";
 import { defaultCarcolsLightModel, defaultLightModel } from "@/store/constants";
 import { binaryToDecimal, decimalToBinary } from "@/utils/binary";
-import { json2xml } from "xml-js";
 import { createCustomColor } from "./color-manager.service";
 import { cloneNestedKeys, createNestedKeys } from "./xml-helpers.service";
 
@@ -42,7 +42,10 @@ interface EditorState {
 	lights: LightCell[][];
 }
 
-export const buildSirenData = (sirenSelected: SirenData, fullFile: any): EditorState => {
+export const buildSirenData = (
+	sirenSelected: SirenData,
+	fullFile: any,
+): EditorState => {
 	const sirenItems = Array.isArray(sirenSelected.sirens.Item)
 		? sirenSelected.sirens.Item
 		: [sirenSelected.sirens.Item];
@@ -59,7 +62,11 @@ export const buildSirenData = (sirenSelected: SirenData, fullFile: any): EditorS
 			cloneNestedKeys(columnData, defaultModel);
 
 			createNestedKeys(columnData, ["flashiness", "delta", "$", "value"], 0);
-			createNestedKeys(columnData, ["flashiness", "multiples", "$", "value"], 0);
+			createNestedKeys(
+				columnData,
+				["flashiness", "multiples", "$", "value"],
+				0,
+			);
 			createNestedKeys(columnData, ["intensity", "$", "value"], 0);
 			createNestedKeys(columnData, ["scaleFactor", "$", "value"], 0);
 			createNestedKeys(columnData, ["color", "$", "value"], 0);
@@ -176,30 +183,46 @@ export const exportSirenData = (editor: any, settings: any): [string, any] => {
 			if (light?.color === "none" && sequencer[columnIndex].includes("1"))
 				continue;
 
-			createNestedKeys(
-				columnData,
-				["rotation", "delta", "$", "value"],
-				-1,
-				`@column${columnIndex + 1}`
-			);
+			// createNestedKeys(
+			// 	columnData,
+			// 	["rotation", "delta", "$", "value"],
+			// 	-1,
+			// 	`@column${columnIndex + 1}`
+			// );
 			createNestedKeys(
 				columnData,
 				["flashiness", "delta", "$", "value"],
 				-1,
-				`@column${columnIndex + 1}`
+				`@column${columnIndex + 1}`,
 			);
 			createNestedKeys(
 				columnData,
 				["flashiness", "multiples", "$", "value"],
 				-1,
-				`@column${columnIndex + 1}`
+				`@column${columnIndex + 1}`,
 			);
-			createNestedKeys(columnData, ["intensity", "$", "value"], -1, `@column${columnIndex + 1}`);
-			createNestedKeys(columnData, ["scaleFactor", "$", "value"], -1, `@column${columnIndex + 1}`);
-			createNestedKeys(columnData, ["color", "$", "value"], -1, `@column${columnIndex + 1}`);
+			createNestedKeys(
+				columnData,
+				["intensity", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`,
+			);
+			createNestedKeys(
+				columnData,
+				["scaleFactor", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`,
+			);
+			createNestedKeys(
+				columnData,
+				["color", "$", "value"],
+				-1,
+				`@column${columnIndex + 1}`,
+			);
 
-			columnData.rotation.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
-			columnData.flashiness.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
+			// columnData.rotation.delta.$.value = light.direction ?? DeltaEnum.FRONT.delta;
+			columnData.flashiness.delta.$.value =
+				light.direction ?? DeltaEnum.FRONT.delta;
 			columnData.flashiness.multiples.$.value = light.multiples;
 			columnData.intensity.$.value = light.intensity;
 			columnData.scaleFactor.$.value = light.scaleFactor;
