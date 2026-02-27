@@ -95,15 +95,14 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					input: "number",
 					inputLabel: "Scale Factor",
 					inputValue: data.scaleFactor,
+					inputAttributes: {
+						min: 0,
+						step: "any",
+					},
 					showCancelButton: true,
 					preConfirm: (valueStr) => {
 						const value = Number(valueStr);
-						if (
-							!value ||
-							Number.isNaN(value) ||
-							value <= 0 ||
-							!Number.isInteger(value)
-						)
+						if (!value || Number.isNaN(value) || value <= 0)
 							return Modal.showValidationMessage("Invalid value");
 						return value;
 					},
