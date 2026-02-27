@@ -22,7 +22,7 @@ const DeltaEnum = {
 	BACK: {
 		name: "Back",
 		angle: 180,
-		// biome-ignore lint/suspicious/noApproximativeNumericConstant: <explanation>
+		// biome-ignore lint/suspicious/noApproximativeNumericConstant: Needs to be a finite number
 		delta: 3.14159265,
 		schema: [
 			[null, null, null],
