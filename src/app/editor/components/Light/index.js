@@ -1,24 +1,23 @@
-import DeltaEnum from "@/enum/direction.enum";
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useMemo } from "react";
+import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
-
+import DeltaEnum from "@/enum/direction.enum";
 import { useColorStore } from "@/store/color.store";
 import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
-import { useCallback, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
 
 function getRow(number) {
-    if (!Number.isInteger(number) || number <= 0) return;
+	if (!Number.isInteger(number) || number <= 0) return;
 
-    let col = "";
-    while (number > 0) {
-        number--; // Ajuste para base 26 "excel"
-        col = String.fromCharCode(65 + (number % 26)) + col;
-        number = Math.floor(number / 26);
-    }
-    return col;
+	let col = "";
+	while (number > 0) {
+		number--; // Ajuste para base 26 "excel"
+		col = String.fromCharCode(65 + (number % 26)) + col;
+		number = Math.floor(number / 26);
+	}
+	return col;
 }
 
 const Light = ({ isCurrent = false, disabled = false, row, column }) => {
@@ -26,10 +25,10 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 		useShallow((state) => ({
 			selectedColor: state.selectedColor,
 			updateLight: state.updateLight,
-		}))
+		})),
 	);
 	const light = useEditorStore(
-		useShallow((state) => state.lights?.[row]?.[column])
+		useShallow((state) => state.lights?.[row]?.[column]),
 	);
 
 	const { colors } = useColorStore();
@@ -78,7 +77,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 			type={"button"}
 			id={`light-${row}-${column}`}
 			className={twMerge(
-				"group my-1 flex h-6 w-9 lg:h-5 lg:w-8 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none",
+				"group my-1 flex h-6 w-9 items-center justify-center rounded-md bg-gray-200/20 font-semibold text-gray-300/50 text-xs outline-none lg:h-5 lg:w-8",
 				color !== "none" && colors[color]?.editor?.default,
 				isCurrent && color !== "none" && colors[color]?.editor?.current,
 			)}

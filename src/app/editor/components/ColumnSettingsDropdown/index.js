@@ -1,24 +1,25 @@
-import DeltaEnum from "@/enum/direction.enum";
-import ScaleFactorEnum from "@/enum/scaleFactor.enum";
-import { defaultLightModel } from "@/store/constants";
-import { useEditorStore } from "@/store/editor.store.ts";
-import { Modal } from "@/utils/modal";
 import {
 	faArrowUp,
 	faCar,
 	faChevronRight,
 	faGear,
-} from "@fortawesome/free-solid-svg-icons";
+} from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { memo, useCallback, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
+import DeltaEnum from "@/enum/direction.enum";
+import ScaleFactorEnum from "@/enum/scaleFactor.enum";
+import { defaultLightModel } from "@/store/constants";
+import { useEditorStore } from "@/store/editor.store.ts";
+import { Modal } from "@/utils/modal";
 
 const ColumnSettingsDropdown = ({ columnIndex }) => {
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
 	const data = useMemo(
-		() => lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
+		() =>
+			lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
 		[lights, columnIndex],
 	);
 
@@ -62,7 +63,12 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			showCancelButton: true,
 			preConfirm: (valueStr) => {
 				const value = Number(valueStr);
-				if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value))
+				if (
+					!value ||
+					Number.isNaN(value) ||
+					value <= 0 ||
+					!Number.isInteger(value)
+				)
 					return Modal.showValidationMessage("Invalid value");
 				return value;
 			},
@@ -92,7 +98,12 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					showCancelButton: true,
 					preConfirm: (valueStr) => {
 						const value = Number(valueStr);
-						if (!value || Number.isNaN(value) || value <= 0 || !Number.isInteger(value))
+						if (
+							!value ||
+							Number.isNaN(value) ||
+							value <= 0 ||
+							!Number.isInteger(value)
+						)
 							return Modal.showValidationMessage("Invalid value");
 						return value;
 					},
@@ -201,7 +212,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										className={twMerge(
 											"group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
 											data.scaleFactor === scaleData.value &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 										)}
 									>
 										{scaleData.name}
@@ -217,7 +228,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										!Object.values(ScaleFactorEnum)
 											.map((d) => d.value)
 											.includes(data.scaleFactor) &&
-										"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 									)}
 								>
 									Custom...
@@ -245,7 +256,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										className={twMerge(
 											"group relative select-none rounded-[3px] px-[5px] py-1 pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
 											data.direction === directionData.delta &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 										)}
 									>
 										<div className="flex items-center">
@@ -257,14 +268,18 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										<div className="mt-1.5 flex flex-col gap-y-1">
 											{directionData.schema.map((row, rowIndex) => (
 												<div
-													key={`direction-${id}-${columnIndex}-row-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-rowIndex}`}
+													key={`direction-${id}-${columnIndex}-row-${
+														// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+														rowIndex
+													}`}
 													className="flex gap-x-1"
 												>
 													{row.map((cell, cellIndex) => (
 														<div
-															key={`direction-${id}-${columnIndex}-${rowIndex}-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-cellIndex}`}
+															key={`direction-${id}-${columnIndex}-${rowIndex}-${
+																// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+																cellIndex
+															}`}
 															className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200/20"
 														>
 															{cell === "CENTER" && (
@@ -292,7 +307,7 @@ cellIndex}`}
 										!Object.values(DeltaEnum)
 											.map((d) => d.delta)
 											.includes(data.direction) &&
-										"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
+											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
 									)}
 								>
 									Custom...

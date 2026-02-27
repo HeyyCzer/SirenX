@@ -8,8 +8,6 @@ import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
 import { loadBuyMeCoffeeWidget } from "@/utils/donations";
 import dynamic from "next/dynamic";
 import { Suspense, useEffect } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 const Editor = dynamic(() => import("@/app/editor/components/Editor"), {
 	ssr: false,
@@ -50,27 +48,25 @@ export default function EditorPage() {
 			<MeshGradient />
 			{/* <FeedbackWidget key={"sentry-feedback"} /> */}
 
-			<DndProvider backend={HTML5Backend}>
-				<Suspense fallback={null}>
-					<SeparatorsContainer />
-				</Suspense>
-				<Suspense fallback={null}>
-					<EditorTutorial />
-				</Suspense>
+			<Suspense fallback={null}>
+				<SeparatorsContainer />
+			</Suspense>
+			<Suspense fallback={null}>
+				<EditorTutorial />
+			</Suspense>
 
-				<div className="relative min-h-screen px-6 py-9 lg:px-12">
-					<div className="flex justify-between gap-x-6">
-						<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
-							<Editor />
-						</Suspense>
-						<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
-							<Toolbar />
-						</Suspense>
-					</div>
+			<div className="relative min-h-screen px-6 py-9 lg:px-12">
+				<div className="flex justify-between gap-x-6">
+					<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
+						<Editor />
+					</Suspense>
+					<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
+						<Toolbar />
+					</Suspense>
 				</div>
+			</div>
 
-				<div id="supportByBMC" />
-			</DndProvider>
+			<div id="supportByBMC" />
 		</MainLayout>
 	);
 }
