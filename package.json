@@ -13,8 +13,8 @@
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^7.1.0",
 		"@fortawesome/free-brands-svg-icons": "^7.1.0",
-		"@fortawesome/free-regular-svg-icons": "^7.1.0",
-		"@fortawesome/free-solid-svg-icons": "^7.1.0",
+		"@fortawesome/pro-regular-svg-icons": "^7.1.0",
+		"@fortawesome/pro-solid-svg-icons": "^7.1.0",
 		"@fortawesome/react-fontawesome": "^3.1.1",
 		"@radix-ui/react-dropdown-menu": "^2.0.6",
 		"@sentry/nextjs": "^10.28.0",

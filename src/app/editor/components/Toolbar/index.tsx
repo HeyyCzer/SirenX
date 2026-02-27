@@ -1,17 +1,23 @@
+import {
+	faArrowRotateRight,
+	faCheck,
+	faFileExport,
+	faFileImport,
+	faPlus,
+} from "@fortawesome/pro-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as Sentry from "@sentry/nextjs";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { event } from "@/gtag";
 import { createCustomColor } from "@/services/color-manager.service";
 import { exportXmlFile, importXmlFile } from "@/services/xml-file.service";
-import { event } from "@/gtag";
 import { useColorStore } from "@/store/color.store";
 import { STORE_KEY } from "@/store/constants";
 import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 import { useSponsorStore } from "@/store/sponsor.store";
 import { Modal } from "@/utils/modal";
-import { faArrowRotateRight, faCheck, faFileExport, faFileImport, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as Sentry from "@sentry/nextjs";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { twMerge } from "tailwind-merge";
 import SponsorModal from "../SponsorModal";
 
 export default function Toolbar() {
@@ -85,7 +91,7 @@ export default function Toolbar() {
 					hiddenFileInput.current.value = "";
 				}
 
-				if (typeof content !== 'string') {
+				if (typeof content !== "string") {
 					Sentry.addBreadcrumb({
 						category: "file",
 						message: "The imported file content is not a string",
@@ -159,7 +165,10 @@ export default function Toolbar() {
 			({
 				isConfirmed,
 				value: newSirenId,
-			}: { isConfirmed: boolean; value: string }) => {
+			}: {
+				isConfirmed: boolean;
+				value: string;
+			}) => {
 				if (!isConfirmed || !newSirenId) return;
 
 				Modal.fire({
@@ -177,7 +186,10 @@ export default function Toolbar() {
 					({
 						isConfirmed,
 						value: newSirenName,
-					}: { isConfirmed: boolean; value: string }) => {
+					}: {
+						isConfirmed: boolean;
+						value: string;
+					}) => {
 						if (!isConfirmed || !newSirenName) return;
 
 						Sentry.addBreadcrumb({
@@ -291,20 +303,26 @@ export default function Toolbar() {
 			`,
 			showCancelButton: true,
 			preConfirm: () => {
-				const value = (document.getElementById("swal-color-picker") as HTMLInputElement).value;
+				const value = (
+					document.getElementById("swal-color-picker") as HTMLInputElement
+				).value;
 				if (!/^#?[0-9a-fA-F]{6}$/.test(value)) {
-					return Modal.showValidationMessage("Invalid format. Use HEX, e.g.: #FF00FF");
+					return Modal.showValidationMessage(
+						"Invalid format. Use HEX, e.g.: #FF00FF",
+					);
 				}
 
 				return value.replace("#", "").toUpperCase();
-			}
-		}).then(({ isConfirmed, value }: { isConfirmed: boolean; value: string }) => {
-			if(!isConfirmed) return;
+			},
+		}).then(
+			({ isConfirmed, value }: { isConfirmed: boolean; value: string }) => {
+				if (!isConfirmed) return;
 
-			const carcolsColor = `0xFF${value.toUpperCase()}`;
-			const key = createCustomColor(carcolsColor);
-			setSelectedColor(key);
-		})
+				const carcolsColor = `0xFF${value.toUpperCase()}`;
+				const key = createCustomColor(carcolsColor);
+				setSelectedColor(key);
+			},
+		);
 	}, [setSelectedColor]);
 
 	return (
@@ -316,7 +334,7 @@ export default function Toolbar() {
 
 			<aside
 				id="toolbar"
-				className="mt-14 flex w-full min-w-[250px] max-w-[300px] flex-col gap-y-5 rounded-2xl border border-white/10 bg-white/5 px-6 pb-6 backdrop-blur-xl drop-shadow-lg"
+				className="mt-14 flex w-full min-w-[250px] max-w-[300px] flex-col gap-y-5 rounded-2xl border border-white/10 bg-white/5 px-6 pb-6 drop-shadow-lg backdrop-blur-xl"
 			>
 				<input
 					type="file"
@@ -333,29 +351,41 @@ export default function Toolbar() {
 
 				<div className="flex flex-col gap-y-1.5">
 					<button
-						className="group flex justify-center items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-6 py-1.5 font-semibold text-sm text-emerald-400 uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-400/10"
+						type="button"
+						className="group flex items-center justify-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/5 px-6 py-1.5 font-semibold text-emerald-400 text-sm uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-emerald-400/40 hover:bg-emerald-400/10"
 						id="toolbar-import"
 						onClick={() =>
 							(hiddenFileInput.current as HTMLInputElement).click()
 						}
 					>
-						<FontAwesomeIcon icon={faFileImport} className="transition-transform group-hover:scale-110" />
+						<FontAwesomeIcon
+							icon={faFileImport}
+							className="transition-transform group-hover:scale-110"
+						/>
 						Import
 					</button>
 					<button
-						className="group flex justify-center items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-1.5 font-semibold text-sm text-white uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10"
+						type="button"
+						className="group flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-1.5 font-semibold text-sm text-white uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10"
 						id="toolbar-export"
 						onClick={handleDownloadFile}
 					>
-						<FontAwesomeIcon icon={faFileExport} className="transition-transform group-hover:scale-110" />
+						<FontAwesomeIcon
+							icon={faFileExport}
+							className="transition-transform group-hover:scale-110"
+						/>
 						Export
 					</button>
 					<button
-						className="group flex justify-center items-center gap-2 rounded-lg border border-rose-500/20 bg-rose-500/5 px-6 py-1.5 font-semibold text-sm text-rose-500 uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-rose-500/40 hover:bg-rose-500/10"
+						type="button"
+						className="group flex items-center justify-center gap-2 rounded-lg border border-rose-500/20 bg-rose-500/5 px-6 py-1.5 font-semibold text-rose-500 text-sm uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-rose-500/40 hover:bg-rose-500/10"
 						id="toolbar-reset"
 						onClick={handleResetEditor}
 					>
-						<FontAwesomeIcon icon={faArrowRotateRight} className="transition-transform group-hover:scale-110" />
+						<FontAwesomeIcon
+							icon={faArrowRotateRight}
+							className="transition-transform group-hover:scale-110"
+						/>
 						Reset editor
 					</button>
 				</div>
