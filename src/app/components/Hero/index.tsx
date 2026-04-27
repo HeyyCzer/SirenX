@@ -87,11 +87,12 @@ export default function Hero() {
 				</m.div>
 
 				{/* Right content - Screenshot */}
-				<m.div
+				<m.a
 					className="relative hidden lg:block"
 					initial={{ opacity: 0, x: 30, scale: 0.95 }}
 					animate={{ opacity: 1, x: 0, scale: 1 }}
 					transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+					href="/editor"
 				>
 					<div className="relative">
 						{/* Glow effect behind image */}
@@ -104,7 +105,7 @@ export default function Hero() {
 							className="relative w-full min-w-[450px] max-w-[700px] rounded-xl border border-white/10 bg-gray-900/50 p-2 shadow-2xl backdrop-blur-sm xl:max-w-[800px]"
 						/>
 					</div>
-				</m.div>
+				</m.a>
 			</div>
 
 			{/* Scroll indicator */}
