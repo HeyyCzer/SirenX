@@ -82,6 +82,7 @@ export const useSettingsStore = create<any>()(
 			migrate(persistedState, version) {
 				if (version !== 2) {
 					useSettingsStore.persist.clearStorage();
+					return {} as any; // Return an empty state to reset to defaults
 				}
 				return persistedState;
 			},
