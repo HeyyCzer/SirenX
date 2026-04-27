@@ -37,6 +37,8 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		await page.locator(".swal2-input").fill("0");
 		await page.locator(".swal2-confirm").click();
 		await expect(page.locator(".swal2-validation-message")).toBeVisible();
+		await page.locator(".swal2-cancel").click();
+		await expect(page.locator(".swal2-container")).not.toBeVisible();
 	});
 
 	test("should change ScaleFactor with valid and invalid values", async () => {
@@ -54,6 +56,8 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		await page.locator(".swal2-input").fill("-10");
 		await page.locator(".swal2-confirm").click();
 		await expect(page.locator(".swal2-validation-message")).toBeVisible();
+		await page.locator(".swal2-cancel").click();
+		await expect(page.locator(".swal2-container")).not.toBeVisible();
 	});
 
 	test("should change Direction with pre-defined value", async () => {
