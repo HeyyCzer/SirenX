@@ -4,7 +4,7 @@ import { test as base, type Page } from "@playwright/test";
 
 const TUTORIAL_DISMISSED = JSON.stringify({ state: { "editor-basic-tutorial": true }, version: 0 });
 
-async function dismissTutorial(page: Page) {
+export async function dismissTutorial(page: Page) {
 	await page.addInitScript((state) => {
 		localStorage.setItem("SirenX//tutorial", state);
 	}, TUTORIAL_DISMISSED);
