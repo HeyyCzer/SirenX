@@ -12,11 +12,13 @@ import DeltaEnum from "@/enum/direction.enum";
 import ScaleFactorEnum from "@/enum/scaleFactor.enum";
 import { defaultLightModel } from "@/store/constants";
 import { useEditorStore } from "@/store/editor.store.ts";
+import { useSettingsStore } from "@/store/settings.store.ts";
 import { Modal } from "@/utils/modal";
 
 const ColumnSettingsDropdown = ({ columnIndex }) => {
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
+	const totalRows = useSettingsStore((state) => state.settings.totalRows.value);
 	const data = useMemo(
 		() =>
 			lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
@@ -124,6 +126,14 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 		[updateLights, lights, columnIndex, data.scaleFactor],
 	);
 
+	const handleCopySequencers = useCallback(() => {
+		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
+			const color = lights[rowIndex]?.[columnIndex]?.color;
+			return color && color !== "none" ? "1" : "0";
+		}).join("");
+		navigator.clipboard.writeText(binary);
+	}, [lights, columnIndex, totalRows]);
+
 	const handleChangeDirection = useCallback(
 		async (choosenDelta) => {
 			let delta = choosenDelta;
@@ -179,6 +189,13 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					className="min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
 					sideOffset={5}
 				>
+					<DropdownMenu.Item
+						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
+						onSelect={handleCopySequencers}
+					>
+						Copy Sequencers
+					</DropdownMenu.Item>
+					<DropdownMenu.Separator className="m-[5px] h-px bg-slate-600" />
 					<DropdownMenu.Item
 						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
 						onSelect={handleChangeIntensity}
