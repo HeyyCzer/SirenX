@@ -1,32 +1,30 @@
-import { createCustomColor } from "@/services/color-manager.service";
-import { useEditorStore } from "@/store/editor.store";
 import { Suspense, useEffect, useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { useShallow } from "zustand/react/shallow";
+import { createCustomColor } from "@/services/color-manager.service";
+import { useEditorStore } from "@/store/editor.store";
 import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
 import LightGroup from "../Light/LightGroup";
 
-export default function EditorGrid({ totalColumns, currentRow }) {
+export default function EditorGrid({ totalColumns, totalRows, currentRow }) {
 	const editorColumns = useMemo(
 		() => Array.from({ length: totalColumns }),
 		[totalColumns],
 	);
 
 	const editorRows = useMemo(
-		() => Array.from({ length: 32 }),
-		[],
+		() => Array.from({ length: totalRows }),
+		[totalRows],
 	);
 
-	const lightRows = useEditorStore(
-		useShallow((state) => state.lights),
-	);
+	const lightRows = useEditorStore(useShallow((state) => state.lights));
 	useEffect(() => {
 		if (!lightRows || lightRows.length === 0) return;
 
 		for (const row of Object.values(lightRows)) {
 			for (const light of Object.values(row)) {
 				if (!light?.color.includes("CUSTOM_")) continue;
-				
+
 				createCustomColor(light.color.replace("CUSTOM_", ""));
 			}
 		}

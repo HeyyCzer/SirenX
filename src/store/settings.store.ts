@@ -28,14 +28,26 @@ export const useSettingsStore = create<any>()(
 				},
 				totalColumns: {
 					label: "Total of columns",
-					description: "This is the total rows of the editor. The maximum is 32.",
+					description: "This is the total rows of the editor. Default is 20.",
 					attributes: {
 						type: "range",
 						min: 1,
-						max: 32,
+						max: 50,
 					},
 					type: "number",
 					value: 20,
+				},
+				totalRows: {
+					label: "Total of rows",
+					description: "This is the total rows of the editor. Default is 32.",
+					negativeEffect: "By changing this from 32, you will not be able to export files.",
+					attributes: {
+						type: "range",
+						min: 1,
+						max: 100,
+					},
+					type: "number",
+					value: 32,
 				},
 			},
 
@@ -66,9 +78,9 @@ export const useSettingsStore = create<any>()(
 		}),
 		{
 			name: `${STORE_KEY}settings`,
-			version: 1,
+			version: 2,
 			migrate(persistedState, version) {
-				if (version === 0) {
+				if (version !== 2) {
 					useSettingsStore.persist.clearStorage();
 				}
 				return persistedState;
