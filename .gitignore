@@ -13,6 +13,8 @@ docs/examples/carcols.meta
 /test/downloads
 /test/screenshots
 /test/videos
+/test/results
+/test/report
 
 
 # next.js

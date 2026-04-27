@@ -7,8 +7,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"test": "cypress run",
-		"test:open": "cypress open"
+		"test": "playwright test",
+		"test:open": "playwright test --ui",
+		"test:install": "playwright install"
 	},
 	"dependencies": {
 		"@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -37,12 +38,12 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.4",
+		"@playwright/test": "^1.59.1",
 		"@types/node": "^24.10.1",
 		"@types/react": "^19.2.7",
 		"@types/react-dom": "^19.2.3",
 		"autoprefixer": "^10.0.1",
 		"concurrently": "^9.1.0",
-		"cypress": "^14.1.0",
 		"eslint": "9.30.1",
 		"eslint-config-next": "15.3.5",
 		"postcss": "^8",
