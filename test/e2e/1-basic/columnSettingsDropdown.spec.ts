@@ -67,7 +67,10 @@ test.describe("ColumnSettingsDropdown", () => {
 	test("should export and validate the file with the changes", async ({ editorPage: page }) => {
 		await page.locator("#toolbar-export").click();
 		await expect(page.locator(".swal2-container")).toBeVisible();
-		await page.locator("#swal2-input").fill("test-export");
+		// first dialog is Siren ID (type=number), .fill() doesn't work on number inputs
+		const sirenIdInput = page.locator("#swal2-input");
+		await sirenIdInput.clear();
+		await sirenIdInput.pressSequentially("100");
 		await page.locator(".swal2-confirm").click();
 		await expect(page.locator(".swal2-container")).toBeVisible();
 		await page.locator(".swal2-confirm").click();

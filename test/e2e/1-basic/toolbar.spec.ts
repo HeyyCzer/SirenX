@@ -10,7 +10,7 @@ test.describe("Toolbar", () => {
 		const bpm = page.locator("#toolbar-bpm");
 		await expect(bpm).toBeVisible();
 
-		const range = bpm.locator("input");
+		const range = bpm.getByRole("slider");
 		await expect(range).toBeVisible();
 
 		await range.evaluate((el: HTMLInputElement) => { el.value = "300"; el.dispatchEvent(new Event("input", { bubbles: true })); });
@@ -29,6 +29,6 @@ test.describe("Toolbar", () => {
 		const Colors = useColorStore.getState().colors;
 		const minExpected = Object.keys(Colors).filter((k) => !["_fallback", "none"].includes(k)).length;
 
-		await expect(colors.locator(":scope > *")).toHaveCount(minExpected, { timeout: 5000 });
+		await expect(colors.locator(":scope > *")).toHaveCount(minExpected + 1, { timeout: 5000 }); // +1 for the "Custom" create button
 	});
 });
