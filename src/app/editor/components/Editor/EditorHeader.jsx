@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 export default function EditorHeader() {
 	const [count, setCount] = useState(0);
 	useEffect(() => {
+		if (process.env.NODE_ENV !== "production") return;
+
 		const fetchData = async () => {
 			const response = await fetch(
 				"https://api.github.com/repos/heyyczer/sirenx",
