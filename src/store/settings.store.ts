@@ -28,7 +28,7 @@ export const useSettingsStore = create<any>()(
 				},
 				totalColumns: {
 					label: "Total of columns",
-					description: "This is the total rows of the editor. Default is 20.",
+					description: "This is the total columns of the editor. Default is 20.",
 					attributes: {
 						type: "range",
 						min: 1,
