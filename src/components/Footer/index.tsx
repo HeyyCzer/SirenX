@@ -1,13 +1,13 @@
 "use client";
 
-import { m } from "motion/react";
+import * as m from "motion/react-m";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Footer() {
 	return (
 		<m.footer
-			className="flex flex-col items-center justify-center gap-4 border-t border-white/5 bg-slate-900/50 py-6 backdrop-blur-sm"
+			className="flex flex-col items-center justify-center gap-4 border-white/5 border-t bg-slate-900/50 py-6 backdrop-blur-sm"
 			initial={{ opacity: 0 }}
 			whileInView={{ opacity: 1 }}
 			viewport={{ once: true }}

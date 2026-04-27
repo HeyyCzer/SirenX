@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as Sentry from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import { Input } from "@/components/Input";
 import { event } from "@/gtag";
 import { createCustomColor } from "@/services/color-manager.service";
 import { exportXmlFile, importXmlFile } from "@/services/xml-file.service";
@@ -283,7 +284,7 @@ export default function Toolbar() {
 			const target = e.target;
 			if (!target) return;
 
-			let value = Number.parseInt(target.value);
+			let value = Number.parseInt(target.value, 10);
 			if (Number.isNaN(value)) value = 120;
 			if (value < 0) value = 0;
 
@@ -324,6 +325,9 @@ export default function Toolbar() {
 			},
 		);
 	}, [setSelectedColor]);
+
+	const isExportDisabled =
+		!settings.oneColorPerColumn.value || settings.totalRows.value !== 32;
 
 	return (
 		<>
@@ -366,7 +370,13 @@ export default function Toolbar() {
 					</button>
 					<button
 						type="button"
-						className="group flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-1.5 font-semibold text-sm text-white uppercase tracking-wide backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-white/10"
+						disabled={isExportDisabled}
+						className={twMerge(
+							"group flex items-center justify-center gap-2 rounded-lg border px-6 py-1.5 font-semibold text-sm uppercase tracking-wide backdrop-blur-sm transition-all duration-300",
+							isExportDisabled
+								? "cursor-not-allowed border-white/10 bg-white/5 text-white/30"
+								: "border-white/20 bg-white/5 text-white hover:border-white/40 hover:bg-white/10",
+						)}
 						id="toolbar-export"
 						onClick={handleDownloadFile}
 					>
@@ -408,12 +418,7 @@ export default function Toolbar() {
 						/>
 						<span className="mt-1 flex items-center gap-x-2 text-white text-xs">
 							Current BPM:
-							<input
-								type="number"
-								className="border-0 border-white/30 border-b-2 bg-transparent px-0 py-0 text-center text-white proportional-nums outline-none transition-all [appearance:textfield] focus:border-emerald-400 focus:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-								value={bpm}
-								onChange={handleUpdateBPM}
-							/>
+							<Input type="number" value={bpm} onChange={handleUpdateBPM} />
 						</span>
 					</div>
 				</div>
@@ -501,9 +506,9 @@ export default function Toolbar() {
 							.map(([settingsId, settingsData]: [string, any]) => (
 								<div key={settingsId} className="flex flex-col gap-y-1">
 									<div className="flex items-center justify-between gap-x-2">
-										<input
+										<Input
 											className={twMerge(
-												"mt-1 rounded-md text-emerald-400 accent-emerald-400 outline-none focus:ring-0",
+												"rounded-md text-emerald-400 accent-emerald-400 outline-none focus:ring-0",
 												settingsData.attributes?.type === "range" && "w-full",
 											)}
 											id={`settings-${settingsId}`}
@@ -518,9 +523,19 @@ export default function Toolbar() {
 											{...(settingsData.attributes ?? {})}
 										/>
 										{settingsData.attributes?.type === "range" && (
-											<span className="text-white text-xs">
-												{settingsData.value}
-											</span>
+											<Input
+												type="number"
+												min={settingsData.attributes.min}
+												max={settingsData.attributes.max}
+												value={settingsData.value}
+												className="w-12 py-0.5"
+												onChange={(e) =>
+													updateSettings({
+														key: settingsId,
+														value: e.target.value,
+													})
+												}
+											/>
 										)}
 									</div>
 									<label htmlFor={`settings-${settingsId}`}>

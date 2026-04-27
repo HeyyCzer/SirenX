@@ -1,7 +1,7 @@
-export function decimalToBinary(decimal: number) {
+export function decimalToBinary(decimal: number, length = 32) {
 	const binary = (decimal >>> 0).toString(2);
-	if (binary.length < 32) {
-		return "0".repeat(32 - binary.length) + binary;
+	if (binary.length < length) {
+		return "0".repeat(length - binary.length) + binary;
 	}
 	return binary;
 }
