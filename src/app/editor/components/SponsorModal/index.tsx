@@ -4,7 +4,8 @@ import {
 	faXmark,
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as m from "motion/react-m";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -38,7 +39,7 @@ export default function SponsorModal({
 		<AnimatePresence>
 			{isOpen && (
 				<>
-					<motion.div
+					<m.div
 						key="sponsor-modal-overlay"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -49,7 +50,7 @@ export default function SponsorModal({
 						onClick={closeModal}
 					/>
 
-					<motion.div
+					<m.div
 						key="sponsor-modal"
 						id="sponsor-modal"
 						initial={{ opacity: 0, scale: 0.8 }}
@@ -137,7 +138,7 @@ export default function SponsorModal({
 								</div>
 							</div>
 						</div>
-					</motion.div>
+					</m.div>
 				</>
 			)}
 		</AnimatePresence>

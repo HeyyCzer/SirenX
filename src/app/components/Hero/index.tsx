@@ -6,7 +6,7 @@ import {
 	faMagicWandSparkles,
 } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { m } from "motion/react";
+import * as m from "motion/react-m";
 import Image from "next/image";
 import Link from "next/link";
 import screenshot from "../../../../public/images/home/screenshot.gif";
