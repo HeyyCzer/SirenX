@@ -1,27 +1,16 @@
 name: Test Deployment
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
   deployment_status:
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'Pull Request number to test'
-        required: true
-        type: number
 
 jobs:
-  # Runs when a deployment completes (for branches in this repo)
-  test-deployment:
-    if: github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success'
+  test:
+    if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.deployment.ref }}
 
       - name: Cache node modules
         id: cache-bun
@@ -48,105 +37,4 @@ jobs:
         run: bun run test
         env:
           PLAYWRIGHT_BASE_URL: ${{ github.event.deployment_status.target_url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-
-  # Runs manually for a specific PR number
-  test-manual:
-    if: github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Get PR head SHA
-        id: pr-info
-        run: |
-          sha=$(gh api repos/${{ github.repository }}/pulls/${{ inputs.pr_number }} --jq '.head.sha')
-          echo "sha=$sha" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.pr-info.outputs.sha }}
-
-      - name: Wait for Vercel deployment
-        id: wait-vercel
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 300
-          check_interval: 10
-          sha: ${{ steps.pr-info.outputs.sha }}
-
-      - name: Cache node modules
-        id: cache-bun
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-        env:
-          FONTAWESOME_TOKEN: ${{ secrets.FONTAWESOME_TOKEN }}
-
-      - name: Install Playwright browsers
-        run: bunx playwright install --with-deps chromium
-
-      - name: Run tests
-        run: bun run test
-        env:
-          PLAYWRIGHT_BASE_URL: ${{ steps.wait-vercel.outputs.url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-
-  # Runs for PRs from forks, waits for Vercel deployment then runs tests
-  test-fork-pr:
-    if: github.event_name == 'pull_request_target'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: Wait for Vercel deployment
-        id: wait-vercel
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 300
-          check_interval: 10
-
-      - name: Cache node modules
-        id: cache-bun
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-        env:
-          FONTAWESOME_TOKEN: ${{ secrets.FONTAWESOME_TOKEN }}
-
-      - name: Install Playwright browsers
-        run: bunx playwright install --with-deps chromium
-
-      - name: Run tests
-        run: bun run test
-        env:
-          PLAYWRIGHT_BASE_URL: ${{ steps.wait-vercel.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
