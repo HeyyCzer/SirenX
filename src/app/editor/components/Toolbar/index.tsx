@@ -410,16 +410,21 @@ export default function Toolbar() {
 						<input
 							type="range"
 							min="10"
-							max="1200"
+							max="1500"
 							step="10"
 							className="w-full accent-emerald-400"
 							value={bpm}
 							onChange={handleUpdateBPM}
 						/>
-						<span className="mt-1 flex items-center gap-x-2 text-white text-xs">
-							Current BPM:
-							<Input type="number" value={bpm} onChange={handleUpdateBPM} />
-						</span>
+						<div className="mt-1 flex items-center justify-center gap-x-2 text-white text-xs">
+							<span className="shrink-0">Current BPM:</span>
+							<Input
+								type="number"
+								value={bpm}
+								onChange={handleUpdateBPM}
+								className="w-16"
+							/>
+						</div>
 					</div>
 				</div>
 
