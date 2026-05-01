@@ -126,12 +126,20 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 		[updateLights, lights, columnIndex, data.scaleFactor],
 	);
 
-	const handleCopySequencers = useCallback(() => {
+	const handleBinaryCopySequencers = useCallback(() => {
 		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
 			const color = lights[rowIndex]?.[columnIndex]?.color;
 			return color && color !== "none" ? "1" : "0";
 		}).join("");
 		navigator.clipboard.writeText(binary);
+	}, [lights, columnIndex, totalRows]);
+
+	const handleCopySequencers = useCallback(() => {
+		const sequencers = Array.from({ length: totalRows }, (_, rowIndex) => {
+			const color = lights[rowIndex]?.[columnIndex]?.color;
+			return color && color !== "none" ? color : "none";
+		}).join(",");
+		navigator.clipboard.writeText(sequencers);
 	}, [lights, columnIndex, totalRows]);
 
 	const handleChangeDirection = useCallback(
@@ -191,9 +199,15 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 				>
 					<DropdownMenu.Item
 						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
+						onSelect={handleBinaryCopySequencers}
+					>
+						Copy Sequencers (binary)
+					</DropdownMenu.Item>
+					<DropdownMenu.Item
+						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
 						onSelect={handleCopySequencers}
 					>
-						Copy Sequencers
+						Copy Sequencers (with colors)
 					</DropdownMenu.Item>
 					<DropdownMenu.Separator className="m-[5px] h-px bg-slate-600" />
 					<DropdownMenu.Item
