@@ -81,12 +81,12 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		await expect(page.locator(".swal2-validation-message")).not.toBeVisible();
 	});
 
-	test("should copy sequencers as binary", async () => {
+	test("should copy sequencers as decimal", async () => {
 		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
-		await page.getByText("Copy Sequencers (binary)").click();
+		await page.getByText("Copy Sequencers (decimal)").click();
 
 		const text = await page.evaluate(() => navigator.clipboard.readText());
-		expect(text).toMatch(/^[01]+$/);
+		expect(text).toMatch(/^\d+$/);
 	});
 
 	test("should copy sequencers with colors", async () => {
