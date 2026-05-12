@@ -131,7 +131,8 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			const color = lights[rowIndex]?.[columnIndex]?.color;
 			return color && color !== "none" ? "1" : "0";
 		}).join("");
-		navigator.clipboard.writeText(binary);
+		const decimal = Number.parseInt(binary, 2).toString();
+		navigator.clipboard.writeText(decimal);
 	}, [lights, columnIndex, totalRows]);
 
 	const handleCopySequencers = useCallback(() => {
@@ -201,7 +202,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
 						onSelect={handleBinaryCopySequencers}
 					>
-						Copy Sequencers (binary)
+						Copy Sequencers (decimal)
 					</DropdownMenu.Item>
 					<DropdownMenu.Item
 						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
