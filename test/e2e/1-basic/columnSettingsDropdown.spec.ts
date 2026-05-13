@@ -7,7 +7,10 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 	let page: Page;
 
 	test.beforeAll(async ({ browser }) => {
-		const context = await browser.newContext();
+		const context = await browser.newContext({
+			permissions: ["clipboard-read", "clipboard-write"],
+		});
+
 		page = await context.newPage();
 		await dismissTutorial(page);
 		await page.goto("/editor");
@@ -77,6 +80,24 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		await page.locator(".swal2-input").fill("-1");
 		await page.locator(".swal2-confirm").click();
 		await expect(page.locator(".swal2-validation-message")).not.toBeVisible();
+	});
+
+	test("should copy sequencers as binary", async () => {
+		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
+		await page.getByText("Copy Sequencers").hover();
+		await page.getByText("Copy as Binary").click();
+
+		const text = await page.evaluate(() => navigator.clipboard.readText());
+		expect(text).toMatch(/^(0|1)+$/);
+	});
+
+	test("should copy sequencers as decimal", async () => {
+		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
+		await page.getByText("Copy Sequencers").hover();
+		await page.getByText("Copy as Decimal").click();
+
+		const text = await page.evaluate(() => navigator.clipboard.readText());
+		expect(text).toMatch(/^\d+$/);
 	});
 
 	test("should export and validate the file with the changes", async () => {

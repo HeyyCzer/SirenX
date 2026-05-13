@@ -126,12 +126,22 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 		[updateLights, lights, columnIndex, data.scaleFactor],
 	);
 
-	const handleCopySequencers = useCallback(() => {
+	const handleCopySequencersBinary = useCallback(() => {
 		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
 			const color = lights[rowIndex]?.[columnIndex]?.color;
 			return color && color !== "none" ? "1" : "0";
 		}).join("");
 		navigator.clipboard.writeText(binary);
+	}, [lights, columnIndex, totalRows]);
+
+	const handleCopySequencersDecimal = useCallback(() => {
+		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
+			const color = lights[rowIndex]?.[columnIndex]?.color;
+			return color && color !== "none" ? "1" : "0";
+		}).join("");
+
+		const decimal = Number.parseInt(binary, 2);
+		navigator.clipboard.writeText(decimal.toString());
 	}, [lights, columnIndex, totalRows]);
 
 	const handleChangeDirection = useCallback(
@@ -189,12 +199,34 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 					className="min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
 					sideOffset={5}
 				>
-					<DropdownMenu.Item
-						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
-						onSelect={handleCopySequencers}
-					>
-						Copy Sequencers
-					</DropdownMenu.Item>
+					<DropdownMenu.Sub>
+						<DropdownMenu.SubTrigger className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[highlighted]:data-[state=open]:bg-slate-600/50 data-[highlighted]:data-[state=open]:text-white data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[state=open]:bg-slate-600/80 data-[disabled]:text-gray-400 data-[highlighted]:text-white data-[state=open]:text-gray-200">
+							Copy Sequencers
+							<div className="ml-auto pl-[20px] text-gray-400 group-data-[disabled]:text-gray-400 group-data-[highlighted]:text-white">
+								<FontAwesomeIcon icon={faChevronRight} />
+							</div>
+						</DropdownMenu.SubTrigger>
+						<DropdownMenu.Portal>
+							<DropdownMenu.SubContent
+								className="ml-1 min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
+								sideOffset={2}
+								alignOffset={-5}
+							>
+								<DropdownMenu.Item
+									className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
+									onSelect={handleCopySequencersBinary}
+								>
+									Copy as Binary
+								</DropdownMenu.Item>
+								<DropdownMenu.Item
+									className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
+									onSelect={handleCopySequencersDecimal}
+								>
+									Copy as Decimal
+								</DropdownMenu.Item>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Sub>
 					<DropdownMenu.Separator className="m-[5px] h-px bg-slate-600" />
 					<DropdownMenu.Item
 						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
