@@ -10,6 +10,7 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		const context = await browser.newContext({
 			permissions: ["clipboard-read", "clipboard-write"],
 		});
+
 		page = await context.newPage();
 		await dismissTutorial(page);
 		await page.goto("/editor");
@@ -81,24 +82,22 @@ test.describe.serial("ColumnSettingsDropdown", () => {
 		await expect(page.locator(".swal2-validation-message")).not.toBeVisible();
 	});
 
+	test("should copy sequencers as binary", async () => {
+		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
+		await page.getByText("Copy Sequencers").hover();
+		await page.getByText("Copy as Binary").click();
+
+		const text = await page.evaluate(() => navigator.clipboard.readText());
+		expect(text).toMatch(/^(0|1)+$/);
+	});
+
 	test("should copy sequencers as decimal", async () => {
 		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
-		await page.getByText("Copy Sequencers (decimal)").click();
+		await page.getByText("Copy Sequencers").hover();
+		await page.getByText("Copy as Decimal").click();
 
 		const text = await page.evaluate(() => navigator.clipboard.readText());
 		expect(text).toMatch(/^\d+$/);
-	});
-
-	test("should copy sequencers with colors", async () => {
-		await page.locator('[data-testid="column-settings-dropdown"]').first().click();
-		await page.getByText("Copy Sequencers (with colors)").click();
-
-		const text = await page.evaluate(() => navigator.clipboard.readText());
-		const entries = text.split(",");
-		expect(entries.length).toBeGreaterThan(0);
-		for (const entry of entries) {
-			expect(entry).toMatch(/^(none|[a-zA-Z0-9_]+)$/);
-		}
 	});
 
 	test("should export and validate the file with the changes", async () => {
