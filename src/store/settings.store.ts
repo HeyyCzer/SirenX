@@ -19,7 +19,7 @@ export const useSettingsStore = create<any>()(
 				oneColorPerColumn: {
 					label: "Limit one color per column",
 					description: "This is useful for visualizing your pattern.",
-					negativeEffect: "By disabling this, you will not be able to export files.",
+					negativeEffect: "If disabled, you won't be able to export files.",
 					attributes: {
 						type: "checkbox",
 					},
@@ -29,6 +29,8 @@ export const useSettingsStore = create<any>()(
 				totalColumns: {
 					label: "Total of columns",
 					description: "This is the total columns of the editor. Default is 20.",
+					// if greater than 32, you'll not be able to export files
+					negativeEffect: "If greater than 32, you won't be able to export files.",
 					attributes: {
 						type: "range",
 						min: 1,
@@ -40,7 +42,8 @@ export const useSettingsStore = create<any>()(
 				totalRows: {
 					label: "Total of rows",
 					description: "This is the total rows of the editor. Default is 32.",
-					negativeEffect: "By changing this from 32, you will not be able to export files.",
+					// if != 32, you'll not be able to export files
+					negativeEffect: "If different than 32, you won't be able to export files.",
 					attributes: {
 						type: "range",
 						min: 1,
