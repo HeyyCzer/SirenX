@@ -8,7 +8,7 @@ export function useOneColorPerColumn() {
   const oneColorPerColumn = useSettingsStore((state) => state.settings.oneColorPerColumn);
 
   useEffect(() => {
-    if (!oneColorPerColumn.value) return;
+    if (!oneColorPerColumn) return;
 
     let hasChanges = false;
     const newLights = { ...lights };
@@ -50,7 +50,7 @@ export function useOneColorPerColumn() {
     if (hasChanges) {
       updateLights(newLights);
     }
-  }, [oneColorPerColumn.value, lights, updateLights]);
+  }, [oneColorPerColumn, lights, updateLights]);
 }
 
 export function usePreventContextMenu() {

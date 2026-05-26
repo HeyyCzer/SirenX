@@ -158,7 +158,7 @@ export const exportSirenData = (editor: any, settings: any): [string, any] => {
 
 		for (
 			let columnIndex = 0;
-			columnIndex < settings.totalColumns.value;
+			columnIndex < settings.totalColumns;
 			columnIndex++
 		) {
 			let light = row[columnIndex];

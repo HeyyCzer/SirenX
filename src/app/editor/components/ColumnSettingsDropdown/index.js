@@ -18,7 +18,7 @@ import { Modal } from "@/utils/modal";
 const ColumnSettingsDropdown = ({ columnIndex }) => {
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
-	const totalRows = useSettingsStore((state) => state.settings.totalRows.value);
+	const totalRows = useSettingsStore((state) => state.settings.totalRows);
 	const data = useMemo(
 		() =>
 			lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
