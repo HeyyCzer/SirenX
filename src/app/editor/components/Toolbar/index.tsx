@@ -327,7 +327,9 @@ export default function Toolbar() {
 	}, [setSelectedColor]);
 
 	const isExportDisabled =
-		!settings.oneColorPerColumn.value || settings.totalRows.value !== 32;
+		!settings.oneColorPerColumn.value ||
+		settings.totalRows.value !== 32 ||
+		settings.totalColumns.value > 32;
 
 	return (
 		<>
