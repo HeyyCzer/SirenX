@@ -11,6 +11,7 @@ interface SeparatorItem {
 
 export default function SeparatorsContainer() {
 	const separatorsVisible = useSettingsStore((state) => state.settings.separatorsVisible);
+
 	const [separators, setSeparators] = useState<SeparatorItem[]>([]);
 
 	const removeSeparator = useCallback((id: string) => {
@@ -23,7 +24,7 @@ export default function SeparatorsContainer() {
 
 	useEffect(() => {
 		const handleKeyup = (e: KeyboardEvent) => {
-			if (!separatorsVisible.value) return;
+			if (!separatorsVisible) return;
 			if (document.querySelector("input:focus")) return;
 
 			if (e.key === "q") {
@@ -35,9 +36,9 @@ export default function SeparatorsContainer() {
 		return () => {
 			window.removeEventListener("keyup", handleKeyup);
 		};
-	}, [separatorsVisible.value]);
+	}, [separatorsVisible]);
 
-	if (!separatorsVisible.value) return null;
+	if (!separatorsVisible) return null;
 
 	return (
 		<>

@@ -10,6 +10,7 @@ import * as Sentry from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Input } from "@/components/Input";
+import { settingsConfig } from "@/config/settings.config";
 import { event } from "@/gtag";
 import { createCustomColor } from "@/services/color-manager.service";
 import { exportXmlFile, importXmlFile } from "@/services/xml-file.service";
@@ -217,7 +218,7 @@ export default function Toolbar() {
 						event({
 							action: "file_export",
 							category: "editor",
-							label: `${settings.totalColumns.value} columns - ${bpm} BPM`,
+							label: `${settings.totalColumns} columns - ${bpm} BPM`,
 						});
 
 						setUploadData({
@@ -327,9 +328,9 @@ export default function Toolbar() {
 	}, [setSelectedColor]);
 
 	const isExportDisabled =
-		!settings.oneColorPerColumn.value ||
-		settings.totalRows.value !== 32 ||
-		settings.totalColumns.value > 32;
+		!settings.oneColorPerColumn ||
+		(settings.totalRows as number) !== 32 ||
+		(settings.totalColumns as number) > 32;
 
 	return (
 		<>
@@ -505,61 +506,59 @@ export default function Toolbar() {
 						id="toolbar-settings"
 						className="mt-4 flex flex-col gap-y-2 text-gray-300 text-xs"
 					>
-						{Object.entries(settings)
-							.filter(
-								([, settingsData]: [string, any]) =>
-									!settingsData.unlisted && typeof settingsData === "object",
-							)
-							.map(([settingsId, settingsData]: [string, any]) => (
-								<div key={settingsId} className="flex flex-col gap-y-1">
-									<div className="flex items-center justify-between gap-x-2">
-										<Input
-											className={twMerge(
-												"rounded-md text-emerald-400 accent-emerald-400 outline-none focus:ring-0",
-												settingsData.attributes?.type === "range" && "w-full",
-											)}
-											id={`settings-${settingsId}`}
-											checked={settingsData.value}
-											value={settingsData.value}
-											onChange={(e) =>
-												updateSettings({
-													key: settingsId,
-													value: e.target.value,
-												})
-											}
-											{...(settingsData.attributes ?? {})}
-										/>
-										{settingsData.attributes?.type === "range" && (
+						{Object.entries(settingsConfig)
+							.filter(([_, decl]) => !decl.unlisted)
+							.map(([settingsId, decl]) => {
+								const value = settings[settingsId as keyof typeof settings];
+								return (
+									<div key={settingsId} className="flex flex-col gap-y-1">
+										<div className="flex items-center justify-between gap-x-2">
 											<Input
-												type="number"
-												min={settingsData.attributes.min}
-												max={settingsData.attributes.max}
-												value={settingsData.value}
-												className="w-12 py-0.5"
+												className={twMerge(
+													"rounded-md text-emerald-400 accent-emerald-400 outline-none focus:ring-0",
+													decl.attributes.type === "range" && "w-full",
+												)}
+												id={`settings-${settingsId}`}
+												checked={value as boolean}
+												value={value as number | string}
 												onChange={(e) =>
 													updateSettings({
-														key: settingsId,
+														key: settingsId as keyof typeof settings,
 														value: e.target.value,
 													})
 												}
+												{...decl.attributes}
 											/>
-										)}
+											{decl.attributes.type === "range" && (
+												<Input
+													type="number"
+													min={decl.attributes.min}
+													max={decl.attributes.max}
+													value={value as number}
+													className="w-12 py-0.5"
+													onChange={(e) =>
+														updateSettings({
+															key: settingsId as keyof typeof settings,
+															value: e.target.value,
+														})
+													}
+												/>
+											)}
+										</div>
+										<label htmlFor={`settings-${settingsId}`}>
+											<h5 className="font-semibold text-sm text-white">
+												{decl.label}
+											</h5>
+											{"description" in decl && decl.description && (
+												<p>{decl.description}</p>
+											)}
+											{"negativeEffect" in decl && decl.negativeEffect && (
+												<p className="text-amber-500">{decl.negativeEffect}</p>
+											)}
+										</label>
 									</div>
-									<label htmlFor={`settings-${settingsId}`}>
-										<h5 className="font-semibold text-sm text-white">
-											{settingsData.label}
-										</h5>
-										{settingsData.description && (
-											<p>{settingsData.description}</p>
-										)}
-										{settingsData.negativeEffect && (
-											<p className="text-amber-500">
-												{settingsData.negativeEffect}
-											</p>
-										)}
-									</label>
-								</div>
-							))}
+								);
+							})}
 					</div>
 				</div>
 

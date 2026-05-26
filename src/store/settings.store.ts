@@ -1,94 +1,55 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import {
+	defaultSettingsValues,
+	type SettingKey,
+	type SettingsValues,
+	settingsConfig,
+} from "@/config/settings.config";
 import { STORE_KEY } from "./constants";
 
+interface SettingsState {
+	settings: SettingsValues;
+	updateSettings: (payload: { key: SettingKey; value: unknown }) => void;
+}
 
-export const useSettingsStore = create<any>()(
+export const useSettingsStore = create<SettingsState>()(
 	persist(
 		(set) => ({
-			settings: {
-				separatorsVisible: {
-					label: "Show/hide separators",
-					description: "This will show the created separators.",
-					attributes: {
-						type: "checkbox",
-					},
-					type: "boolean",
-					value: true,
-				},
-				oneColorPerColumn: {
-					label: "Limit one color per column",
-					description: "This is useful for visualizing your pattern.",
-					negativeEffect: "If disabled, you won't be able to export files.",
-					attributes: {
-						type: "checkbox",
-					},
-					type: "boolean",
-					value: true,
-				},
-				totalColumns: {
-					label: "Total of columns",
-					description: "This is the total columns of the editor. Default is 20.",
-					// if greater than 32, you'll not be able to export files
-					negativeEffect: "If greater than 32, you won't be able to export files.",
-					attributes: {
-						type: "range",
-						min: 1,
-						max: 50,
-					},
-					type: "number",
-					value: 20,
-				},
-				totalRows: {
-					label: "Total of rows",
-					description: "This is the total rows of the editor. Default is 32.",
-					// if != 32, you'll not be able to export files
-					negativeEffect: "If different than 32, you won't be able to export files.",
-					attributes: {
-						type: "range",
-						min: 1,
-						max: 100,
-					},
-					type: "number",
-					value: 32,
-				},
-			},
+			settings: { ...defaultSettingsValues },
 
-			// Actions
-			// TODO: Add types to the actions
-			updateSettings: ({ key, value }: any) =>
-				set((state: any) => {
-					let processedValue = value;
+			updateSettings: ({ key, value }) =>
+				set((state) => {
+					const declaration = settingsConfig[key];
+					if (!declaration) return state;
 
-					if (state.settings[key].attributes?.type === "checkbox") {
+					let processedValue: boolean | number;
+					if (declaration.attributes.type === "checkbox") {
 						processedValue = !(value === "true");
-					}
-
-					if (state.settings[key].type === "number") {
+					} else if (declaration.type === "number") {
 						processedValue = Number(value);
+					} else {
+						processedValue = value as boolean | number;
 					}
 
 					return {
 						settings: {
 							...state.settings,
-							[key]: {
-								...state.settings[key],
-								value: processedValue,
-							},
+							[key]: processedValue,
 						},
-					}
+					};
 				}),
 		}),
 		{
 			name: `${STORE_KEY}settings`,
-			version: 2,
+			version: 3,
 			migrate(persistedState, version) {
-				if (version !== 2) {
+				if (version !== 3) {
 					useSettingsStore.persist.clearStorage();
-					return {} as any; // Return an empty state to reset to defaults
+					return { settings: { ...defaultSettingsValues } } as SettingsState;
 				}
-				return persistedState;
+				return persistedState as SettingsState;
 			},
-		}
-	)
+		},
+	),
 );

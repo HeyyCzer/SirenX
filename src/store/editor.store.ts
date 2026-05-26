@@ -29,7 +29,7 @@ interface EditorState {
 		row: number;
 		column: number;
 		color: string;
-		isOneColorPerColumn: { value: boolean };
+		isOneColorPerColumn: boolean;
 	}) => void;
 	updateLights: (lights: EditorState["lights"]) => void;
 }
@@ -90,7 +90,7 @@ export const useEditorStore = create<EditorState>()(
 						newLights[row][column] = defaultLightModel;
 					}
 
-					if (isOneColorPerColumn.value) {
+					if (isOneColorPerColumn) {
 						for (const rowKey of Object.keys(newLights)) {
 							const currentRow = newLights[rowKey as any];
 							if (

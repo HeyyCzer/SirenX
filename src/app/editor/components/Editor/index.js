@@ -15,15 +15,15 @@ export default function Editor() {
 		<main className="mx-auto flex w-fit flex-col gap-y-6 overflow-x-auto">
 			<EditorHeader />
 			<EditorPreview
-				totalColumns={totalColumns.value}
-				totalRows={totalRows.value}
+				totalColumns={totalColumns}
+				totalRows={totalRows}
 				currentRow={currentRow}
 				setCurrentRow={setCurrentRow}
 				bpm={bpm}
 			/>
 			<EditorGrid
-				totalColumns={totalColumns.value}
-				totalRows={totalRows.value}
+				totalColumns={totalColumns}
+				totalRows={totalRows}
 				currentRow={currentRow}
 			/>
 		</main>
