@@ -12,11 +12,20 @@ export default function EditorHeader() {
 		if (process.env.NODE_ENV !== "production") return;
 
 		const fetchData = async () => {
-			const response = await fetch(
-				"https://api.github.com/repos/heyyczer/sirenx",
-			);
-			const data = await response.json();
-			setCount(data.stargazers_count);
+			try {
+				const response = await fetch(
+					"https://api.github.com/repos/heyyczer/sirenx",
+				);
+				if (!response.ok) {
+					throw new Error(`GitHub API error: ${response.status}`);
+				}
+
+				const data = await response.json();
+				setCount(data.stargazers_count);
+			} catch (error) {
+				console.warn("Failed to fetch GitHub stars:", error);
+				setCount(0);
+			}
 		};
 		fetchData();
 	}, []);
@@ -45,9 +54,11 @@ export default function EditorHeader() {
 				<FontAwesomeIcon icon={faGithub} />
 				<span className="text-sm">
 					Star on GitHub
-					<span className="ml-2 text-white/40 text-xs">
-						<FontAwesomeIcon icon={faStar} /> {count}
-					</span>
+					{count > 0 && (
+						<span className="ml-2 text-white/40 text-xs">
+							<FontAwesomeIcon icon={faStar} /> {count}
+						</span>
+					)}
 				</span>
 			</Link>
 		</div>
