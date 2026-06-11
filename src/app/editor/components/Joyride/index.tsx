@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { ACTIONS, Joyride } from "react-joyride";
-import { tv } from "tailwind-variants";
+import { ACTIONS, type EventData, Joyride } from "react-joyride";
+import { tv, type VariantProps } from "tailwind-variants";
 import { useTutorialStore } from "@/store/tutorial.store";
 
 const button = tv({
@@ -16,7 +16,11 @@ const button = tv({
 	},
 });
 
-const TooltipButton = (props) => {
+type ButtonVariants = VariantProps<typeof button>;
+
+const TooltipButton = (
+	props: ButtonVariants & { title: string; className?: string },
+) => {
 	return (
 		<button
 			type="button"
@@ -28,6 +32,16 @@ const TooltipButton = (props) => {
 	);
 };
 
+export interface TooltipProps {
+	continuous: boolean;
+	index: number;
+	step: any;
+	backProps: any;
+	closeProps: any;
+	primaryProps: any;
+	tooltipProps: any;
+}
+
 const Tooltip = ({
 	continuous,
 	index,
@@ -36,7 +50,7 @@ const Tooltip = ({
 	closeProps,
 	primaryProps,
 	tooltipProps,
-}) => {
+}: TooltipProps) => {
 	return (
 		<div
 			className="react-joyride__tooltip relative box-border w-[380px] max-w-full rounded-lg bg-slate-800 p-6 text-gray-300"
@@ -61,13 +75,20 @@ const Tooltip = ({
 	);
 };
 
+export interface TutorialProps {
+	uid: string;
+	dependent?: string;
+	steps: any[];
+	callback?: (data: EventData) => void;
+}
+
 export default function Tutorial({
 	uid,
 	dependent,
 	steps,
 	callback: tutorialCallback,
 	...props
-}) {
+}: TutorialProps) {
 	const [showTutorial, setShowTutorial] = useState(false);
 	const tutorialState = useTutorialStore();
 	const setStatus = useTutorialStore((state) => state.setStatus);
@@ -92,7 +113,7 @@ export default function Tutorial({
 			}
 		}
 
-		let tutorialTimeout;
+		let tutorialTimeout: NodeJS.Timeout;
 		const tutorial = tutorialState[uid];
 		if (!tutorial) {
 			tutorialTimeout = setTimeout(() => {
@@ -105,8 +126,8 @@ export default function Tutorial({
 		};
 	}, [tutorialState, uid, dependent]);
 
-	const callback = useCallback(
-		(data) => {
+	const onEvent = useCallback(
+		(data: EventData) => {
 			tutorialCallback?.(data);
 
 			if (!uid) return;
@@ -121,7 +142,7 @@ export default function Tutorial({
 	return (
 		<Joyride
 			run={showTutorial}
-			callback={callback}
+			onEvent={onEvent}
 			locale={{
 				back: "Back",
 				close: "Close",
@@ -129,22 +150,29 @@ export default function Tutorial({
 				next: "Next",
 				skip: "Skip",
 			}}
-			hideCloseButton
-			disableScrolling
-			disableScrollParentFix
 			{...props}
 			steps={steps}
 			tooltipComponent={Tooltip}
 			styles={{
-				options: {
-					arrowColor: "var(--color-slate-800)",
-					backgroundColor: "var(--color-slate-800)",
-					textColor: "var(--color-gray-300)",
-					overlayColor: "rgba(0, 0, 0, 0.6)",
-					primaryColor: "var(--color-emerald-400)",
-					zIndex: 1000,
+				buttonPrimary: {
+					backgroundColor: "var(--color-emerald-400)",
+				},
+				arrow: {
+					color: "var(--color-slate-800)",
+				},
+				beaconInner: {
+					backgroundColor: "var(--color-emerald-400)",
+				},
+				beaconOuter: {
+					backgroundColor: "#34d39933",
+					border: "2px solid var(--color-emerald-400)",
 				},
 			}}
+			options={{
+				skipBeacon: true,
+				scrollOffset: 100,
+			}}
+			continuous
 		/>
 	);
 }
