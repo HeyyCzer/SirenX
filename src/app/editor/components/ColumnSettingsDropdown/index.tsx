@@ -1,19 +1,33 @@
-import {
-	faArrowUp,
-	faCar,
-	faChevronRight,
-	faGear,
-} from "@fortawesome/pro-solid-svg-icons";
+import { faArrowUp, faCar, faGear } from "@fortawesome/pro-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { memo, useCallback, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
+import { activeItemCn, Dropdown } from "@/components/Dropdown";
 import DeltaEnum from "@/enum/direction.enum";
 import ScaleFactorEnum from "@/enum/scaleFactor.enum";
 import { defaultLightModel } from "@/store/constants";
 import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 import { Modal } from "@/utils/modal";
+
+type Lights = Record<string, Record<string, typeof defaultLightModel>>;
+
+function applyToColumn<K extends keyof typeof defaultLightModel>(
+	lights: Lights,
+	columnIndex: number,
+	field: K,
+	value: (typeof defaultLightModel)[K],
+): Lights {
+	const clone = JSON.parse(JSON.stringify(lights)) as Lights;
+	for (const row of Object.values(clone)) {
+		if (!row[columnIndex])
+			row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
+		row[columnIndex][field] = value;
+	}
+	return clone;
+}
+
+const scaleFactorValues = Object.values(ScaleFactorEnum).map((d) => d.value);
+const deltaValues = Object.values(DeltaEnum).map((d) => d.delta);
 
 const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 	const lights = useEditorStore((state) => state.lights);
@@ -42,17 +56,7 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 			},
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
-
-			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
-				string,
-				Record<string, typeof defaultLightModel>
-			>;
-			for (const row of Object.values(tempLights)) {
-				if (!row[columnIndex])
-					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
-				row[columnIndex].intensity = value;
-			}
-			updateLights(tempLights);
+			updateLights(applyToColumn(lights, columnIndex, "intensity", value));
 		});
 	}, [updateLights, lights, columnIndex, data.intensity]);
 
@@ -63,10 +67,7 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 			input: "number",
 			inputLabel: "Multiples",
 			inputValue: data.multiples,
-			inputAttributes: {
-				min: "1",
-				step: "1",
-			},
+			inputAttributes: { min: "1", step: "1" },
 			showCancelButton: true,
 			preConfirm: (valueStr) => {
 				const value = Number(valueStr);
@@ -81,23 +82,14 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 			},
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
-
-			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
-				string,
-				Record<string, typeof defaultLightModel>
-			>;
-			for (const row of Object.values(tempLights)) {
-				if (!row[columnIndex])
-					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
-				row[columnIndex].multiples = value;
-			}
-			updateLights(tempLights);
+			updateLights(applyToColumn(lights, columnIndex, "multiples", value));
 		});
 	}, [updateLights, lights, columnIndex, data.multiples]);
 
 	const handleChangeScaleFactor = useCallback(
 		async (choosenScaleFactor: "CUSTOM" | number) => {
 			let scaleFactor: number;
+
 			if (choosenScaleFactor === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom scale factor",
@@ -105,10 +97,7 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 					input: "number",
 					inputLabel: "Scale Factor",
 					inputValue: data.scaleFactor,
-					inputAttributes: {
-						min: "0",
-						step: "any",
-					},
+					inputAttributes: { min: "0", step: "any" },
 					showCancelButton: true,
 					preConfirm: (valueStr) => {
 						const value = Number(valueStr);
@@ -117,50 +106,41 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 						return value;
 					},
 				});
-
 				if (!isConfirmed) return;
-
 				scaleFactor = inputValue;
 			} else {
 				scaleFactor = choosenScaleFactor;
 			}
 
-			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
-				string,
-				Record<string, typeof defaultLightModel>
-			>;
-			for (const row of Object.values(tempLights)) {
-				if (!row[columnIndex])
-					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
-				row[columnIndex].scaleFactor = scaleFactor;
-			}
-			updateLights(tempLights);
+			updateLights(
+				applyToColumn(lights, columnIndex, "scaleFactor", scaleFactor),
+			);
 		},
 		[updateLights, lights, columnIndex, data.scaleFactor],
 	);
 
+	const getSequencerBinary = useCallback(
+		() =>
+			Array.from({ length: totalRows }, (_, rowIndex) => {
+				const color = lights[rowIndex]?.[columnIndex]?.color;
+				return color && color !== "none" ? "1" : "0";
+			}).join(""),
+		[lights, columnIndex, totalRows],
+	);
+
 	const handleCopySequencersBinary = useCallback(() => {
-		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
-			const color = lights[rowIndex]?.[columnIndex]?.color;
-			return color && color !== "none" ? "1" : "0";
-		}).join("");
-		navigator.clipboard.writeText(binary);
-	}, [lights, columnIndex, totalRows]);
+		navigator.clipboard.writeText(getSequencerBinary());
+	}, [getSequencerBinary]);
 
 	const handleCopySequencersDecimal = useCallback(() => {
-		const binary = Array.from({ length: totalRows }, (_, rowIndex) => {
-			const color = lights[rowIndex]?.[columnIndex]?.color;
-			return color && color !== "none" ? "1" : "0";
-		}).join("");
-
-		const decimal = Number.parseInt(binary, 2);
-		navigator.clipboard.writeText(decimal.toString());
-	}, [lights, columnIndex, totalRows]);
+		navigator.clipboard.writeText(
+			Number.parseInt(getSequencerBinary(), 2).toString(),
+		);
+	}, [getSequencerBinary]);
 
 	const handleChangeDirection = useCallback(
 		async (choosenDelta: "CUSTOM" | number) => {
 			let delta: number;
-			console.log("choosenDelta", choosenDelta);
 
 			if (choosenDelta === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
@@ -171,159 +151,111 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 					inputValue: data.direction,
 					preConfirm: (valueStr) => {
 						const value = Number(valueStr);
-						if (!value || Number.isNaN(value)) {
+						if (!value || Number.isNaN(value))
 							return Modal.showValidationMessage("Invalid value");
-						}
 						return value;
 					},
 				});
-
 				if (!isConfirmed) return;
-
 				delta = Number(inputValue);
 			} else {
 				delta = choosenDelta;
 			}
 
-			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
-				string,
-				Record<string, typeof defaultLightModel>
-			>;
-			for (const row of Object.values(tempLights)) {
-				if (!row[columnIndex])
-					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
-				row[columnIndex].direction = delta;
-			}
-			updateLights(tempLights);
+			updateLights(applyToColumn(lights, columnIndex, "direction", delta));
 		},
 		[updateLights, lights, columnIndex, data.direction],
 	);
 
 	return (
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>
+		<Dropdown.Root>
+			<Dropdown.Trigger asChild>
 				<button
-					type={"button"}
+					type="button"
 					className="w-9 text-gray-400 text-xs outline-none transition-colors hover:text-gray-200 sm:text-sm lg:w-8"
 					id={`settings-dropdown-${columnIndex}`}
 					data-testid="column-settings-dropdown"
 				>
 					<FontAwesomeIcon icon={faGear} />
 				</button>
-			</DropdownMenu.Trigger>
+			</Dropdown.Trigger>
 
-			<DropdownMenu.Portal>
-				<DropdownMenu.Content
-					className="min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
-					sideOffset={5}
-				>
-					<DropdownMenu.Sub>
-						<DropdownMenu.SubTrigger className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[highlighted]:data-[state=open]:bg-slate-600/50 data-[highlighted]:data-[state=open]:text-white data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[state=open]:bg-slate-600/80 data-[disabled]:text-gray-400 data-[highlighted]:text-white data-[state=open]:text-gray-200">
-							Copy Sequencers
-							<div className="ml-auto pl-[20px] text-gray-400 group-data-[disabled]:text-gray-400 group-data-[highlighted]:text-white">
-								<FontAwesomeIcon icon={faChevronRight} />
-							</div>
-						</DropdownMenu.SubTrigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent
-								className="ml-1 min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
-								sideOffset={2}
-								alignOffset={-5}
-							>
-								<DropdownMenu.Item
-									className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
-									onSelect={handleCopySequencersBinary}
-								>
+			<Dropdown.Portal>
+				<Dropdown.Content sideOffset={5}>
+					<Dropdown.Sub>
+						<Dropdown.SubTrigger>Copy Sequencers</Dropdown.SubTrigger>
+						<Dropdown.Portal>
+							<Dropdown.SubContent sideOffset={2} alignOffset={-5}>
+								<Dropdown.Item onSelect={handleCopySequencersBinary}>
 									Copy as Binary
-								</DropdownMenu.Item>
-								<DropdownMenu.Item
-									className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
-									onSelect={handleCopySequencersDecimal}
-								>
+								</Dropdown.Item>
+								<Dropdown.Item onSelect={handleCopySequencersDecimal}>
 									Copy as Decimal
-								</DropdownMenu.Item>
-							</DropdownMenu.SubContent>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Sub>
-					<DropdownMenu.Separator className="m-[5px] h-px bg-slate-600" />
-					<DropdownMenu.Item
-						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
-						onSelect={handleChangeIntensity}
-					>
+								</Dropdown.Item>
+							</Dropdown.SubContent>
+						</Dropdown.Portal>
+					</Dropdown.Sub>
+
+					<Dropdown.Separator className="m-[5px] h-px bg-slate-600" />
+
+					<Dropdown.Item onSelect={handleChangeIntensity}>
 						Change Intensity
-					</DropdownMenu.Item>
-					<DropdownMenu.Item
-						className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white"
-						onSelect={handleChangeMultiples}
-					>
+					</Dropdown.Item>
+					<Dropdown.Item onSelect={handleChangeMultiples}>
 						Change Multiples
-					</DropdownMenu.Item>
-					<DropdownMenu.Sub>
-						<DropdownMenu.SubTrigger className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[highlighted]:data-[state=open]:bg-slate-600/50 data-[highlighted]:data-[state=open]:text-white data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[state=open]:bg-slate-600/80 data-[disabled]:text-gray-400 data-[highlighted]:text-white data-[state=open]:text-gray-200">
-							Change Scale Factor
-							<div className="ml-auto pl-[20px] text-gray-400 group-data-[disabled]:text-gray-400 group-data-[highlighted]:text-white">
-								<FontAwesomeIcon icon={faChevronRight} />
-							</div>
-						</DropdownMenu.SubTrigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent
-								className="ml-1 min-w-[220px] rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
-								sideOffset={2}
-								alignOffset={-5}
-							>
+					</Dropdown.Item>
+
+					<Dropdown.Sub>
+						<Dropdown.SubTrigger>Change Scale Factor</Dropdown.SubTrigger>
+						<Dropdown.Portal>
+							<Dropdown.SubContent sideOffset={2} alignOffset={-5}>
 								{Object.entries(ScaleFactorEnum).map(([id, scaleData]) => (
-									<DropdownMenu.Item
+									<Dropdown.Item
 										key={`scalefactor-${id}-${columnIndex}`}
 										onSelect={() => handleChangeScaleFactor(scaleData.value)}
-										className={twMerge(
-											"group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
-											data.scaleFactor === scaleData.value &&
-												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
-										)}
+										className={
+											data.scaleFactor === scaleData.value
+												? activeItemCn
+												: undefined
+										}
 									>
 										{scaleData.name}
 										<span className="mr-2 ml-auto text-gray-400">
 											({scaleData.value})
 										</span>
-									</DropdownMenu.Item>
+									</Dropdown.Item>
 								))}
-								<DropdownMenu.Item
+								<Dropdown.Item
 									onSelect={() => handleChangeScaleFactor("CUSTOM")}
-									className={twMerge(
-										"group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
-										!Object.values(ScaleFactorEnum)
-											.map((d) => d.value)
-											.includes(data.scaleFactor) &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
-									)}
+									className={
+										!scaleFactorValues.includes(data.scaleFactor)
+											? activeItemCn
+											: undefined
+									}
 								>
 									Custom...
-								</DropdownMenu.Item>
-							</DropdownMenu.SubContent>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Sub>
-					<DropdownMenu.Sub>
-						<DropdownMenu.SubTrigger className="group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[highlighted]:data-[state=open]:bg-slate-600/50 data-[highlighted]:data-[state=open]:text-white data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[state=open]:bg-slate-600/80 data-[disabled]:text-gray-400 data-[highlighted]:text-white data-[state=open]:text-gray-200">
-							Change Direction
-							<div className="ml-auto pl-[20px] text-gray-400 group-data-[disabled]:text-gray-400 group-data-[highlighted]:text-white">
-								<FontAwesomeIcon icon={faChevronRight} />
-							</div>
-						</DropdownMenu.SubTrigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent
-								className="ml-1 max-h-[500px] min-w-[220px] overflow-y-auto rounded-md bg-slate-800 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade"
+								</Dropdown.Item>
+							</Dropdown.SubContent>
+						</Dropdown.Portal>
+					</Dropdown.Sub>
+
+					<Dropdown.Sub>
+						<Dropdown.SubTrigger>Change Direction</Dropdown.SubTrigger>
+						<Dropdown.Portal>
+							<Dropdown.SubContent
+								className="max-h-[500px] overflow-y-auto"
 								sideOffset={2}
 								alignOffset={-5}
 							>
 								{Object.entries(DeltaEnum).map(([id, directionData]) => (
-									<DropdownMenu.Item
+									<Dropdown.BlockItem
 										key={`direction-${id}-${columnIndex}`}
 										onSelect={() => handleChangeDirection(directionData.delta)}
-										className={twMerge(
-											"group relative select-none rounded-[3px] px-[5px] py-1 pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
-											data.direction === directionData.delta &&
-												"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
-										)}
+										className={
+											data.direction === directionData.delta
+												? activeItemCn
+												: undefined
+										}
 									>
 										<div className="flex items-center">
 											{directionData.name}
@@ -334,13 +266,13 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 										<div className="mt-1.5 flex flex-col gap-y-1">
 											{directionData.schema.map((row, rowIndex) => (
 												<div
-													// biome-ignore lint/suspicious/noArrayIndexKey: it's ok in this case
+													// biome-ignore lint/suspicious/noArrayIndexKey: ok here
 													key={`direction-${id}-${columnIndex}-row-${rowIndex}`}
 													className="flex gap-x-1"
 												>
 													{row.map((cell, cellIndex) => (
 														<div
-															// biome-ignore lint/suspicious/noArrayIndexKey: it's ok in this case
+															// biome-ignore lint/suspicious/noArrayIndexKey: ok here
 															key={`direction-${id}-${columnIndex}-${rowIndex}-${cellIndex}`}
 															className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200/20"
 														>
@@ -360,26 +292,24 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 												</div>
 											))}
 										</div>
-									</DropdownMenu.Item>
+									</Dropdown.BlockItem>
 								))}
-								<DropdownMenu.Item
+								<Dropdown.Item
 									onSelect={() => handleChangeDirection("CUSTOM")}
-									className={twMerge(
-										"group relative flex h-[25px] select-none items-center rounded-[3px] px-[5px] pl-[25px] text-[13px] text-gray-200 leading-none outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-slate-600/50 data-[disabled]:text-gray-400 data-[highlighted]:text-white",
-										!Object.values(DeltaEnum)
-											.map((d) => d.delta)
-											.includes(data.direction) &&
-											"bg-emerald-400/30 text-emerald-400 data-[highlighted]:bg-emerald-400/20 data-[highlighted]:text-emerald-500",
-									)}
+									className={
+										!deltaValues.includes(data.direction)
+											? activeItemCn
+											: undefined
+									}
 								>
 									Custom...
-								</DropdownMenu.Item>
-							</DropdownMenu.SubContent>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Sub>
-				</DropdownMenu.Content>
-			</DropdownMenu.Portal>
-		</DropdownMenu.Root>
+								</Dropdown.Item>
+							</Dropdown.SubContent>
+						</Dropdown.Portal>
+					</Dropdown.Sub>
+				</Dropdown.Content>
+			</Dropdown.Portal>
+		</Dropdown.Root>
 	);
 };
 
