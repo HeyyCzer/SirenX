@@ -514,7 +514,7 @@
 .swal2-select,
 .swal2-radio,
 .swal2-checkbox {
-	@apply bg-slate-700;
+	@apply bg-slate-700 !important;
 	@apply text-gray-200;
 	@apply outline-none;
 	margin: 1em 2em 3px;
