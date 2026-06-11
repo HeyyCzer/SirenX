@@ -53,7 +53,7 @@ export const settingsConfig: Record<string, SettingDeclaration> = {
 export type SettingKey = keyof typeof settingsConfig;
 
 export type SettingsValues = {
-	[K in SettingKey]: typeof settingsConfig[K]["defaultValue"];
+	[K in SettingKey]: (typeof settingsConfig)[K]["defaultValue"];
 };
 
 export const defaultSettingsValues: SettingsValues = Object.fromEntries(

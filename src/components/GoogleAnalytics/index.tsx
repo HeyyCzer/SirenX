@@ -1,18 +1,21 @@
 "use client";
 
-import * as gtag from "@/gtag";
 import Script from "next/script";
+import * as gtag from "@/gtag";
 
 const GoogleAnalytics = () => {
 	if (!gtag.GA_TRACKING_ID) return null;
 
 	return (
 		<>
-			<Script strategy="afterInteractive" src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`} />
+			<Script
+				strategy="afterInteractive"
+				src={`https://www.googletagmanager.com/gtag/js?id=${gtag.GA_TRACKING_ID}`}
+			/>
 			<Script
 				id="gtag-init"
 				strategy="afterInteractive"
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation>
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: its ok in this case
 				dangerouslySetInnerHTML={{
 					__html: `
                       window.dataLayer = window.dataLayer || [];

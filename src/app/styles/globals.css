@@ -16,46 +16,43 @@ a {
 }
 
 kbd > kbd {
-	@apply 
-		rounded-[3px]
-		border-[1px]
-		border-gray-500/50
-		bg-gray-500/20 
-		text-gray-400 
-		font-medium
-		text-xs
-		w-fit 
-		inline-block
-		px-[4px] py-[1px];
+	@apply rounded-[3px] border-[1px] border-gray-500/50 bg-gray-500/20 text-gray-400 font-medium text-xs w-fit inline-block px-[4px] py-[1px];
 }
 
 @keyframes siren {
-	0%, 30%, 45% {
+	0%,
+	30%,
+	45% {
 		@apply text-white;
 		@apply drop-shadow-none blur-none;
 	}
-	25%, 35% {
+	25%,
+	35% {
 		@apply bg-gradient-to-br from-emerald-400 to-cyan-400 bg-clip-text text-transparent;
 		@apply drop-shadow-[0_0_20px_#34d399] blur-[0.25px];
 	}
 }
 
 @keyframes siren2 {
-	0%, 30%, 45% {
+	0%,
+	30%,
+	45% {
 		@apply bg-gradient-to-br from-emerald-400 to-cyan-400 bg-clip-text text-transparent;
 		@apply drop-shadow-none blur-none;
 	}
-	25%, 35% {
+	25%,
+	35% {
 		@apply text-white;
 		@apply drop-shadow-[0_0_20px_#fff] blur-[0.25px];
 	}
 }
 
 @keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0.3;
-  }
+	75%,
+	100% {
+		transform: scale(2);
+		opacity: 0.3;
+	}
 }
 
 .text-gradient-primary {
@@ -79,7 +76,7 @@ kbd > kbd {
 	--background: theme("colors.gray.800");
 
 	input {
-		@apply outline-none;	
+		@apply outline-none;
 	}
 }
 

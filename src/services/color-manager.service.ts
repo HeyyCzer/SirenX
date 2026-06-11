@@ -7,10 +7,10 @@ interface RgbColor {
 }
 
 function hexToRgb(hex: string): RgbColor {
-	let hexWithoutHash = hex.replace(/^#/, '');
+	let hexWithoutHash = hex.replace(/^#/, "");
 
 	if (hex.length === 3) {
-		hexWithoutHash = hex.replace(/(.)/g, '$1$1');
+		hexWithoutHash = hex.replace(/(.)/g, "$1$1");
 	}
 
 	const r = Number.parseInt(hexWithoutHash.substring(0, 2), 16);
@@ -21,7 +21,7 @@ function hexToRgb(hex: string): RgbColor {
 }
 
 function getContrastColor(hexColor: string): "white" | "black" {
-	const hexWithoutHash = hexColor.replace(/^#/, '');
+	const hexWithoutHash = hexColor.replace(/^#/, "");
 
 	const r = Number.parseInt(hexWithoutHash.substring(0, 2), 16);
 	const g = Number.parseInt(hexWithoutHash.substring(2, 4), 16);
@@ -42,9 +42,18 @@ export const createCustomColor = (carcolsColor: string): string => {
 
 	// Set CSS variables on :root for this custom color
 	const varPrefix = `--color-${key.toLowerCase()}`;
-	document.documentElement.style.setProperty(`${varPrefix}-r`, rgbColor.r.toString());
-	document.documentElement.style.setProperty(`${varPrefix}-g`, rgbColor.g.toString());
-	document.documentElement.style.setProperty(`${varPrefix}-b`, rgbColor.b.toString());
+	document.documentElement.style.setProperty(
+		`${varPrefix}-r`,
+		rgbColor.r.toString(),
+	);
+	document.documentElement.style.setProperty(
+		`${varPrefix}-g`,
+		rgbColor.g.toString(),
+	);
+	document.documentElement.style.setProperty(
+		`${varPrefix}-b`,
+		rgbColor.b.toString(),
+	);
 	document.documentElement.style.setProperty(`${varPrefix}-text`, textColor);
 
 	// Create dynamic CSS classes that use the CSS variables
@@ -67,7 +76,9 @@ export const createCustomColor = (carcolsColor: string): string => {
 		document.head.appendChild(style);
 	}
 
-	const totalCustoms = Object.keys(Colors).filter((color) => color.includes("CUSTOM")).length;
+	const totalCustoms = Object.keys(Colors).filter((color) =>
+		color.includes("CUSTOM"),
+	).length;
 	const newColor = {
 		toolbar: {
 			name: `Custom ${totalCustoms + 1}`,
@@ -85,7 +96,7 @@ export const createCustomColor = (carcolsColor: string): string => {
 			rgb: rgbColor,
 			textColor: textColor,
 			varPrefix: varPrefix,
-		}
+		},
 	};
 	useColorStore.setState((state) => ({
 		colors: {
@@ -95,8 +106,15 @@ export const createCustomColor = (carcolsColor: string): string => {
 	}));
 
 	// Make custom colors the first ones, so they can be easily found, and sort the custom colors by name.
-	const customColors = Object.entries(Colors).filter(([color]) => color.includes("CUSTOM"));
-	const sortedColors = Object.entries(Colors).filter(([color]) => !color.includes("CUSTOM")).sort(([a], [b]) => Object.keys(Colors).indexOf(a) - Object.keys(Colors).indexOf(b));
+	const customColors = Object.entries(Colors).filter(([color]) =>
+		color.includes("CUSTOM"),
+	);
+	const sortedColors = Object.entries(Colors)
+		.filter(([color]) => !color.includes("CUSTOM"))
+		.sort(
+			([a], [b]) =>
+				Object.keys(Colors).indexOf(a) - Object.keys(Colors).indexOf(b),
+		);
 	const newColors = Object.fromEntries([...customColors, ...sortedColors]);
 	for (const index in newColors) {
 		delete Colors[index];
@@ -105,7 +123,7 @@ export const createCustomColor = (carcolsColor: string): string => {
 	Object.assign(Colors, newColors);
 
 	return key;
-}
+};
 
 export const restoreCustomColors = (): void => {
 	const Colors = useColorStore.getState().colors;
@@ -115,10 +133,22 @@ export const restoreCustomColors = (): void => {
 			const { rgb, textColor, varPrefix } = colorData.css;
 
 			// Set CSS variables
-			document.documentElement.style.setProperty(`${varPrefix}-r`, rgb.r.toString());
-			document.documentElement.style.setProperty(`${varPrefix}-g`, rgb.g.toString());
-			document.documentElement.style.setProperty(`${varPrefix}-b`, rgb.b.toString());
-			document.documentElement.style.setProperty(`${varPrefix}-text`, textColor);
+			document.documentElement.style.setProperty(
+				`${varPrefix}-r`,
+				rgb.r.toString(),
+			);
+			document.documentElement.style.setProperty(
+				`${varPrefix}-g`,
+				rgb.g.toString(),
+			);
+			document.documentElement.style.setProperty(
+				`${varPrefix}-b`,
+				rgb.b.toString(),
+			);
+			document.documentElement.style.setProperty(
+				`${varPrefix}-text`,
+				textColor,
+			);
 
 			// Check if style tag already exists
 			if (document.querySelector(`style[data-custom-color="${key}"]`)) continue;
@@ -142,4 +172,4 @@ export const restoreCustomColors = (): void => {
 			document.head.appendChild(style);
 		}
 	}
-}
+};

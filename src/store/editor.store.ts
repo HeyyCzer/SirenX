@@ -1,8 +1,10 @@
-import { createCustomColor } from "@/services/color-manager.service";
-import DefaultCarcols from "@/default_carcols.json";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_KEY, defaultLightModel } from "./constants";
+import DefaultCarcols from "@/assets/default_carcols.json" with {
+	type: "json",
+};
+import { createCustomColor } from "@/services/color-manager.service";
+import { defaultLightModel, STORE_KEY } from "./constants";
 
 interface EditorState {
 	sirenId: string | null;
@@ -34,23 +36,6 @@ interface EditorState {
 	updateLights: (lights: EditorState["lights"]) => void;
 }
 
-// Initialize custom colors from localStorage if available
-if (typeof window !== "undefined") {
-	const data = localStorage.getItem(`${STORE_KEY}editor`);
-	if (data) {
-		const preloadedEditor = JSON.parse(data);
-		if (preloadedEditor) {
-			for (const row of Object.values(preloadedEditor.lights ?? {})) {
-				for (const item of Object.values(row ?? {})) {
-					if (item?.color?.startsWith("CUSTOM_")) {
-						createCustomColor(item.color.replace("CUSTOM_", ""));
-					}
-				}
-			}
-		}
-	}
-}
-
 export const useEditorStore = create<EditorState>()(
 	persist(
 		(set) => ({
@@ -72,15 +57,13 @@ export const useEditorStore = create<EditorState>()(
 			setUploadData: ({ id, name, file }) =>
 				set({ sirenId: id, sirenName: name, uploadedFile: file }),
 
-			setCurrentBpm: (bpm) =>
-				set({ bpm }),
+			setCurrentBpm: (bpm) => set({ bpm }),
 
-			setSelectedColor: (color) =>
-				set({ selectedColor: color }),
+			setSelectedColor: (color) => set({ selectedColor: color }),
 
 			updateLight: ({ row, column, color, isOneColorPerColumn }) =>
 				set((state) => {
-					const newLights = { ...state.lights };
+					const newLights = { ...state.lights } as EditorState["lights"];
 
 					if (!newLights[row]) {
 						newLights[row] = [];
@@ -92,7 +75,7 @@ export const useEditorStore = create<EditorState>()(
 
 					if (isOneColorPerColumn) {
 						for (const rowKey of Object.keys(newLights)) {
-							const currentRow = newLights[rowKey as any];
+							const currentRow = newLights[Number(rowKey)];
 							if (
 								currentRow[column]?.color &&
 								currentRow[column]?.color !== color &&
@@ -101,7 +84,7 @@ export const useEditorStore = create<EditorState>()(
 							) {
 								currentRow[column] = {
 									...currentRow[column],
-									color: color
+									color: color,
 								};
 							}
 						}
@@ -109,17 +92,34 @@ export const useEditorStore = create<EditorState>()(
 
 					newLights[row][column] = {
 						...newLights[row][column],
-						color: color
+						color: color,
 					};
 
 					return { lights: newLights };
 				}),
 
-			updateLights: (lights) =>
-				set({ lights }),
+			updateLights: (lights) => set({ lights }),
 		}),
 		{
 			name: `${STORE_KEY}editor`,
-		}
-	)
+			onRehydrateStorage: () => {
+				// After rehydration, ensure custom colors are registered
+				const data = localStorage.getItem(`${STORE_KEY}editor`);
+				if (data) {
+					const preloadedEditor = JSON.parse(data);
+					if (preloadedEditor) {
+						for (const row of Object.values(preloadedEditor.lights ?? {})) {
+							for (const item of Object.values(row ?? {})) {
+								if (item?.color?.startsWith("CUSTOM_")) {
+									createCustomColor(
+										item.color.replace("CUSTOM_", ""),
+									);
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+	),
 );

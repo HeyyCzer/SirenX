@@ -7,7 +7,12 @@ export const pageview = (url: string) => {
 	});
 };
 
-export const event = ({ action, category, label, value }: {
+export const event = ({
+	action,
+	category,
+	label,
+	value,
+}: {
 	action: string;
 	category: string;
 	label: string;

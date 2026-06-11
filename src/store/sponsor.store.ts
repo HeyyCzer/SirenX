@@ -17,6 +17,6 @@ export const useSponsorStore = create<SponsorState>()(
 		}),
 		{
 			name: `${STORE_KEY}sponsor`,
-		}
-	)
+		},
+	),
 );

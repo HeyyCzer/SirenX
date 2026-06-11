@@ -1,47 +1,24 @@
 "use client";
 
-// import FeedbackWidget from "@/app/editor/components/SentryFeedback";
+import { Suspense, useEffect } from "react";
+import SeparatorsContainer from "@/app/editor/components/SeparatorsContainer";
+import Toolbar from "@/app/editor/components/Toolbar";
+import AppTutorial from "@/app/editor/components/Tutorial";
 import MainLayout from "@/components/MainLayout";
 import MeshGradient from "@/components/MeshGradient";
-import { restoreCustomColors } from "@/services/color-manager.service";
 import { useOneColorPerColumn, usePreventContextMenu } from "@/hooks/useEditor";
+import { restoreCustomColors } from "@/services/color-manager.service";
 import { loadBuyMeCoffeeWidget } from "@/utils/donations";
-import dynamic from "next/dynamic";
-import { Suspense, useEffect } from "react";
-
-const Editor = dynamic(() => import("@/app/editor/components/Editor"), {
-	ssr: false,
-	loading: () => (
-		<div className="min-h-[600px] w-full animate-pulse rounded-lg bg-slate-800/50" />
-	),
-});
-
-const SeparatorsContainer = dynamic(
-	() => import("@/app/editor/components/SeparatorsContainer"),
-	{
-		ssr: false,
-	},
-);
-
-const Toolbar = dynamic(() => import("@/app/editor/components/Toolbar"), {
-	ssr: false,
-	loading: () => (
-		<div className="h-[600px] w-[200px] animate-pulse rounded-lg bg-slate-800/50" />
-	),
-});
-
-const EditorTutorial = dynamic(() => import("./components/Tutorial"), {
-	ssr: false,
-});
+import Editor from "./components/Editor";
 
 export default function EditorPage() {
 	useEffect(() => {
-		loadBuyMeCoffeeWidget();
-		restoreCustomColors();
+		void loadBuyMeCoffeeWidget();
+		void restoreCustomColors();
 	}, []);
 
-	usePreventContextMenu();
-	useOneColorPerColumn();
+	void usePreventContextMenu();
+	void useOneColorPerColumn();
 
 	return (
 		<MainLayout hideFooter>
@@ -52,15 +29,23 @@ export default function EditorPage() {
 				<SeparatorsContainer />
 			</Suspense>
 			<Suspense fallback={null}>
-				<EditorTutorial />
+				<AppTutorial />
 			</Suspense>
 
 			<div className="relative min-h-screen px-6 py-9 lg:px-12">
 				<div className="flex justify-between gap-x-6">
-					<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
+					<Suspense
+						fallback={
+							<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />
+						}
+					>
 						<Editor />
 					</Suspense>
-					<Suspense fallback={<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />}>
+					<Suspense
+						fallback={
+							<div className="h-6 w-24 animate-pulse rounded bg-slate-800/50" />
+						}
+					>
 						<Toolbar />
 					</Suspense>
 				</div>

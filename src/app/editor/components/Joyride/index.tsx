@@ -1,12 +1,7 @@
-import { useTutorialStore } from "@/store/tutorial.store";
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import { ACTIONS } from "react-joyride";
-import { tv } from "tailwind-variants";
-
-const ReactJoyride = dynamic(() => import("react-joyride"), {
-	ssr: false,
-});
+import { ACTIONS, type EventData, Joyride } from "react-joyride";
+import { tv, type VariantProps } from "tailwind-variants";
+import { useTutorialStore } from "@/store/tutorial.store";
 
 const button = tv({
 	base: "py-1 px-2 transition-colors border-0 rounded-md text-white cursor-pointer outline-none appearance-none",
@@ -21,7 +16,11 @@ const button = tv({
 	},
 });
 
-const TooltipButton = (props) => {
+type ButtonVariants = VariantProps<typeof button>;
+
+const TooltipButton = (
+	props: ButtonVariants & { title: string; className?: string },
+) => {
 	return (
 		<button
 			type="button"
@@ -33,6 +32,16 @@ const TooltipButton = (props) => {
 	);
 };
 
+export interface TooltipProps {
+	continuous: boolean;
+	index: number;
+	step: any;
+	backProps: any;
+	closeProps: any;
+	primaryProps: any;
+	tooltipProps: any;
+}
+
 const Tooltip = ({
 	continuous,
 	index,
@@ -41,7 +50,7 @@ const Tooltip = ({
 	closeProps,
 	primaryProps,
 	tooltipProps,
-}) => {
+}: TooltipProps) => {
 	return (
 		<div
 			className="react-joyride__tooltip relative box-border w-[380px] max-w-full rounded-lg bg-slate-800 p-6 text-gray-300"
@@ -51,7 +60,7 @@ const Tooltip = ({
 				{step.title && (
 					<h4 className="pb-2 font-bold text-emerald-400">{step.title}</h4>
 				)}
-				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: it's safe in this case */}
 				<p dangerouslySetInnerHTML={{ __html: step.content }} />
 			</div>
 
@@ -66,19 +75,29 @@ const Tooltip = ({
 	);
 };
 
+export interface TutorialProps {
+	uid: string;
+	dependent?: string;
+	steps: any[];
+	callback?: (data: EventData) => void;
+	continuous?: boolean;
+	autoStart?: boolean;
+}
+
 export default function Tutorial({
 	uid,
 	dependent,
 	steps,
 	callback: tutorialCallback,
-	...props
-}) {
+	continuous = false,
+	autoStart = false,
+}: TutorialProps) {
 	const [showTutorial, setShowTutorial] = useState(false);
 	const tutorialState = useTutorialStore();
 	const setStatus = useTutorialStore((state) => state.setStatus);
 
 	for (const stepIndex in steps) {
-		const step = Number.parseInt(stepIndex);
+		const step = Number.parseInt(stepIndex, 10);
 		const stepData = steps[step];
 
 		if (stepData?.condition && !stepData.condition()) {
@@ -97,7 +116,7 @@ export default function Tutorial({
 			}
 		}
 
-		let tutorialTimeout;
+		let tutorialTimeout: NodeJS.Timeout;
 		const tutorial = tutorialState[uid];
 		if (!tutorial) {
 			tutorialTimeout = setTimeout(() => {
@@ -107,11 +126,11 @@ export default function Tutorial({
 
 		return () => {
 			clearTimeout(tutorialTimeout);
-		}
+		};
 	}, [tutorialState, uid, dependent]);
 
-	const callback = useCallback(
-		(data) => {
+	const onEvent = useCallback(
+		(data: EventData) => {
 			tutorialCallback?.(data);
 
 			if (!uid) return;
@@ -124,9 +143,9 @@ export default function Tutorial({
 	);
 
 	return (
-		<ReactJoyride
+		<Joyride
 			run={showTutorial}
-			callback={callback}
+			onEvent={onEvent}
 			locale={{
 				back: "Back",
 				close: "Close",
@@ -134,22 +153,28 @@ export default function Tutorial({
 				next: "Next",
 				skip: "Skip",
 			}}
-			hideCloseButton
-			disableScrolling
-			disableScrollParentFix
-			{...props}
 			steps={steps}
 			tooltipComponent={Tooltip}
 			styles={{
-				options: {
-					arrowColor: "var(--color-slate-800)",
-					backgroundColor: "var(--color-slate-800)",
-					textColor: "var(--color-gray-300)",
-					overlayColor: "rgba(0, 0, 0, 0.6)",
-					primaryColor: "var(--color-emerald-400)",
-					zIndex: 1000,
+				buttonPrimary: {
+					backgroundColor: "var(--color-emerald-400)",
+				},
+				arrow: {
+					color: "var(--color-slate-800)",
+				},
+				beaconInner: {
+					backgroundColor: "var(--color-emerald-400)",
+				},
+				beaconOuter: {
+					backgroundColor: "#34d39933",
+					border: "2px solid var(--color-emerald-400)",
 				},
 			}}
+			options={{
+				skipBeacon: autoStart,
+				scrollOffset: 100,
+			}}
+			continuous={continuous}
 		/>
 	);
 }

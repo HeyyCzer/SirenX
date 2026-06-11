@@ -1,6 +1,11 @@
 import { addBreadcrumb } from "@sentry/nextjs";
 
-export function createNestedKeys(obj: any, keys: string[], value: any, path = "@"): void {
+export function createNestedKeys(
+	obj: any,
+	keys: string[],
+	value: any,
+	path = "@",
+): void {
 	if (keys.length === 0) return;
 	if (keys.length === 1) {
 		if (obj[keys[0]] !== undefined) return;
@@ -27,23 +32,28 @@ export function createNestedKeys(obj: any, keys: string[], value: any, path = "@
 		obj[currentKey] = {};
 	}
 
-	createNestedKeys(obj[currentKey], keys.slice(1), value, `${path}.${currentKey}`);
+	createNestedKeys(
+		obj[currentKey],
+		keys.slice(1),
+		value,
+		`${path}.${currentKey}`,
+	);
 }
 
 export function cloneNestedKeys(source: any, target: any, path = "@"): void {
-	if (!target || typeof target !== 'object' || Array.isArray(target)) {
+	if (!target || typeof target !== "object" || Array.isArray(target)) {
 		return;
 	}
 
-	if (!source || typeof source !== 'object' || Array.isArray(source)) {
+	if (!source || typeof source !== "object" || Array.isArray(source)) {
 		return;
 	}
 
 	for (const key in target) {
-		if (target.hasOwnProperty(key)) {
+		if (Object.hasOwn(target, key)) {
 			const currentPath = path === "@" ? key : `${path}.${key}`;
 
-			if (!source.hasOwnProperty(key)) {
+			if (!Object.hasOwn(source, key)) {
 				source[key] = JSON.parse(JSON.stringify(target[key]));
 
 				const debugData = {
@@ -54,14 +64,21 @@ export function cloneNestedKeys(source: any, target: any, path = "@"): void {
 					targetObject: target,
 				};
 
-				console.debug(`Cloning key '${key}' from target to source at path '${currentPath}'`, debugData);
+				console.debug(
+					`Cloning key '${key}' from target to source at path '${currentPath}'`,
+					debugData,
+				);
 				addBreadcrumb({
 					message: `Cloning key '${key}' from target to source`,
 					data: debugData,
 				});
 			} else {
-				if (typeof source[key] === 'object' && !Array.isArray(source[key]) &&
-					typeof target[key] === 'object' && !Array.isArray(target[key])) {
+				if (
+					typeof source[key] === "object" &&
+					!Array.isArray(source[key]) &&
+					typeof target[key] === "object" &&
+					!Array.isArray(target[key])
+				) {
 					cloneNestedKeys(source[key], target[key], currentPath);
 				}
 			}

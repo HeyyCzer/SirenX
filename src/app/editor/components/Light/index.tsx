@@ -8,7 +8,7 @@ import { useColorStore } from "@/store/color.store";
 import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 
-function getRow(number) {
+function getRow(number: number) {
 	if (!Number.isInteger(number) || number <= 0) return;
 
 	let col = "";
@@ -20,7 +20,19 @@ function getRow(number) {
 	return col;
 }
 
-const Light = ({ isCurrent = false, disabled = false, row, column }) => {
+interface LightProps {
+	isCurrent?: boolean;
+	disabled?: boolean;
+	row: number;
+	column: number;
+}
+
+const Light = ({
+	isCurrent = false,
+	disabled = false,
+	row,
+	column,
+}: LightProps) => {
 	const { selectedColor, updateLight } = useEditorStore(
 		useShallow((state) => ({
 			selectedColor: state.selectedColor,
@@ -33,11 +45,11 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 
 	const { colors } = useColorStore();
 	const isOneColorPerColumn = useSettingsStore(
-		(state) => state.settings.oneColorPerColumn,
+		(state) => state.settings.oneColorPerColumn as boolean,
 	);
 
 	const handleClick = useCallback(
-		(color) => {
+		(color: string) => {
 			if (disabled) return;
 			updateLight({ row, column, color, isOneColorPerColumn });
 		},
@@ -53,7 +65,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 	);
 
 	const onMouseInteract = useCallback(
-		(e) => {
+		(e: React.MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
 			if (e.buttons === 1) {
 				handleClick(selectedColor);
@@ -65,7 +77,7 @@ const Light = ({ isCurrent = false, disabled = false, row, column }) => {
 	);
 
 	const onMouseRightClick = useCallback(
-		(e) => {
+		(e: React.MouseEvent<HTMLButtonElement>) => {
 			e.preventDefault();
 			handleClick("none");
 		},

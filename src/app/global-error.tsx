@@ -1,13 +1,13 @@
 "use client";
 
-import { STORE_KEY } from "@/store/constants";
 import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
+import { STORE_KEY } from "@/store/constants";
 
 export default function GlobalError({
 	error,
 }: Readonly<{
-	error: Error & { digest?: string }
+	error: Error & { digest?: string };
 }>) {
 	useEffect(() => {
 		Sentry.captureException(error);
