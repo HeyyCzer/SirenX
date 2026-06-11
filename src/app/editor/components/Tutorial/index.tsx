@@ -2,7 +2,6 @@ import Tutorial from "@/app/editor/components/Joyride";
 
 export default function AppTutorial() {
 	return (
-		// @ts-expect-error
 		<Tutorial
 			uid={"editor-basic-tutorial"}
 			steps={[
@@ -59,6 +58,7 @@ export default function AppTutorial() {
 				},
 			]}
 			continuous
+			autoStart
 		/>
 	);
 }

@@ -1,13 +1,21 @@
 import { useEffect, useMemo } from "react";
 import Light from "../Light";
 
+interface EditorPreviewProps {
+	totalColumns: number;
+	totalRows: number;
+	currentRow: number;
+	setCurrentRow: React.Dispatch<React.SetStateAction<number>>;
+	bpm: number;
+}
+
 export default function EditorPreview({
 	totalColumns,
 	totalRows,
 	currentRow,
 	setCurrentRow,
 	bpm,
-}) {
+}: EditorPreviewProps) {
 	const editorColumns = useMemo(
 		() => Array.from({ length: totalColumns }),
 		[totalColumns],

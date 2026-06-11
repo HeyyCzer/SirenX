@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { useEditorStore } from "@/store/editor.store.ts";
-import { useSettingsStore } from "@/store/settings.store.ts";
+import { useEditorStore } from "@/store/editor.store";
+import { useSettingsStore } from "@/store/settings.store";
 import EditorGrid from "./EditorGrid";
 import EditorHeader from "./EditorHeader";
 import EditorPreview from "./EditorPreview";
 
 export default function Editor() {
 	const bpm = useEditorStore((state) => state.bpm);
-	const totalColumns = useSettingsStore((state) => state.settings.totalColumns);
-	const totalRows = useSettingsStore((state) => state.settings.totalRows);
+	const totalColumns = useSettingsStore(
+		(state) => state.settings.totalColumns as number,
+	);
+	const totalRows = useSettingsStore(
+		(state) => state.settings.totalRows as number,
+	);
 	const [currentRow, setCurrentRow] = useState(0);
 
 	return (

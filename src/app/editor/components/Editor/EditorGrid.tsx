@@ -6,7 +6,17 @@ import { useEditorStore } from "@/store/editor.store";
 import ColumnSettingsDropdown from "../ColumnSettingsDropdown";
 import LightGroup from "../Light/LightGroup";
 
-export default function EditorGrid({ totalColumns, totalRows, currentRow }) {
+interface EditorGridProps {
+	totalColumns: number;
+	totalRows: number;
+	currentRow: number;
+}
+
+export default function EditorGrid({
+	totalColumns,
+	totalRows,
+	currentRow,
+}: EditorGridProps) {
 	const editorColumns = useMemo(
 		() => Array.from({ length: totalColumns }),
 		[totalColumns],
@@ -19,7 +29,7 @@ export default function EditorGrid({ totalColumns, totalRows, currentRow }) {
 
 	const lightRows = useEditorStore(useShallow((state) => state.lights));
 	useEffect(() => {
-		if (!lightRows || lightRows.length === 0) return;
+		if (!lightRows || Object.keys(lightRows).length === 0) return;
 
 		for (const row of Object.values(lightRows)) {
 			for (const light of Object.values(row)) {

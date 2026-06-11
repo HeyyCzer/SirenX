@@ -18,7 +18,9 @@ import { Modal } from "@/utils/modal";
 const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
-	const totalRows = useSettingsStore((state) => state.settings.totalRows);
+	const totalRows = useSettingsStore(
+		(state) => state.settings.totalRows as number,
+	);
 	const data = useMemo(
 		() =>
 			lights[0]?.[columnIndex] ?? JSON.parse(JSON.stringify(defaultLightModel)),
@@ -32,7 +34,7 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 			input: "text",
 			inputLabel: "Intensity",
 			inputValue: data.intensity,
-			preConfirm: (valueStr: string) => {
+			preConfirm: (valueStr) => {
 				const value = Number(valueStr);
 				if (!value || Number.isNaN(value) || value < 0)
 					return Modal.showValidationMessage("Invalid value");
@@ -41,7 +43,10 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
 
-			const tempLights = JSON.parse(JSON.stringify(lights));
+			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
+				string,
+				Record<string, typeof defaultLightModel>
+			>;
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex])
 					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
@@ -59,8 +64,8 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 			inputLabel: "Multiples",
 			inputValue: data.multiples,
 			inputAttributes: {
-				min: 1,
-				step: 1,
+				min: "1",
+				step: "1",
 			},
 			showCancelButton: true,
 			preConfirm: (valueStr) => {
@@ -77,7 +82,10 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 		}).then(({ isConfirmed, value }) => {
 			if (!isConfirmed) return;
 
-			const tempLights = JSON.parse(JSON.stringify(lights));
+			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
+				string,
+				Record<string, typeof defaultLightModel>
+			>;
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex])
 					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
@@ -88,9 +96,9 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 	}, [updateLights, lights, columnIndex, data.multiples]);
 
 	const handleChangeScaleFactor = useCallback(
-		async (choosenScaleFactor) => {
-			let scaleFactor = choosenScaleFactor;
-			if (scaleFactor === "CUSTOM") {
+		async (choosenScaleFactor: "CUSTOM" | number) => {
+			let scaleFactor: number;
+			if (choosenScaleFactor === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom scale factor",
 					text: "This will change the scale factor of the light.",
@@ -98,7 +106,7 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 					inputLabel: "Scale Factor",
 					inputValue: data.scaleFactor,
 					inputAttributes: {
-						min: 0,
+						min: "0",
 						step: "any",
 					},
 					showCancelButton: true,
@@ -113,9 +121,14 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 				if (!isConfirmed) return;
 
 				scaleFactor = inputValue;
+			} else {
+				scaleFactor = choosenScaleFactor;
 			}
 
-			const tempLights = JSON.parse(JSON.stringify(lights));
+			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
+				string,
+				Record<string, typeof defaultLightModel>
+			>;
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex])
 					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));
@@ -145,11 +158,11 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 	}, [lights, columnIndex, totalRows]);
 
 	const handleChangeDirection = useCallback(
-		async (choosenDelta) => {
-			let delta = choosenDelta;
+		async (choosenDelta: "CUSTOM" | number) => {
+			let delta: number;
 			console.log("choosenDelta", choosenDelta);
 
-			if (delta === "CUSTOM") {
+			if (choosenDelta === "CUSTOM") {
 				const { isConfirmed, value: inputValue } = await Modal.fire({
 					title: "Custom direction",
 					text: "This will change the direction of the light.",
@@ -168,9 +181,14 @@ const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 				if (!isConfirmed) return;
 
 				delta = Number(inputValue);
+			} else {
+				delta = choosenDelta;
 			}
 
-			const tempLights = JSON.parse(JSON.stringify(lights));
+			const tempLights = JSON.parse(JSON.stringify(lights)) as Record<
+				string,
+				Record<string, typeof defaultLightModel>
+			>;
 			for (const row of Object.values(tempLights)) {
 				if (!row[columnIndex])
 					row[columnIndex] = JSON.parse(JSON.stringify(defaultLightModel));

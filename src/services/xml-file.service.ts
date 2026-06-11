@@ -81,7 +81,7 @@ export const importXmlFile = async (fileContent: string) => {
 
 			showCancelButton: true,
 			confirmButtonText: "Let's edit this!",
-		}).then((result: { isConfirmed: boolean; value: string }) => {
+		}).then((result) => {
 			if (!result.isConfirmed) return;
 
 			selectedSiren = sirensArray.find(

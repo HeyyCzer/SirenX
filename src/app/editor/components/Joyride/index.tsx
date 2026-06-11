@@ -80,6 +80,8 @@ export interface TutorialProps {
 	dependent?: string;
 	steps: any[];
 	callback?: (data: EventData) => void;
+	continuous?: boolean;
+	autoStart?: boolean;
 }
 
 export default function Tutorial({
@@ -87,7 +89,8 @@ export default function Tutorial({
 	dependent,
 	steps,
 	callback: tutorialCallback,
-	...props
+	continuous = false,
+	autoStart = false,
 }: TutorialProps) {
 	const [showTutorial, setShowTutorial] = useState(false);
 	const tutorialState = useTutorialStore();
@@ -150,7 +153,6 @@ export default function Tutorial({
 				next: "Next",
 				skip: "Skip",
 			}}
-			{...props}
 			steps={steps}
 			tooltipComponent={Tooltip}
 			styles={{
@@ -169,10 +171,10 @@ export default function Tutorial({
 				},
 			}}
 			options={{
-				skipBeacon: true,
+				skipBeacon: autoStart,
 				scrollOffset: 100,
 			}}
-			continuous
+			continuous={continuous}
 		/>
 	);
 }

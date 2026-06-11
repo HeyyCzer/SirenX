@@ -13,12 +13,12 @@ import Editor from "./components/Editor";
 
 export default function EditorPage() {
 	useEffect(() => {
-		loadBuyMeCoffeeWidget();
-		restoreCustomColors();
+		void loadBuyMeCoffeeWidget();
+		void restoreCustomColors();
 	}, []);
 
-	usePreventContextMenu();
-	useOneColorPerColumn();
+	void usePreventContextMenu();
+	void useOneColorPerColumn();
 
 	return (
 		<MainLayout hideFooter>

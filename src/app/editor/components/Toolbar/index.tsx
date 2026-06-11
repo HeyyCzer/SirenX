@@ -153,97 +153,81 @@ export default function Toolbar() {
 			title: "Enter the Siren ID",
 			input: "number",
 			inputAttributes: {
-				min: 100,
+				min: "100",
 			},
 			inputValue: sirenId,
 			inputPlaceholder: "Siren ID",
 			showCancelButton: true,
-			preConfirm: (newSirenId: string) => {
+			preConfirm: (newSirenId) => {
 				if (!newSirenId)
 					return Modal.showValidationMessage("Please, enter a Siren ID.");
 				return newSirenId;
 			},
-		}).then(
-			({
-				isConfirmed,
-				value: newSirenId,
-			}: {
-				isConfirmed: boolean;
-				value: string;
-			}) => {
-				if (!isConfirmed || !newSirenId) return;
+		}).then(({ isConfirmed, value: newSirenId }) => {
+			if (!isConfirmed || !newSirenId) return;
 
-				Modal.fire({
-					title: "Enter the Siren Name",
-					input: "text",
-					inputValue: sirenName,
-					inputPlaceholder: "Siren name",
-					showCancelButton: true,
-					preConfirm: (newSirenName: string) => {
-						if (!newSirenName)
-							return Modal.showValidationMessage("Please, enter a Siren Name.");
-						return newSirenName;
-					},
-				}).then(
-					({
-						isConfirmed,
-						value: newSirenName,
-					}: {
-						isConfirmed: boolean;
-						value: string;
-					}) => {
-						if (!isConfirmed || !newSirenName) return;
+			Modal.fire({
+				title: "Enter the Siren Name",
+				input: "text",
+				inputValue: sirenName,
+				inputPlaceholder: "Siren name",
+				showCancelButton: true,
+				preConfirm: (newSirenName: string) => {
+					if (!newSirenName)
+						return Modal.showValidationMessage("Please, enter a Siren Name.");
+					return newSirenName;
+				},
+			}).then(({ isConfirmed, value: newSirenName }) => {
+				if (!isConfirmed || !newSirenName) return;
 
-						Sentry.addBreadcrumb({
-							category: "file",
-							message: "Requesting file export",
-							level: "info",
-						});
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "Requesting file export",
+					level: "info",
+				});
 
-						const [fileContent, jsonFileContent] =
-							exportXmlFile(
-								{
-									sirenId,
-									newSirenId,
-									newSirenName,
-									uploadedFile,
-									lights,
-									bpm,
-								},
-								settings,
-								`${crypto.randomUUID()}.meta`,
-							) || [];
-						if (!fileContent) return;
+				const [fileContent, jsonFileContent] =
+					exportXmlFile(
+						{
+							sirenId,
+							newSirenId,
+							newSirenName,
+							uploadedFile,
+							lights,
+							bpm,
+						},
+						settings,
+						`${crypto.randomUUID()}.meta`,
+					) || [];
+				if (!fileContent) return;
 
-						event({
-							action: "file_export",
-							category: "editor",
-							label: `${settings.totalColumns} columns - ${bpm} BPM`,
-						});
+				event({
+					action: "file_export",
+					category: "editor",
+					label: `${settings.totalColumns} columns - ${bpm} BPM`,
+				});
 
-						setUploadData({
-							id: newSirenId,
-							name: newSirenName,
-							file: jsonFileContent,
-						});
+				setUploadData({
+					id: newSirenId,
+					name: newSirenName,
+					file: jsonFileContent,
+				});
 
-						if (
-							!sponsor.lastSeen ||
-							Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
-						) {
-							setIsSponsorModalOpen(true);
-							setSponsorLastSeen(Date.now());
-						}
+				if (
+					!sponsor.lastSeen ||
+					Date.now() - sponsor.lastSeen > 15 * 24 * 60 * 60 * 1000
+				) {
+					setIsSponsorModalOpen(true);
+					setSponsorLastSeen(Date.now());
+				}
 
-						Sentry.addBreadcrumb({
-							category: "file",
-							message: "File exported!",
-							level: "info",
-						});
-					},
-				);
-			},
-		);
+				Sentry.addBreadcrumb({
+					category: "file",
+					message: "File exported!",
+					level: "info",
+				});
+			});
+		});
 	}, [
 		lights,
 		sponsor,
@@ -316,15 +300,13 @@ export default function Toolbar() {
 
 				return value.replace("#", "").toUpperCase();
 			},
-		}).then(
-			({ isConfirmed, value }: { isConfirmed: boolean; value: string }) => {
-				if (!isConfirmed) return;
+		}).then(({ isConfirmed, value }) => {
+			if (!isConfirmed) return;
 
-				const carcolsColor = `0xFF${value.toUpperCase()}`;
-				const key = createCustomColor(carcolsColor);
-				setSelectedColor(key);
-			},
-		);
+			const carcolsColor = `0xFF${value.toUpperCase()}`;
+			const key = createCustomColor(carcolsColor);
+			setSelectedColor(key);
+		});
 	}, [setSelectedColor]);
 
 	const isExportDisabled =

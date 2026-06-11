@@ -14,7 +14,7 @@ export function useOneColorPerColumn() {
 
 		let hasChanges = false;
 		const newLights = { ...lights };
-		const columnColors = [];
+		const columnColors: (string | undefined)[] = [];
 
 		for (const rowIndex in lights) {
 			const row = lights[rowIndex];
@@ -61,7 +61,7 @@ export function useOneColorPerColumn() {
 
 export function usePreventContextMenu() {
 	useEffect(() => {
-		const preventContextMenu = (e) => e.preventDefault();
+		const preventContextMenu = (e: Event) => e.preventDefault();
 		window.addEventListener("contextmenu", preventContextMenu);
 
 		return () => {
