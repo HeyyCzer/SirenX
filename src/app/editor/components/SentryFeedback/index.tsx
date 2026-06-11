@@ -12,7 +12,7 @@ export default function FeedbackWidget() {
 
 		return () => {
 			if (!widgetRef.current) return;
-			
+
 			widgetRef.current?.removeFromDom();
 			widgetRef.current = null;
 		};

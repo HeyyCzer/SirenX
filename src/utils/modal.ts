@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import Swal from "sweetalert2/dist/sweetalert2.js";
 
 export const Modal = Swal.mixin({

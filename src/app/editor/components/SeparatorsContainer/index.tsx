@@ -1,7 +1,7 @@
 "use client";
 
-import { useSettingsStore } from "@/store/settings.store";
 import { useCallback, useEffect, useState } from "react";
+import { useSettingsStore } from "@/store/settings.store";
 import Separator from "./Separator";
 
 interface SeparatorItem {
@@ -10,7 +10,9 @@ interface SeparatorItem {
 }
 
 export default function SeparatorsContainer() {
-	const separatorsVisible = useSettingsStore((state) => state.settings.separatorsVisible);
+	const separatorsVisible = useSettingsStore(
+		(state) => state.settings.separatorsVisible,
+	);
 
 	const [separators, setSeparators] = useState<SeparatorItem[]>([]);
 
@@ -19,7 +21,7 @@ export default function SeparatorsContainer() {
 	}, []);
 
 	const moveSeparator = useCallback((id: string, x: number) => {
-		setSeparators((prev) => prev.map((s) => s.id === id ? { ...s, x } : s));
+		setSeparators((prev) => prev.map((s) => (s.id === id ? { ...s, x } : s)));
 	}, []);
 
 	useEffect(() => {
@@ -28,7 +30,10 @@ export default function SeparatorsContainer() {
 			if (document.querySelector("input:focus")) return;
 
 			if (e.key === "q") {
-				setSeparators((prev) => [...prev, { id: crypto.randomUUID(), x: window.innerWidth / 2 }]);
+				setSeparators((prev) => [
+					...prev,
+					{ id: crypto.randomUUID(), x: window.innerWidth / 2 },
+				]);
 			}
 		};
 		window.addEventListener("keyup", handleKeyup);

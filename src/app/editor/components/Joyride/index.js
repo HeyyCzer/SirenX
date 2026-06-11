@@ -1,8 +1,8 @@
-import { useTutorialStore } from "@/store/tutorial.store";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { ACTIONS } from "react-joyride";
 import { tv } from "tailwind-variants";
+import { useTutorialStore } from "@/store/tutorial.store";
 
 const ReactJoyride = dynamic(() => import("react-joyride"), {
 	ssr: false,
@@ -51,7 +51,7 @@ const Tooltip = ({
 				{step.title && (
 					<h4 className="pb-2 font-bold text-emerald-400">{step.title}</h4>
 				)}
-				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: it's safe in this case */}
 				<p dangerouslySetInnerHTML={{ __html: step.content }} />
 			</div>
 
@@ -78,7 +78,7 @@ export default function Tutorial({
 	const setStatus = useTutorialStore((state) => state.setStatus);
 
 	for (const stepIndex in steps) {
-		const step = Number.parseInt(stepIndex);
+		const step = Number.parseInt(stepIndex, 10);
 		const stepData = steps[step];
 
 		if (stepData?.condition && !stepData.condition()) {
@@ -107,7 +107,7 @@ export default function Tutorial({
 
 		return () => {
 			clearTimeout(tutorialTimeout);
-		}
+		};
 	}, [tutorialState, uid, dependent]);
 
 	const callback = useCallback(

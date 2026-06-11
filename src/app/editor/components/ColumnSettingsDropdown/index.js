@@ -316,18 +316,14 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 										<div className="mt-1.5 flex flex-col gap-y-1">
 											{directionData.schema.map((row, rowIndex) => (
 												<div
-													key={`direction-${id}-${columnIndex}-row-${
-														// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-														rowIndex
-													}`}
+													// biome-ignore lint/suspicious/noArrayIndexKey: it's ok in this case
+													key={`direction-${id}-${columnIndex}-row-${rowIndex}`}
 													className="flex gap-x-1"
 												>
 													{row.map((cell, cellIndex) => (
 														<div
-															key={`direction-${id}-${columnIndex}-${rowIndex}-${
-																// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-																cellIndex
-															}`}
+															// biome-ignore lint/suspicious/noArrayIndexKey: it's ok in this case
+															key={`direction-${id}-${columnIndex}-${rowIndex}-${cellIndex}`}
 															className="flex h-6 w-6 items-center justify-center rounded-md bg-gray-200/20"
 														>
 															{cell === "CENTER" && (

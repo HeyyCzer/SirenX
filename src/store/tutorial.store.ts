@@ -20,6 +20,6 @@ export const useTutorialStore = create<TutorialState>()(
 		}),
 		{
 			name: `${STORE_KEY}tutorial`,
-		}
-	)
+		},
+	),
 );

@@ -1,8 +1,8 @@
-import { createCustomColor } from "@/services/color-manager.service";
-import DefaultCarcols from "@/default_carcols.json";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { STORE_KEY, defaultLightModel } from "./constants";
+import DefaultCarcols from "@/default_carcols.json";
+import { createCustomColor } from "@/services/color-manager.service";
+import { defaultLightModel, STORE_KEY } from "./constants";
 
 interface EditorState {
 	sirenId: string | null;
@@ -72,11 +72,9 @@ export const useEditorStore = create<EditorState>()(
 			setUploadData: ({ id, name, file }) =>
 				set({ sirenId: id, sirenName: name, uploadedFile: file }),
 
-			setCurrentBpm: (bpm) =>
-				set({ bpm }),
+			setCurrentBpm: (bpm) => set({ bpm }),
 
-			setSelectedColor: (color) =>
-				set({ selectedColor: color }),
+			setSelectedColor: (color) => set({ selectedColor: color }),
 
 			updateLight: ({ row, column, color, isOneColorPerColumn }) =>
 				set((state) => {
@@ -101,7 +99,7 @@ export const useEditorStore = create<EditorState>()(
 							) {
 								currentRow[column] = {
 									...currentRow[column],
-									color: color
+									color: color,
 								};
 							}
 						}
@@ -109,17 +107,16 @@ export const useEditorStore = create<EditorState>()(
 
 					newLights[row][column] = {
 						...newLights[row][column],
-						color: color
+						color: color,
 					};
 
 					return { lights: newLights };
 				}),
 
-			updateLights: (lights) =>
-				set({ lights }),
+			updateLights: (lights) => set({ lights }),
 		}),
 		{
 			name: `${STORE_KEY}editor`,
-		}
-	)
+		},
+	),
 );

@@ -2,9 +2,9 @@
 // The config you add here will be used whenever a users loads a page in their browser.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
+import * as Sentry from "@sentry/nextjs";
 import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
-import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
 	dsn: "https://adfe0823652a89aa021901c6d0255c99@o4511109215485952.ingest.us.sentry.io/4511299115548672",
@@ -27,11 +27,17 @@ Sentry.init({
 	],
 
 	beforeSend: (event, hint) => {
-		const date = new Date().toISOString().replace(/:/g, '-');
+		const date = new Date().toISOString().replace(/:/g, "-");
 		hint.attachments = hint.attachments ?? [];
 		hint.attachments.push(
-			{ filename: `user-editor__${date}.json`, data: JSON.stringify(useEditorStore.getState(), null, 2) },
-			{ filename: `user-settings__${date}.json`, data: JSON.stringify(useSettingsStore.getState(), null, 2) }
+			{
+				filename: `user-editor__${date}.json`,
+				data: JSON.stringify(useEditorStore.getState(), null, 2),
+			},
+			{
+				filename: `user-settings__${date}.json`,
+				data: JSON.stringify(useSettingsStore.getState(), null, 2),
+			},
 		);
 
 		// if (event.exception && event.event_id && event.level && ["error", "fatal"].includes(event.level)) {
@@ -42,9 +48,9 @@ Sentry.init({
 	},
 
 	ignoreErrors: [
-		'https://reactjs.org/docs/error-decoder.html?invariant=422', // There was an error while hydrating this Suspense boundary. Switched to client rendering.
-		'https://reactjs.org/docs/error-decoder.html?invariant=423', // There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root...
-		'https://reactjs.org/docs/error-decoder.html?invariant=425' // Text content does not match server-rendered HTML...
+		"https://reactjs.org/docs/error-decoder.html?invariant=422", // There was an error while hydrating this Suspense boundary. Switched to client rendering.
+		"https://reactjs.org/docs/error-decoder.html?invariant=423", // There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root...
+		"https://reactjs.org/docs/error-decoder.html?invariant=425", // Text content does not match server-rendered HTML...
 	],
 
 	// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.

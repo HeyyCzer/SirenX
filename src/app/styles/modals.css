@@ -1,15 +1,19 @@
 .swal2-popup.swal2-toast {
 	box-sizing: border-box;
-	grid-column: 1/4 !important;
-	grid-row: 1/4 !important;
+	grid-column: 1 / 4 !important;
+	grid-row: 1 / 4 !important;
 	grid-template-columns: 1fr 99fr 1fr;
 	padding: 1em;
 	overflow-y: hidden;
 	@apply bg-slate-800;
-	box-shadow: 0 0 1px hsla(0deg, 0%, 0%, 0.075), 0 1px 2px hsla(0deg, 0%, 0%, 0.075), 1px 2px 4px hsla(0deg, 0%, 0%, 0.075), 1px 3px 8px hsla(0deg, 0%, 0%, 0.075), 2px 4px 16px hsla(0deg, 0%, 0%, 0.075);
+	box-shadow:
+		0 0 1px hsla(0deg, 0%, 0%, 0.075),
+		0 1px 2px hsla(0deg, 0%, 0%, 0.075),
+		1px 2px 4px hsla(0deg, 0%, 0%, 0.075),
+		1px 3px 8px hsla(0deg, 0%, 0%, 0.075),
+		2px 4px 16px hsla(0deg, 0%, 0%, 0.075);
 	pointer-events: all;
 }
-
 
 .swal2-popup.swal2-toast > * {
 	grid-column: 2;
@@ -37,8 +41,8 @@
 	font-size: 0.8em;
 }
 .swal2-popup.swal2-toast .swal2-close {
-	grid-column: 3/3;
-	grid-row: 1/99;
+	grid-column: 3 / 3;
+	grid-row: 1 / 99;
 	align-self: center;
 	width: 0.8em;
 	height: 0.8em;
@@ -57,7 +61,7 @@
 }
 .swal2-popup.swal2-toast .swal2-loader {
 	grid-column: 1;
-	grid-row: 1/99;
+	grid-row: 1 / 99;
 	align-self: center;
 	width: 2em;
 	height: 2em;
@@ -65,7 +69,7 @@
 }
 .swal2-popup.swal2-toast .swal2-icon {
 	grid-column: 1;
-	grid-row: 1/99;
+	grid-row: 1 / 99;
 	align-self: center;
 	width: 2em;
 	min-width: 2em;
@@ -86,10 +90,14 @@
 	top: 0.875em;
 	width: 1.375em;
 }
-.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^="swal2-x-mark-line"][class$="left"] {
+.swal2-popup.swal2-toast
+	.swal2-icon.swal2-error
+	[class^="swal2-x-mark-line"][class$="left"] {
 	left: 0.3125em;
 }
-.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^="swal2-x-mark-line"][class$="right"] {
+.swal2-popup.swal2-toast
+	.swal2-icon.swal2-error
+	[class^="swal2-x-mark-line"][class$="right"] {
 	right: 0.3125em;
 }
 .swal2-popup.swal2-toast .swal2-actions {
@@ -114,14 +122,18 @@
 	transform: rotate(45deg);
 	border-radius: 50%;
 }
-.swal2-popup.swal2-toast .swal2-success [class^="swal2-success-circular-line"][class$="left"] {
+.swal2-popup.swal2-toast
+	.swal2-success
+	[class^="swal2-success-circular-line"][class$="left"] {
 	top: -0.8em;
 	left: -0.5em;
 	transform: rotate(-45deg);
 	transform-origin: 2em 2em;
 	border-radius: 4em 0 0 4em;
 }
-.swal2-popup.swal2-toast .swal2-success [class^="swal2-success-circular-line"][class$="right"] {
+.swal2-popup.swal2-toast
+	.swal2-success
+	[class^="swal2-success-circular-line"][class$="right"] {
 	top: -0.25em;
 	left: 0.9375em;
 	transform-origin: 0 1.5em;
@@ -140,21 +152,29 @@
 .swal2-popup.swal2-toast .swal2-success [class^="swal2-success-line"] {
 	height: 0.3125em;
 }
-.swal2-popup.swal2-toast .swal2-success [class^="swal2-success-line"][class$="tip"] {
+.swal2-popup.swal2-toast
+	.swal2-success
+	[class^="swal2-success-line"][class$="tip"] {
 	top: 1.125em;
 	left: 0.1875em;
 	width: 0.75em;
 }
-.swal2-popup.swal2-toast .swal2-success [class^="swal2-success-line"][class$="long"] {
+.swal2-popup.swal2-toast
+	.swal2-success
+	[class^="swal2-success-line"][class$="long"] {
 	top: 0.9375em;
 	right: 0.1875em;
 	width: 1.375em;
 }
-.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip {
+.swal2-popup.swal2-toast
+	.swal2-success.swal2-icon-show
+	.swal2-success-line-tip {
 	-webkit-animation: swal2-toast-animate-success-line-tip 0.75s;
 	animation: swal2-toast-animate-success-line-tip 0.75s;
 }
-.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long {
+.swal2-popup.swal2-toast
+	.swal2-success.swal2-icon-show
+	.swal2-success-line-long {
 	-webkit-animation: swal2-toast-animate-success-line-long 0.75s;
 	animation: swal2-toast-animate-success-line-long 0.75s;
 }
@@ -177,8 +197,14 @@
 	left: 0;
 	box-sizing: border-box;
 	grid-template-areas: "top-start     top            top-end" "center-start  center         center-end" "bottom-start  bottom-center  bottom-end";
-	grid-template-rows: minmax(-webkit-min-content, auto) minmax(-webkit-min-content, auto) minmax(-webkit-min-content, auto);
-	grid-template-rows: minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);
+	grid-template-rows: minmax(-webkit-min-content, auto) minmax(
+			-webkit-min-content,
+			auto
+		) minmax(-webkit-min-content, auto);
+	grid-template-rows: minmax(min-content, auto) minmax(min-content, auto) minmax(
+			min-content,
+			auto
+		);
 	height: 100%;
 	padding: 0.625em;
 	overflow-x: hidden;
@@ -261,12 +287,12 @@
 }
 .swal2-container.swal2-grow-row > .swal2-popup,
 .swal2-container.swal2-grow-fullscreen > .swal2-popup {
-	grid-column: 1/4;
+	grid-column: 1 / 4;
 	width: 100%;
 }
 .swal2-container.swal2-grow-column > .swal2-popup,
 .swal2-container.swal2-grow-fullscreen > .swal2-popup {
-	grid-row: 1/4;
+	grid-row: 1 / 4;
 	align-self: stretch;
 }
 .swal2-container.swal2-no-transition {
@@ -441,7 +467,9 @@
 	margin-bottom: -1.2em;
 	padding: 0;
 	overflow: hidden;
-	transition: color 0.1s, box-shadow 0.1s;
+	transition:
+		color 0.1s,
+		box-shadow 0.1s;
 	border: none;
 	border-radius: 5px;
 	background: transparent;
@@ -497,7 +525,9 @@
 .swal2-textarea {
 	box-sizing: border-box;
 	width: auto;
-	transition: border-color 0.1s, box-shadow 0.1s;
+	transition:
+		border-color 0.1s,
+		box-shadow 0.1s;
 	border: 0;
 	outline: none;
 	border-radius: 10px;
@@ -735,14 +765,16 @@
 	transform: rotate(45deg);
 	border-radius: 50%;
 }
-.swal2-icon.swal2-success [class^="swal2-success-circular-line"][class$="left"] {
+.swal2-icon.swal2-success
+	[class^="swal2-success-circular-line"][class$="left"] {
 	top: -0.4375em;
 	left: -2.0635em;
 	transform: rotate(-45deg);
 	transform-origin: 3.75em 3.75em;
 	border-radius: 7.5em 0 0 7.5em;
 }
-.swal2-icon.swal2-success [class^="swal2-success-circular-line"][class$="right"] {
+.swal2-icon.swal2-success
+	[class^="swal2-success-circular-line"][class$="right"] {
 	top: -0.6875em;
 	left: 1.875em;
 	transform: rotate(-45deg);
@@ -829,11 +861,15 @@
 .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step {
 	background: #2778c4;
 }
-.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step {
+.swal2-progress-steps
+	.swal2-progress-step.swal2-active-progress-step
+	~ .swal2-progress-step {
 	background: #add8e6;
 	color: #fff;
 }
-.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step ~ .swal2-progress-step-line {
+.swal2-progress-steps
+	.swal2-progress-step.swal2-active-progress-step
+	~ .swal2-progress-step-line {
 	background: #add8e6;
 }
 .swal2-progress-steps .swal2-progress-step-line {
@@ -1403,10 +1439,12 @@ body.swal2-no-backdrop .swal2-container .swal2-modal {
 	body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
 		overflow-y: scroll !important;
 	}
-	body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) > [aria-hidden="true"] {
+	body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)
+		> [aria-hidden="true"] {
 		display: none;
 	}
-	body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container {
+	body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)
+		.swal2-container {
 		position: static !important;
 	}
 }
