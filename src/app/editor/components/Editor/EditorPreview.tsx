@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { startTransition, useEffect, useMemo } from "react";
 import Light from "../Light";
 
 interface EditorPreviewProps {
@@ -24,7 +24,9 @@ export default function EditorPreview({
 	useEffect(() => {
 		const interval = setInterval(
 			() => {
-				setCurrentRow((prev) => (prev + 1) % totalRows);
+				startTransition(() => {
+					setCurrentRow((prev) => (prev + 1) % totalRows);
+				});
 			},
 			1000 / (bpm / 60),
 		);
