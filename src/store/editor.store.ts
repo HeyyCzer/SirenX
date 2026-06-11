@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import DefaultCarcols from "@/default_carcols.json";
+import DefaultCarcols from "@/assets/default_carcols.json" with {
+	type: "json",
+};
 import { createCustomColor } from "@/services/color-manager.service";
 import { defaultLightModel, STORE_KEY } from "./constants";
 
@@ -34,23 +36,6 @@ interface EditorState {
 	updateLights: (lights: EditorState["lights"]) => void;
 }
 
-// Initialize custom colors from localStorage if available
-if (typeof window !== "undefined") {
-	const data = localStorage.getItem(`${STORE_KEY}editor`);
-	if (data) {
-		const preloadedEditor = JSON.parse(data);
-		if (preloadedEditor) {
-			for (const row of Object.values(preloadedEditor.lights ?? {})) {
-				for (const item of Object.values(row ?? {})) {
-					if (item?.color?.startsWith("CUSTOM_")) {
-						createCustomColor(item.color.replace("CUSTOM_", ""));
-					}
-				}
-			}
-		}
-	}
-}
-
 export const useEditorStore = create<EditorState>()(
 	persist(
 		(set) => ({
@@ -78,7 +63,7 @@ export const useEditorStore = create<EditorState>()(
 
 			updateLight: ({ row, column, color, isOneColorPerColumn }) =>
 				set((state) => {
-					const newLights = { ...state.lights };
+					const newLights = { ...state.lights } as EditorState["lights"];
 
 					if (!newLights[row]) {
 						newLights[row] = [];
@@ -90,7 +75,7 @@ export const useEditorStore = create<EditorState>()(
 
 					if (isOneColorPerColumn) {
 						for (const rowKey of Object.keys(newLights)) {
-							const currentRow = newLights[rowKey as any];
+							const currentRow = newLights[Number(rowKey)];
 							if (
 								currentRow[column]?.color &&
 								currentRow[column]?.color !== color &&
@@ -117,6 +102,24 @@ export const useEditorStore = create<EditorState>()(
 		}),
 		{
 			name: `${STORE_KEY}editor`,
+			onRehydrateStorage: () => {
+				// After rehydration, ensure custom colors are registered
+				const data = localStorage.getItem(`${STORE_KEY}editor`);
+				if (data) {
+					const preloadedEditor = JSON.parse(data);
+					if (preloadedEditor) {
+						for (const row of Object.values(preloadedEditor.lights ?? {})) {
+							for (const item of Object.values(row ?? {})) {
+								if (item?.color?.startsWith("CUSTOM_")) {
+									createCustomColor(
+										item.color.replace("CUSTOM_", ""),
+									);
+								}
+							}
+						}
+					}
+				}
+			}
 		},
 	),
 );
