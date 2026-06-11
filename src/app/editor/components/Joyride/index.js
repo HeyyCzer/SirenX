@@ -1,12 +1,7 @@
-import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import { ACTIONS } from "react-joyride";
+import { ACTIONS, Joyride } from "react-joyride";
 import { tv } from "tailwind-variants";
 import { useTutorialStore } from "@/store/tutorial.store";
-
-const ReactJoyride = dynamic(() => import("react-joyride"), {
-	ssr: false,
-});
 
 const button = tv({
 	base: "py-1 px-2 transition-colors border-0 rounded-md text-white cursor-pointer outline-none appearance-none",
@@ -124,7 +119,7 @@ export default function Tutorial({
 	);
 
 	return (
-		<ReactJoyride
+		<Joyride
 			run={showTutorial}
 			callback={callback}
 			locale={{

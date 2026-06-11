@@ -11,11 +11,11 @@ import { twMerge } from "tailwind-merge";
 import DeltaEnum from "@/enum/direction.enum";
 import ScaleFactorEnum from "@/enum/scaleFactor.enum";
 import { defaultLightModel } from "@/store/constants";
-import { useEditorStore } from "@/store/editor.store.ts";
-import { useSettingsStore } from "@/store/settings.store.ts";
+import { useEditorStore } from "@/store/editor.store";
+import { useSettingsStore } from "@/store/settings.store";
 import { Modal } from "@/utils/modal";
 
-const ColumnSettingsDropdown = ({ columnIndex }) => {
+const ColumnSettingsDropdown = ({ columnIndex }: { columnIndex: number }) => {
 	const lights = useEditorStore((state) => state.lights);
 	const updateLights = useEditorStore((state) => state.updateLights);
 	const totalRows = useSettingsStore((state) => state.settings.totalRows);
@@ -32,7 +32,7 @@ const ColumnSettingsDropdown = ({ columnIndex }) => {
 			input: "text",
 			inputLabel: "Intensity",
 			inputValue: data.intensity,
-			preConfirm: (valueStr) => {
+			preConfirm: (valueStr: string) => {
 				const value = Number(valueStr);
 				if (!value || Number.isNaN(value) || value < 0)
 					return Modal.showValidationMessage("Invalid value");
