@@ -21,7 +21,7 @@
 		"@sentry/nextjs": "^10.57.0",
 		"babel-plugin-react-compiler": "^19.0.0-beta-27714ef-20250124",
 		"motion": "^12.40.0",
-		"next": "16.2.9",
+		"next": "16.2.11",
 		"react": "^19.2.7",
 		"react-dnd": "^16.0.1",
 		"react-dnd-html5-backend": "^16.0.1",
