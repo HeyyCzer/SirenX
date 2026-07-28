@@ -1,0 +1,80 @@
+version: 2
+
+updates:
+  - package-ecosystem: "bun"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "⬆️"
+      include: "scope"
+    groups:
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+          - "babel-plugin-react-compiler"
+      next:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "@next/*"
+      react-dnd:
+        patterns:
+          - "react-dnd"
+          - "react-dnd-html5-backend"
+      fortawesome:
+        patterns:
+          - "@fortawesome/*"
+      sentry:
+        patterns:
+          - "@sentry/*"
+      tailwind:
+        patterns:
+          - "tailwindcss"
+          - "tailwindcss-*"
+          - "tailwind-merge"
+          - "tailwind-variants"
+          - "autoprefixer"
+          - "postcss"
+      playwright:
+        patterns:
+          - "@playwright/test"
+          - "playwright"
+      linting:
+        patterns:
+          - "@biomejs/*"
+          - "eslint"
+        exclude-patterns:
+          - "eslint-config-next"
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "⬆️"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
