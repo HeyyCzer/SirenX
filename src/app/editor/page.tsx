@@ -21,7 +21,7 @@ export default function EditorPage() {
 	void useOneColorPerColumn();
 
 	return (
-		<MainLayout hideFooter>
+		<MainLayout>
 			<MeshGradient />
 			{/* <FeedbackWidget key={"sentry-feedback"} /> */}
 
