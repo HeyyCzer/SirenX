@@ -5,7 +5,9 @@ import "./styles/modals.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import MotionProvider from "@/components/MotionProvider";
+import TranslateCompat from "@/components/TranslateCompat";
 import "@fortawesome/fontawesome-svg-core/styles.css";
+
 config.autoAddCss = false;
 
 export const metadata = {
@@ -36,6 +38,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" data-scroll-behavior="smooth">
 			<body className="dark bg-slate-950" suppressHydrationWarning>
+				<TranslateCompat />
 				<GoogleAnalytics />
 				<MotionProvider>{children}</MotionProvider>
 			</body>

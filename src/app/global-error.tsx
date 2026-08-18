@@ -37,7 +37,7 @@ export default function GlobalError({
 
 					{error.digest ? (
 						<p>
-							Error ID: <code>{error.digest}</code>
+							<span>Error ID:</span> <code>{error.digest}</code>
 						</p>
 					) : null}
 				</div>

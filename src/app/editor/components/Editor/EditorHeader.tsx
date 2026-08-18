@@ -53,7 +53,7 @@ export default function EditorHeader() {
 			>
 				<FontAwesomeIcon icon={faGithub} />
 				<span className="text-sm">
-					Star on GitHub
+					<span>Star on GitHub</span>
 					{count > 0 && (
 						<span className="ml-2 text-white/40 text-xs">
 							<FontAwesomeIcon icon={faStar} /> {count}
