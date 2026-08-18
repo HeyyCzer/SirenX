@@ -451,7 +451,7 @@ export default function Toolbar() {
 												</span>
 											)}
 										</button>
-										{colorData.toolbar.name}
+										<span>{colorData.toolbar.name}</span>
 									</div>
 								);
 							})}
@@ -473,7 +473,7 @@ export default function Toolbar() {
 									className="text-2xl drop-shadow-[0px_2px_1px_#000]"
 								/>
 							</button>
-							Custom
+							<span>Custom</span>
 						</div>
 					</div>
 				</div>
