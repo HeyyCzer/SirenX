@@ -7,7 +7,7 @@ import { useEditorStore } from "@/store/editor.store";
 import { useSettingsStore } from "@/store/settings.store";
 
 Sentry.init({
-	dsn: "https://adfe0823652a89aa021901c6d0255c99@o4511109215485952.ingest.us.sentry.io/4511299115548672",
+	dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
 	// Add optional integrations for additional features
 	integrations: [
